@@ -17,23 +17,23 @@ object Constants {
     fun getCherryVersion() : String {
         return BuildConfig.BUILD_VERSION_STRING_CHERRY
     }
-    var CG_AUTHOR = "Updates: @CherrygramAPKs"
+    var CG_AUTHOR = "Updates: @gomin"
 
     /** CG Links start**/
     @JvmField
-    var CG_CHANNEL_USERNAME = "cherrygram"
+    var CG_CHANNEL_USERNAME = "gomin"
     @JvmField
-    var CG_CHANNEL_URL = "https://t.me/cherrygram"
+    var CG_CHANNEL_URL = "https://t.me/gomin"
 
     @JvmField
-    var CG_APKS_CHANNEL_USERNAME = "CherrygramAPKs"
+    var CG_APKS_CHANNEL_USERNAME = "gomin"
     @JvmField
-    var CG_APKS_CHANNEL_URL = "https://t.me/CherrygramAPKs"
+    var CG_APKS_CHANNEL_URL = "https://t.me/gomin"
 
     @JvmField
-    var CG_CHAT_USERNAME = "CherrygramSupport"
+    var CG_CHAT_USERNAME = "gomin"
     @JvmField
-    var CG_CHAT_URL = "https://t.me/CherrygramSupport"
+    var CG_CHAT_URL = "https://t.me/gomin"
 
     @JvmField
     var UPDATE_APP_URL = if (CherrygramCoreConfig.isPlayStoreBuild()) "https://play.google.com/store/apps/details?id=uz.unnarsx.cherrygram" else CG_CHANNEL_URL
