@@ -1,21 +1,16 @@
-# Active Context - Gomin (Cherrygram Edition)
-
-## [CURRENT MISSION]
-- [CURRENT MISSION]: Виправити стабілізацію збірки Gomin в GitHub Actions та локально.
-
-## [COMPLETED ATOMIC STEPS]
+- [CURRENT MISSION]: Виправити краш додатку при старті (через зміну підпису) та оновити брендинг (назва "Гомін" і Adaptive Icons з архівів).
 - [COMPLETED ATOMIC STEPS]:
-    - Проаналізовано JNI код (TgNetWrapper.cpp) та знайдено заглушки для security.
-    - Перевірено локальну збірку (працює успішно, C++ компілюється).
-    - Виявлено помилку в build.gradle: `desktopPath` дорівнює `null` на Linux, що валить конфігурацію Gradle в CI.
-
-## [OPEN PROBLEMS]
-- [OPEN PROBLEMS]:
-    - GitHub Actions не має встановленого NDK r21.
-    - GitHub Actions падає через `into null` в тасці `copyFiles`.
-- Need to locate exact paths for `BuildVars.java`.
-- Need to locate font assets.
-- Need to verify build environment (JDK, SDK, NDK).
-
-## [MODIFIED FILES]
-- None yet.
+  - Вимкнено ініціалізацію Talsec Security в 3-х ApplicationLoaderlmpl.
+  - Змінено `AppName` з `Gomin` на `Гомін` в `strings.xml`.
+  - Згенеровані іконки з `IconKitchen-Output (2).zip` застосовано як основний набір `ic_launcher`.
+  - Згенеровані іконки з `IconKitchen-Output (3).zip` застосовано як `ic_launcher_monochrome` для тематичних іконок системи (Adaptive Icons).
+  - Оновлено `AndroidManifest.xml` для використання `ic_launcher` всюди.
+  - Зроблено коміт і пуш в GitHub.
+- [OPEN PROBLEMS]: Чекаємо на збірку від GitHub Actions для підтвердження успішності білду.
+- [MODIFIED FILES]:
+  - `TMessagesProj_App/src/main/java/org/telegram/ui/ApplicationLoaderlmpl.kt` -> Вимкнено Talsec.
+  - `TMessagesProj_AppStandalone/src/main/java/org/telegram/ui/ApplicationLoaderlmpl.kt` -> Вимкнено Talsec.
+  - `TMessagesProj_AppHuawei/src/main/java/org/telegram/ui/HuaweiApplicationLoaderlmpl.kt` -> Вимкнено Talsec.
+  - `TMessagesProj/src/main/res/values/strings.xml` -> Зміна AppName.
+  - `TMessagesProj/src/main/AndroidManifest.xml` -> Впроваджено `ic_launcher` та `ic_launcher_round`.
+  - `TMessagesProj/src/main/res/mipmap-*` -> Нові ресурси іконок.
