@@ -842,7 +842,7 @@ void ConnectionsManager::onConnectionQuickAckReceived(Connection *connection, in
 }
 
 // #include "../security/secure_validator.hpp"
-#include "../security/skCrypter.hpp"
+// #include "../security/skCrypter.hpp"
 
 void ConnectionsManager::onConnectionDataReceived(Connection *connection, NativeByteBuffer *data, uint32_t length) {
     bool error = false;
