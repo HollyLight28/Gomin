@@ -254,7 +254,7 @@ public class AndroidUtilities {
     public final static String TYPEFACE_ROBOTO_CONDENSED_BOLD = "fonts/rcondensedbold.ttf";
     public final static String TYPEFACE_ROBOTO_REGULAR = "fonts/rregular.ttf";
     public final static String TYPEFACE_ROBOTO_ITALIC = "fonts/ritalic.ttf";
-    public final static String TYPEFACE_ROBOTO_MEDIUM = "fonts/rmedium.ttf";
+    public final static String TYPEFACE_ROBOTO_MEDIUM = "fonts/playfair.ttf";
     public final static String TYPEFACE_ROBOTO_EXTRA_BOLD = "fonts/rextrabold.ttf";
     public final static String TYPEFACE_ROBOTO_MEDIUM_ITALIC = "fonts/rmediumitalic.ttf";
     public final static String TYPEFACE_ROBOTO_MONO = "fonts/rmono.ttf";

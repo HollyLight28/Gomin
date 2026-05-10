@@ -32,7 +32,7 @@ import java.util.Set;
 
 public class FontHelper {
 
-    public final static String TYPEFACE_GILROY_EXTRABOLD = "fonts/gilroy_extrabold.ttf";
+    public final static String TYPEFACE_GILROY_EXTRABOLD = "fonts/playfair.ttf";
 
     private static final String TEST_TEXT;
     private static final int CANVAS_SIZE = 40;

@@ -8681,6 +8681,7 @@ public class Theme {
         synchronized (sync) {
             if (chat_msgTextPaint == null) {
                 chat_msgTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                chat_msgTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/geist.ttf"));
                 chat_msgGameTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
                 chat_msgTextPaintEmoji = new TextPaint[6];
                 chat_msgTextPaintOneEmoji = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -8693,7 +8694,9 @@ public class Theme {
                 chat_replyNamePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
                 chat_replyNamePaint.setTypeface(AndroidUtilities.bold());
                 chat_replyTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+                chat_replyTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/geist.ttf"));
                 chat_quoteTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+                chat_quoteTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/geist.ttf"));
                 chat_titleLabelTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
                 chat_topicTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
                 chat_topicTextPaint.setTypeface(AndroidUtilities.bold());

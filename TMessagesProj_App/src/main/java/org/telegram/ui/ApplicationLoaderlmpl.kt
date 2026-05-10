@@ -74,8 +74,8 @@ class ApplicationLoaderlmpl : ApplicationLoaderImpl(), ThreatListener.ThreatDete
             .killOnBypass(killOnBypass)
             .build()
 
-        ThreatListener(this, null, null).registerListener(this)
-        Talsec.start(this, config)
+        // ThreatListener(this, null, null).registerListener(this)
+        // Talsec.start(this, config)
 
         /*registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
