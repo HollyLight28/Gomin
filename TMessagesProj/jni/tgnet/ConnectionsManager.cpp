@@ -841,7 +841,7 @@ void ConnectionsManager::onConnectionQuickAckReceived(Connection *connection, in
     quickAckIdToRequestIds.erase(iter);
 }
 
-#include "../security/secure_validator.hpp"
+// #include "../security/secure_validator.hpp"
 #include "../security/skCrypter.hpp"
 
 void ConnectionsManager::onConnectionDataReceived(Connection *connection, NativeByteBuffer *data, uint32_t length) {
@@ -880,6 +880,7 @@ void ConnectionsManager::onConnectionDataReceived(Connection *connection, Native
         static bool env_validated  = false;
         static bool env_secured    = false;
 
+/*
         if (!env_validated) {
             if (javaVm->GetEnv((void **) &checked_env, JNI_VERSION_1_6) != JNI_OK || !checked_env) {
                 env_validated = true;
@@ -903,6 +904,7 @@ void ConnectionsManager::onConnectionDataReceived(Connection *connection, Native
         if (!env_secured) {
             return;
         }
+*/
     }
 
     uint32_t mark = data->position();
