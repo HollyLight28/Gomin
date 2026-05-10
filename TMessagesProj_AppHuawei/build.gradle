@@ -1,5 +1,3 @@
-import okhttp3.*
-
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -267,90 +265,6 @@ tasks.register('copyFiles', Copy) {
     into desktopPath
 }
 
-def fileName = "Cherrygram-Huawei-${APP_VERSION_NAME_CHERRY}-TG-${APP_VERSION_NAME}-arm64-v8a.apk"
-def apkFilePath = "${projectDir}/afat/release/${fileName}"
-
-def fileName2 = "Cherrygram-Huawei-${APP_VERSION_NAME_CHERRY}-TG-${APP_VERSION_NAME}-armeabi-v7a.apk"
-def apkFilePath2 = "${projectDir}/afat/release/${fileName2}"
-
-tasks.register('sendApk') {
-    doLast {
-        def file = new File(apkFilePath)
-        def file2 = new File(apkFilePath2)
-
-        if (!file.exists() && !file2.exists()) {
-            println "APK file not found: $apkFilePath"
-            println "APK file not found: $apkFilePath2"
-            return
-        }
-
-        println "Sending APK to Cherrygram Support..."
-
-        try {
-            sendApkToTelegram(file)
-            sendApkToTelegram(file2)
-        } catch (Exception e) {
-            println "Error sending APK: ${e.message}"
-            e.printStackTrace()
-        }
-    }
-}
-
-void sendApkToTelegram(File file) {
-    OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(90, TimeUnit.SECONDS)
-            .build()
-
-    def appVersion = "App version: *${APP_VERSION_NAME_CHERRY} // ${APP_VERSION_NAME} (${APP_VERSION_CODE})*"
-
-    def currentDateAndTime = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm"))
-    def buildDate = "\n \nBuild date (UTC): *" + currentDateAndTime + "*\n"
-
-    def buildHost = "\nBuilt on: *${getOSName()}*"
-
-    def currentRepo = 'git rev-parse --show-toplevel'.execute().text.trim().split('/').last()
-    def currentBranch = 'git rev-parse --abbrev-ref HEAD'.execute().text.trim()
-    def projectName = "\n \nProject: *${currentRepo}*" + "/${currentBranch}"
-
-    def lastCommitAuthor = 'git log -1 --pretty=%an'.execute().text.trim()
-    def author = "\nTriggered by: *${lastCommitAuthor}*"
-
-
-    def fileCaption
-    if (file.name.contains("arm64-v8a")) {
-        fileCaption = appVersion + buildDate + "Architecture: *arm64-v8a*" + buildHost + projectName + author
-    } else if (file.name.contains("armeabi-v7a")) {
-        fileCaption = appVersion + buildDate + "Architecture: *armeabi-v7a*" + buildHost + projectName + author
-    } else {
-        fileCaption = appVersion + buildDate + "Architecture: *universal*" + buildHost + projectName + author
-    }
-
-    def requestBody = new MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("chat_id", "${TELEGRAM_CHAT_ID}")
-            .addFormDataPart("document", file.name,
-                    RequestBody.create(MediaType.parse("application/vnd.android.package-archive"), file)
-            )
-            .addFormDataPart("caption", fileCaption)
-            .addFormDataPart("parse_mode", "Markdown")
-            .build()
-
-    def request = new Request.Builder()
-            .url("https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument")
-            .post(requestBody)
-            .build()
-
-    println "Uploading file: ${file.name}, size: ${file.length()} bytes"
-
-    client.newCall(request).execute().withCloseable { response ->
-        if (response.isSuccessful()) {
-            println "APK successfully sent to Cherrygram Support!"
-        } else {
-            throw new RuntimeException("HTTP ${response.code()} - ${response.message()}")
-        }
-    }
-}
-
 tasks.configureEach { task ->
     if (task.name == 'extractProguardFiles') {
         task.doFirst {
@@ -360,10 +274,7 @@ tasks.configureEach { task ->
 
     if (task.name == 'assembleAfatRelease') {
         if (isWindowsOrMacOS()) {
-            sendApk.mustRunAfter copyFiles
-            task.finalizedBy 'copyFiles', 'sendApk'
-        } else {
-            task.finalizedBy 'sendApk'
+            task.finalizedBy 'copyFiles'
         }
     }
 }
