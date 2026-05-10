@@ -25,17 +25,31 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    - name: Install NDK
+      run: |
+        echo "y" | sudo ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "ndk;21.4.7075529"
+        echo "ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/21.4.7075529" >> $GITHUB_ENV
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug --stacktrace
+    - name: Build Regular Debug APK
+      run: ./gradlew :TMessagesProj_App:assembleDebug --stacktrace
 
-    - name: Upload APK
+    - name: Build Huawei Debug APK
+      run: ./gradlew :TMessagesProj_AppHuawei:assembleAfatDebug --stacktrace
+
+    - name: Upload Regular APK
       uses: actions/upload-artifact@v4
       with:
-        name: Gomin-App
+        name: Gomin-Regular-Debug
         path: TMessagesProj_App/build/outputs/apk/debug/*.apk
+
+    - name: Upload Huawei APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: Gomin-Huawei-Debug
+        path: TMessagesProj_AppHuawei/build/outputs/apk/afatDebug/*.apk
 
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -43,7 +57,9 @@ jobs:
       with:
         tag_name: "v${{ github.run_number }}"
         name: "Gomin Build #${{ github.run_number }}"
-        files: TMessagesProj_App/build/outputs/apk/debug/*.apk
+        files: |
+          TMessagesProj_App/build/outputs/apk/debug/*.apk
+          TMessagesProj_AppHuawei/build/outputs/apk/afatDebug/*.apk
         draft: false
         prerelease: false
       env:

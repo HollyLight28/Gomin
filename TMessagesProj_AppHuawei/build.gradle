@@ -220,6 +220,10 @@ static def loadEnv(filePath) {
 
 def env = loadEnv("${project.rootDir}/secrets_for_ci.env")
 
+// Встановлюємо дефолтні значення для CI, якщо файлу немає
+if (!env.containsKey('APP_VERSION_CODE')) env['APP_VERSION_CODE'] = '1'
+if (!env.containsKey('APP_VERSION_NAME_CHERRY')) env['APP_VERSION_NAME_CHERRY'] = '1.0.0'
+
 env.each { key, value ->
     ext."$key" = value
 }
@@ -256,6 +260,8 @@ if (isWindows()) {
     desktopPath = "C:/Users/${SYSTEM_USERNAME}/Desktop/Cherry/Stable"
 } else if (isMacOS()) {
     desktopPath = "/Users/${SYSTEM_USERNAME}/Desktop/Cherry/Stable"
+} else {
+    desktopPath = "${project.buildDir}/outputs/apk/stable"
 }
 
 tasks.register('copyFiles', Copy) {
