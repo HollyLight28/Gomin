@@ -1,16 +1,14 @@
-- [CURRENT MISSION]: Виправити краш додатку при старті (через зміну підпису) та оновити брендинг (назва "Гомін" і Adaptive Icons з архівів).
+- [CURRENT MISSION]: Виправити краш додатку при старті, оновити брендинг (назва "Гомін" і Adaptive Icons), переконатись в успішній збірці локально і на GitHub Actions.
 - [COMPLETED ATOMIC STEPS]:
-  - Вимкнено ініціалізацію Talsec Security в 3-х ApplicationLoaderlmpl.
+  - Вимкнено ініціалізацію Talsec Security.
   - Змінено `AppName` з `Gomin` на `Гомін` в `strings.xml`.
-  - Згенеровані іконки з `IconKitchen-Output (2).zip` застосовано як основний набір `ic_launcher`.
-  - Згенеровані іконки з `IconKitchen-Output (3).zip` застосовано як `ic_launcher_monochrome` для тематичних іконок системи (Adaptive Icons).
-  - Оновлено `AndroidManifest.xml` для використання `ic_launcher` всюди.
-  - Зроблено коміт і пуш в GitHub.
-- [OPEN PROBLEMS]: Чекаємо на збірку від GitHub Actions для підтвердження успішності білду.
+  - Згенеровані іконки застосовано як `ic_launcher` та `ic_launcher_monochrome`.
+  - Виправлено помилку збірки ресурсів (AAPT error): повернено старі імена для додаткових/альтернативних іконок в `AndroidManifest.xml`, які не мали відповідників у папці `mipmap`.
+  - Проведено успішну локальну збірку (`BUILD SUCCESSFUL`).
+  - Зміни відправлені в GitHub.
+- [OPEN PROBLEMS]: Очікування завершення GitHub Actions для підтвердження успішного CI-циклу.
 - [MODIFIED FILES]:
   - `TMessagesProj_App/src/main/java/org/telegram/ui/ApplicationLoaderlmpl.kt` -> Вимкнено Talsec.
-  - `TMessagesProj_AppStandalone/src/main/java/org/telegram/ui/ApplicationLoaderlmpl.kt` -> Вимкнено Talsec.
-  - `TMessagesProj_AppHuawei/src/main/java/org/telegram/ui/HuaweiApplicationLoaderlmpl.kt` -> Вимкнено Talsec.
   - `TMessagesProj/src/main/res/values/strings.xml` -> Зміна AppName.
-  - `TMessagesProj/src/main/AndroidManifest.xml` -> Впроваджено `ic_launcher` та `ic_launcher_round`.
+  - `TMessagesProj/src/main/AndroidManifest.xml` -> Впроваджено `ic_launcher` для головної Activity, виправлено імена для альтернативних іконок.
   - `TMessagesProj/src/main/res/mipmap-*` -> Нові ресурси іконок.
