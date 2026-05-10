@@ -244,10 +244,13 @@ android {
 
 static def loadEnv(filePath) {
     def env = [:]
-    Files.lines(Paths.get(filePath)).each { line ->
-        if (line && !line.startsWith("#")) {
-            def (key, value) = line.split('=', 2)
-            env[key.trim()] = value?.trim()
+    def path = Paths.get(filePath)
+    if (Files.exists(path)) {
+        Files.lines(path).each { line ->
+            if (line && !line.startsWith("#") && line.contains("=")) {
+                def (key, value) = line.split('=', 2)
+                env[key.trim()] = value?.trim()
+            }
         }
     }
     return env
