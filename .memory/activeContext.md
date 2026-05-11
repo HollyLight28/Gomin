@@ -1,14 +1,11 @@
-- [CURRENT MISSION]: Виправити краш додатку при старті, оновити брендинг (назва "Гомін" і Adaptive Icons), переконатись в успішній збірці локально і на GitHub Actions.
+- [CURRENT MISSION]: Виправити постійний краш додатку при старті (після 27 спроб юзера) та налаштувати правильну збірку для "партизанського" (Standalone) використання.
 - [COMPLETED ATOMIC STEPS]:
-  - Вимкнено ініціалізацію Talsec Security.
-  - Змінено `AppName` з `Gomin` на `Гомін` в `strings.xml`.
-  - Згенеровані іконки застосовано як `ic_launcher` та `ic_launcher_monochrome`.
-  - Виправлено помилку збірки ресурсів (AAPT error): повернено старі імена для додаткових/альтернативних іконок в `AndroidManifest.xml`, які не мали відповідників у папці `mipmap`.
-  - Проведено успішну локальну збірку (`BUILD SUCCESSFUL`).
-  - Зміни відправлені в GitHub.
-- [OPEN PROBLEMS]: Очікування завершення GitHub Actions для підтвердження успішного CI-циклу.
+  - `build.yml` повністю переписано на збірку **Standalone** версії замість Play Store (`TMessagesProj_AppStandalone:assembleDebug`).
+  - Видалено іконку "Череграма" зі Splash Screen (в `styles.xml` для v31 та night тем) та замінено на `ic_launcher_round`.
+  - Зміни відправлені на GitHub, запущено новий Actions білд.
+- [OPEN PROBLEMS]: 
+  - **КРИТИЧНО**: Додаток крашиться при старті. У нас **немає логів**. Згідно з `MODULE 4: Circuit Breaker`, ми зупиняємо вгадування. Потрібен `stack trace` або `crash.txt` з телефону юзера.
 - [MODIFIED FILES]:
-  - `TMessagesProj_App/src/main/java/org/telegram/ui/ApplicationLoaderlmpl.kt` -> Вимкнено Talsec.
-  - `TMessagesProj/src/main/res/values/strings.xml` -> Зміна AppName.
-  - `TMessagesProj/src/main/AndroidManifest.xml` -> Впроваджено `ic_launcher` для головної Activity, виправлено імена для альтернативних іконок.
-  - `TMessagesProj/src/main/res/mipmap-*` -> Нові ресурси іконок.
+  - `.github/workflows/build.yml` -> Змінено таргет збірки на Standalone.
+  - `TMessagesProj/src/main/res/values-v31/styles.xml` -> Замінено `windowSplashScreenAnimatedIcon`.
+  - `TMessagesProj/src/main/res/values-night/styles.xml` -> Замінено `windowSplashScreenAnimatedIcon`.

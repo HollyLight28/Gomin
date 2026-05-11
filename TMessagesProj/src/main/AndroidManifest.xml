@@ -461,7 +461,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="vnd.android.cursor.item/vnd.uz.unnarsx.cherrygram.android.profile" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.ua.gomin.messenger.android.profile" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -508,8 +508,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="vnd.android.cursor.item/vnd.uz.unnarsx.cherrygram.android.call"/>
-                <data android:mimeType="vnd.android.cursor.item/vnd.uz.unnarsx.cherrygram.android.call.video"/>
+                <data android:mimeType="vnd.android.cursor.item/vnd.ua.gomin.messenger.android.call"/>
+                <data android:mimeType="vnd.android.cursor.item/vnd.ua.gomin.messenger.android.call.video"/>
             </intent-filter>
         </activity-alias>
         <activity
