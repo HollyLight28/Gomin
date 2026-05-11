@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- by t.me/arsLan-->
     <string name="CG_FollowChannelTitle">Підписатися на офіційний канал</string>
@@ -89,7 +89,7 @@
     <string name="CG_Stats_TOS">Продовжуючи, ви автоматично погоджуєтеся з Умовами надання послуг Telegram та Умовами використання Гомін.</string>
     <string name="CG_SortByDate">Сортувати повідомлення за датою</string>
     <string name="CG_SortByUnread">Сортувати перше непрочитані</string>
-    <string name="CG_UnknownCherrySettingsOption">Немає такого параметра Cherry.</string>
+    <string name="CG_UnknownCherrySettingsOption">Немає такого параметра Gomin.</string>
     <string name="CG_Restart">Перезапустити додаток</string>
     <string name="CG_RestartToApply">Перезавантажте додаток для застосування змін</string>
     <string name="CG_PushService">Сервіс повідомлень Гомін.</string>
@@ -397,7 +397,7 @@
     <string name="DP_EnjoyingUs">Подобається Гомін?</string>
     <string name="DP_RateUs">Оцініть нас на Google Play!</string>
     <string name="DP_DonatesMoreInfo">Хочете допомогти Гомін розвиватися? Перейдіть до **Гомін Support** чату.</string>
-    <string name="DP_DonatesThanks">Дякую за вашу підтримку! Ви зробили Вишню щасливою ❤️</string>
+    <string name="DP_DonatesThanks">Дякую за вашу підтримку! Ви зробили Гомін щасливішим ❤️</string>
     <string name="DP_DonateBadge">Пожертвуйте і розблоковуйте бонуси</string>
     <string name="DP_Donate_Desc">При пожертвуванні від $2 ви також отримаєте бонусні подарунки:</string>
     <string name="DP_Donate_Badge_desc">**Значок Гомін** поруч з вашим ім\'ям.</string>

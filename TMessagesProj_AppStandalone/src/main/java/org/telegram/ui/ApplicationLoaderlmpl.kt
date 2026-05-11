@@ -30,7 +30,7 @@ class ApplicationLoaderlmpl : ApplicationLoaderImpl() {
 
     private fun uh() {
         Handler(Looper.getMainLooper()).postDelayed({
-            AppRestartHelper.restartApp(ApplicationLoader.applicationContext)
+            // AppRestartHelper.restartApp(ApplicationLoader.applicationContext)
         }, 15_000)
     }
 }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- by t.me/arsLan-->
     <string name="CG_AppName" translatable="false">Gomin</string>
@@ -118,7 +118,7 @@
     <string name="CG_SortByDate">Sort by message date</string>
     <string name="CG_SortByUnread">Sort by unread first</string>
 
-    <string name="CG_UnknownCherrySettingsOption">There is no such Cherry Settings option.</string>
+    <string name="CG_UnknownCherrySettingsOption">There is no such Gomin Settings option.</string>
     <string name="CG_Restart">Restart app</string>
     <string name="CG_RestartToApply">Restart app to apply changes</string>
     <string name="CG_PushService">Gomin Push Service.</string>
@@ -485,7 +485,7 @@
     <string name="DP_RateUs">Rate us on Google Play!</string>
 
     <string name="DP_DonatesMoreInfo">Want to help Gomin grow? Check out **Gomin Support** chat.</string>
-    <string name="DP_DonatesThanks">Thanks for your support! You made Cherry happy ❤️</string>
+    <string name="DP_DonatesThanks">Thanks for your support! You made Gomin happy ❤️</string>
 
     <string name="DP_DonateBadge">Donate and unlock bonuses</string>
     <string name="DP_Donate_Desc">When you donate $2 or more, you\'ll also get some bonus gifts:</string>

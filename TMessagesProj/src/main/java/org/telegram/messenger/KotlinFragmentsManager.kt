@@ -185,7 +185,7 @@ object KotlinFragmentsManager: CoroutineScope by MainScope() {
 
     fun nfweioufwehr117() {
 //        exitProcess(0)
-        AppRestartHelper.restartApp(ApplicationLoader.applicationContext)
+//        AppRestartHelper.restartApp(ApplicationLoader.applicationContext)
     }
 
 }

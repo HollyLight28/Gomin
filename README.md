@@ -1,42 +1,47 @@
-# 🍒 Cherrygram
+# 🔊 Гомін (Gomin) — Український месенджер нового покоління
 
-Cherrygram is a third-party Telegram client with not many but useful modifications.
+**Гомін** — це не просто клієнт Telegram. Це інструмент для тих, хто цінує естетику, приватність та ефективність. Побудований на базі Cherrygram, він перетворює звичне спілкування на професійний досвід з українською душею.
 
-This is an unofficial fork of the original [Telegram App for Android](https://github.com/DrKLO/Telegram).
+---
 
-This repo contains the official source code for [Telegram App for Android](https://play.google.com/store/apps/details?id=org.telegram.messenger).
+## 🏛️ Візія
+Ми створюємо продукт для українців, який поєднує в собі:
+- **Executive Aesthetics**: Шрифти Geist та Playfair створюють преміальний вигляд.
+- **Інтегровані інструменти**: Робота з файлами та AI безпосередньо в месенджері.
+- **Безпека**: Жодних трекерів, тільки чистий код та надійність Telegram.
 
-## Current Maintainers
+---
 
-- [arsLan4k1390](https://github.com/arsLan4k1390)
-- You? :)
+## ✨ Ключові особливості (У розробці)
+- **Gomin Drive**: Ваша персональна хмара на базі Telegram. Організація файлів, папок та безлімітне сховище без зайвих API.
+- **Gomin AI Assistant**: Розумний помічник, що розуміє контекст ваших розмов та допомагає з відповідями та аналізом.
+- **Локалізація та Шрифти**: Глибока інтеграція української типографіки та культурного контексту.
 
-## Contributors
+---
 
-- [arsLan4k1390](https://github.com/arsLan4k1390)
+## 🛠️ Технічний стек
+- **Base**: Telegram for Android (Custom Fork)
+- **Engine**: Cherrygram
+- **Typography**: 
+  - `Geist` (by Vercel) — для повідомлень та UI.
+  - `Playfair Display` — для акцентних заголовків.
+- **Language**: Java, Kotlin, C++ (JNI)
 
+---
 
-## Discussion
+## 🚀 Встановлення та розробка
+1. Клонуйте репозиторій:
+   ```bash
+   git clone https://github.com/HollyLight28/Gomin.git
+   ```
+2. Відкрийте в Android Studio.
+3. Використовуйте `./gradlew assembleStandaloneDebug` для збірки.
 
-Join the [Cherrygram official channel](https://t.me/cherrygram)
+---
 
-Join the [Cherrygram official group](https://t.me/CherrygramSupport)
+## 📜 Ліцензія
+Цей проєкт є вільним програмним забезпеченням, поширюваним під ліцензією **GNU GPL v2**. Ми поважаємо працю розробників Telegram та Cherrygram, на чиїх плечах стоїть цей проєкт.
 
+---
 
-## API, Protocol documentation
-
-Telegram API manuals: https://core.telegram.org/api
-
-MTproto protocol manuals: https://core.telegram.org/mtproto
-
-
-## Compilation Guide
-
-1. Download the Cherrygram source code (`git clone https://github.com/arslan4k1390/Cherrygram.git`)
-2. Switch to `main_Reproducible_Builds` branch and follow the instructions listed in `README.md`
-
-
-## Thanks to:
-- [Catogram](https://github.com/Catogram/Catogram) and [Nekogram](https://gitlab.com/Nekogram/Nekogram)
-- [exteraGram](https://github.com/exteraSquad/exteraGram) and [OwlGram](https://github.com/OwlGramDev/OwlGram)
-- [Telegraher](https://github.com/nikitasius/Telegraher) and [Telegram Monet](https://github.com/c3r5b8/Telegram-Monet)
+*Створено з вібраціями вільного Гомону.*

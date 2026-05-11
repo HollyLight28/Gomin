@@ -168,7 +168,7 @@ object CherrygramCoreConfig: CoroutineScope by CoroutineScope(
         launch {
             if (ApplicationLoader.checkPlayServices()) {
                 FirebaseApp.initializeApp(ApplicationLoader.applicationContext)
-                FirebaseRemoteConfigHelper.initRemoteConfig()
+//                FirebaseRemoteConfigHelper.initRemoteConfig()
             }
 
             DonatesManager.startAutoRefresh(ApplicationLoader.applicationContext, force = false, fromIntegrityChecker = false)

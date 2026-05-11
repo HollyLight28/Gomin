@@ -1,23 +1,21 @@
-# Project Brief: Gomin (Cherrygram Edition)
+# Project Brief: Gomin (The Ukrainian Telegram Suite)
 
 ## Goal
-Build a custom Telegram client based on Cherrygram with a unique visual identity (rebranding).
+Transform a Telegram fork into a high-end, professional Ukrainian client ("Gomin") with integrated "Telegram Cloud" storage and an AI-powered assistant.
+
+## Core Features
+1. **Gomin Drive**: A virtual file system built on top of Telegram's unlimited storage (channels/saved messages). Supports folders, organization, and 2GB+ file management without external APIs.
+2. **Gomin AI Assistant**: A bottom-sheet interface (80% height) for chat analysis, response suggestions, and general AI interaction, utilizing chat context.
+3. **Executive Identity**: Professional rebranding, documentation, and specific typography.
 
 ## Technical Stack
 - **Base**: Cherrygram (Telegram fork)
 - **Language**: Java/Kotlin
 - **Build System**: Gradle
-- **Target Platform**: Android
+- **Fonts**: Geist (Vercel) for UI/Messages, Playfair (Serif) for Headers.
+- **AI**: Gemini/Vertex AI integration.
 
 ## App Configuration
 - **App Title**: Gomin
-- **Short Name**: gomin
 - **App api_id**: 35162000
 - **App api_hash**: 8686113844de267311e15037880ae97b
-- **FCM Service Account**: firebase-adminsdk-fbsvc@gomin-ua.iam.gserviceaccount.com
-- **Public Keys**: (Stored in memory)
-
-## Visual Identity Goals
-1. Change Launcher Icons.
-2. Change Fonts throughout the application.
-3. Custom branding in UI.
