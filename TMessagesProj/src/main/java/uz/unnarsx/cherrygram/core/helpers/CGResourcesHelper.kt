@@ -151,16 +151,14 @@ object CGResourcesHelper {
     /** Profile activity finish */
 
     /** Misc start */
+    @JvmStatic
     fun getProperNotificationIcon(): Int { // App notification icon
-        return if (CherrygramCoreConfig.oldNotificationIcon) {
-            R.drawable.notification
-        } else {
-            return if (isAnyOfBraIconsEnabled()) R.drawable.cg_notification_bra else R.drawable.cg_notification
-        }
+        return R.drawable.ic_gomin_notification
     }
 
+    @JvmStatic
     fun getResidentNotificationIcon(): Int {
-        return if (CherrygramCoreConfig.oldNotificationIcon) R.drawable.cg_notification else R.drawable.notification
+        return R.drawable.ic_gomin_notification
     }
 
     fun isAnyOfBraIconsEnabled(): Boolean {

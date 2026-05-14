@@ -48,7 +48,6 @@ public class AboutPreferencesEntry extends UniversalFragment {
     private final int channelRow = 5;
     private final int chatRow = 6;
     private final int githubRow = 7;
-    private final int crowdinRow = 8;
     private final int policyRow = 9;
 
     @Override
@@ -93,7 +92,7 @@ public class AboutPreferencesEntry extends UniversalFragment {
             items.add(UItem.asButton(githubRow, R.drawable.github_logo_white, getString(R.string.CGP_Source), value));
         }
 
-        items.add(UItem.asButton(crowdinRow, R.drawable.msg_translate_solar, getString(R.string.CGP_Crowdin), "Crowdin"));
+
         items.add(UItem.asButton(policyRow, R.drawable.msg_policy_solar, getString(R.string.PrivacyPolicy)));
         items.add(UItem.asShadow(null));
     }
@@ -130,8 +129,7 @@ public class AboutPreferencesEntry extends UniversalFragment {
             } else {
                 Browser.openUrl(getContext(), Constants.CG_GITHUB_URL + "/commit/" + BuildConfig.GIT_COMMIT_HASH);
             }
-        } else if (item.id == crowdinRow) {
-            Browser.openUrl(getContext(), Constants.CG_CROWDIN_URL);
+
         } else if (item.id == policyRow) {
             Browser.openUrl(getContext(), Constants.CG_PRIVACY_URL);
         }
@@ -154,9 +152,7 @@ public class AboutPreferencesEntry extends UniversalFragment {
         } else if (item.id == chatRow) {
             AndroidUtilities.addToClipboard("@" + Constants.CG_CHAT_USERNAME);
             return true;
-        } else if (item.id == crowdinRow) {
-            AndroidUtilities.addToClipboard(Constants.CG_CROWDIN_URL);
-            return true;
+
         } else if (item.id == policyRow) {
             AndroidUtilities.addToClipboard(Constants.CG_PRIVACY_URL);
             return true;

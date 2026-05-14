@@ -79,7 +79,7 @@ object CherrygramCoreConfig: CoroutineScope by CoroutineScope(
     /** Miscellaneous start */
     var noRounding by sharedPreferences.boolean("CP_NoRounding1", true)
     var systemEmoji by sharedPreferences.boolean("AP_SystemEmoji", false)
-    var systemFonts by sharedPreferences.boolean("AP_SystemFonts", true)
+    var systemFonts by sharedPreferences.boolean("AP_SystemFonts", false)
 
     const val EDGE_MODE_ENABLE = 0
     const val EDGE_MODE_DISABLE = 1

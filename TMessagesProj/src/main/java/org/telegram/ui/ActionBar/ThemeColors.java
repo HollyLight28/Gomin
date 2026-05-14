@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class ThemeColors {
 
-    public static final int CHERRYGRAM_COLOR = 0xFFA33156;
+    public static final int CHERRYGRAM_COLOR = 0xFF229AF0;
 
     public static final int TELEGRAM_COLOR = 0xFF229AF0;        // -14509328
     public static final int TELEGRAM_COLOR_TEXT = 0xFF298ACF;   // -14054705
@@ -27,8 +27,8 @@ public class ThemeColors {
         defaultColors[key_alwaysWhite] = Color.WHITE;
         defaultColors[key_alwaysGray] = 0xff999999;
         defaultColors[key_alwaysGrayDarkTheme] = 0xff656660;
-        defaultColors[key_cgGradient1] = 0xffA33156;
-        defaultColors[key_cgGradient2] = 0xffE54C7F;
+        defaultColors[key_cgGradient1] = 0xFF229AF0;
+        defaultColors[key_cgGradient2] = 0xFF1976D2;
         /** Cherrygram finish */
 
         defaultColors[key_wallpaperFileOffset] = 0;

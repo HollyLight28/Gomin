@@ -36,8 +36,6 @@ jobs:
     - name: Build Regular Debug APK
       run: ./gradlew :TMessagesProj_AppStandalone:assembleDebug --stacktrace
 
-    - name: Build Huawei Debug APK
-      run: ./gradlew :TMessagesProj_AppHuawei:assembleAfatDebug --stacktrace
 
     - name: Upload Regular APK
       uses: actions/upload-artifact@v4
@@ -45,11 +43,6 @@ jobs:
         name: Gomin-Standalone-Debug
         path: TMessagesProj_AppStandalone/build/outputs/apk/debug/*.apk
 
-    - name: Upload Huawei APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: Gomin-Huawei-Debug
-        path: TMessagesProj_AppHuawei/build/outputs/apk/afatDebug/*.apk
 
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -59,7 +52,6 @@ jobs:
         name: "Gomin Build #${{ github.run_number }}"
         files: |
           TMessagesProj_AppStandalone/build/outputs/apk/debug/*.apk
-          TMessagesProj_AppHuawei/build/outputs/apk/afatDebug/*.apk
         draft: false
         prerelease: false
       env:

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- by t.me/arsLan-->
+    <string name="CG_AppName" translatable="false">Гомін</string>
     <string name="CG_FollowChannelTitle">Підписатися на офіційний канал</string>
     <string name="CG_FollowChannelInfo">Долучайтеся до нашого каналу, щоб бути в курсі всіх новин та можливостей Гомін!</string>
     <string name="CG_DoNotRemindAgain">Не нагадувати</string>
@@ -199,8 +200,7 @@
     <string name="CP_MainTabs_OpenSettings">Відкрити налаштування свайпом</string>
     <string name="CP_MainTabs_OpenSettings_Desc">Проведіть пальцем зліва направо по вкладках, щоб відкрити налаштування — аналогічно до бічної панелі, коли вкладки вимкнено.</string>
     <string name="CP_MainTabs_Layout_Desc">Тапніть для увімкнення/вимкнення, утримуйте й перетягніть для зміни порядку.</string>
-    <string name="CP_MainTabs_DoubleTap_Desc">Подвійний тап по вкладці чатів відкриває «Збережене».
-Подвійний тап по вкладці профілю (або «Налаштування», якщо вкладка профілю прихована) перемикає акаунти.</string>
+    <string name="CP_MainTabs_DoubleTap_Desc">Подвійний тап по вкладці чатів відкриває «Збережене».\nПодвійний тап по вкладці профілю (або «Налаштування», якщо вкладка профілю прихована) перемикає акаунти.</string>
     <string name="CP_MainTabs_ShowTabsTitle">Відображати назви вкладок</string>
     <string name="AP_HideUserPhone_Show">Торкніться щоб показати</string>
     <string name="AP_HideUserPhone_Copy">Затисніть щоб копіювати</string>
@@ -420,9 +420,6 @@
     <string name="DP_CameraCutoutDesc">Ви можете показати логотип Гомін під Вашою камерою - він з\'явиться на скриншотах.
     \nЯкщо логотип **відображається правильно і залишається в зоні камери **, будь ласка, збережіть цю опцію.
     \nЦе допомагає додатку і підтримує проект - я буду дуже вдячний: ❤️</string>
-    <string name="DP_Donate_Method_Int">Міжнародні платіжні системи</string>
-    <string name="DP_Donate_Method_Rus">Для жителів Російської Федерації</string>
-    <string name="DP_Donate_Method_Uzb">Для жителів Узбекистану</string>
     <string name="DP_Donate_Method_Surname">Будь ласка, зв\'яжіться з **@arsLan**, якщо платіжна система вимагає особисту інформацію одержувача.</string>
     <string name="DP_Donate_Exclusive">Ексклюзивно для тих, хто підтримує</string>
     <string name="DP_Donate_ExclusiveDesc">Підтримайте проект і розблокуйте всі функції.</string>

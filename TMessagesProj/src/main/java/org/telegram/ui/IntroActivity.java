@@ -155,11 +155,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
 
     @Override
     public View createView(Context context) {
-        logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo).mutate();
-        logoDrawable.setBounds(0, dp(8.666f), dp(145), dp(35));
-        SpannableStringBuilder ssb = new SpannableStringBuilder(" ");
-        ssb.setSpan(new ImageSpan(logoDrawable), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        titles[0] = ssb;
+        titles[0] = LocaleController.getString(R.string.Page1Title);
 
 
         actionBar.setAddToContainer(false);
@@ -310,6 +306,12 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                 }
                 float offset = (position * width + positionOffsetPixels - currentViewPagerPage * width) / width;
                 Intro.setScrollOffset(offset);
+                
+                if (position == 0) {
+                    frameLayout2.setAlpha(positionOffset);
+                } else if (position >= 1) {
+                    frameLayout2.setAlpha(1.0f);
+                }
             }
 
             @Override
@@ -617,6 +619,16 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             headerTextView.setText(titles[position]);
             messageTextView.setText(AndroidUtilities.replaceTags(messages[position]));
 
+            if (position == 0) {
+                RLottieImageView birdImageView = new RLottieImageView(container.getContext());
+                birdImageView.setImageResource(R.drawable.cg_logo_bird);
+                birdImageView.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+                frameLayout.addView(birdImageView, LayoutHelper.createFrame(140, 140, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 50, 0, 0));
+                
+                headerTextView.setTranslationY(dp(40));
+                messageTextView.setTranslationY(dp(40));
+            }
+
             return frameLayout;
         }
 
@@ -803,7 +815,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             loadTexture(R.drawable.intro_powerful_star, 18);
             loadTexture(R.drawable.intro_private_door, 19);
             loadTexture(R.drawable.intro_private_screw, 20);
-            loadTexture(R.drawable.intro_tg_plane, 21);
+            loadTexture(R.drawable.cg_logo_bird, 21);
             loadTexture(v -> {
                 Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 paint.setColor(ThemeColors.CHERRYGRAM_COLOR); // It's logo color, it should not be colored by the theme

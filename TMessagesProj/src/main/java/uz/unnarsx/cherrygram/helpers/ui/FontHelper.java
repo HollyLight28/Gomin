@@ -85,20 +85,29 @@ public class FontHelper {
     }
 
     public static Typeface createTypefaceFromAsset(String assetPath) {
+        String path = assetPath;
+        if (assetPath.equals("fonts/rmedium.ttf") || assetPath.equals("fonts/rbold.ttf")) {
+            path = "fonts/playfair.ttf";
+        } else if (assetPath.equals("fonts/rmediumitalic.ttf") || assetPath.equals("fonts/ritalic.ttf")) {
+            path = "fonts/ritalic.ttf";
+        } else {
+            path = "fonts/geist.ttf";
+        }
+        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Typeface.Builder builder = new Typeface.Builder(ApplicationLoader.applicationContext.getAssets(), assetPath);
-            if (assetPath.contains("rextrabold")) {
+            Typeface.Builder builder = new Typeface.Builder(ApplicationLoader.applicationContext.getAssets(), path);
+            if (path.contains("rextrabold")) {
                 builder.setWeight(800);
             }
-            if (assetPath.contains("medium") || assetPath.contains("rbold")) {
+            if (path.contains("medium") || path.contains("rbold") || path.contains("playfair")) {
                 builder.setWeight(700);
             }
-            if (assetPath.contains("italic")) {
+            if (path.contains("italic")) {
                 builder.setItalic(true);
             }
             return builder.build();
         } else {
-            return Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), assetPath);
+            return Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), path);
         }
     }
 
@@ -121,11 +130,11 @@ public class FontHelper {
                     builder.setWeight(300);
                 } else if (lower.contains("regular") || lower.contains("book")) {
                     builder.setWeight(400);
-                } else if (lower.contains("medium")) {
+                } else if (lower.contains("medium") || lower.contains("playfair")) {
                     builder.setWeight(500);
                 } else if (lower.contains("semibold")) {
                     builder.setWeight(600);
-                } else if (lower.contains("bold") && !lower.contains("extrabold")) {
+                } else if ((lower.contains("bold") || lower.contains("playfair")) && !lower.contains("extrabold")) {
                     builder.setWeight(700);
                 } else if (lower.contains("extrabold") || lower.contains("black")) {
                     builder.setWeight(800);

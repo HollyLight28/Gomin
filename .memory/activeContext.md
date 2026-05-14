@@ -1,19 +1,22 @@
-# Active Context - Gomin Architecture Phase
+# Gomin Project State - 2026-05-14
 
 ## [CURRENT MISSION]
-Implement the "Professional Gomin" roadmap: Custom Typography (Geist/Playfair), AI Assistant UI, and Gomin Drive (Cloud FS).
+Rebrand Cherrygram to Gomin, fix UI previews, and implement premium typography.
 
 ## [COMPLETED ATOMIC STEPS]
-- Identified font assets: `geist.ttf` (Vercel) and `playfair.ttf` (Serif) are present in `assets/fonts`.
-- Located typeface constants in `AndroidUtilities.java`.
-- Verified user vision for "Telegram-as-Storage" (Gomin Drive).
-
-## [OPEN PROBLEMS]
-- `TYPEFACE_ROBOTO_REGULAR` needs to be updated to `geist.ttf` in `AndroidUtilities.java`.
-- Gomin Drive architecture (Virtual File System mapping) needs definition.
-- AI BottomSheet UI component needs implementation.
-- Restart loop stability (User currently testing).
+1. Changed `CG_GITHUB_URL` in `Constants.kt` to `https://github.com/HollyLight28/Gomin`.
+2. Removed `CGP_Crowdin` (Help with translation) from `AboutPreferencesEntry.java`.
+3. Implemented font forcing in `FontHelper.java`:
+   - `geist.ttf` as regular (messages).
+   - `playfair.ttf` as medium/bold (titles).
+4. Restored `MainTabsPreviewCell.java` logic to show bottom tabs organizer preview.
 
 ## [MODIFIED FILES]
-- `.memory/projectBrief.md` -> Redefined core vision.
-- `.memory/activeContext.md` -> Shifted focus to Drive/AI/Fonts.
+- `Constants.kt` -> `CG_GITHUB_URL` -> Architectural consistency with new repo.
+- `AboutPreferencesEntry.java` -> Removed Crowdin -> UI Cleanup.
+- `FontHelper.java` -> Global Font Swap -> Premium Branding.
+- `MainTabsPreviewCell.java` -> UI Restoration -> Fixing "missing" previews.
+
+## [OPEN PROBLEMS]
+- Need to verify if `playfair.ttf` isn't too large for some small title labels.
+- Monitor `MainTabsPreviewCell` for any layout overflows with 5+ tabs.

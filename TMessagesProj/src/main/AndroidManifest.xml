@@ -130,7 +130,7 @@
 
         <activity-alias
             android:enabled="true"
-            android:name="uz.unnarsx.cherrygram.CG_Icon_Cherry"
+            android:name="ua.gomin.messenger.Gomin_Icon_Main"
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher"
@@ -148,7 +148,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Dark"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_dark"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -163,7 +163,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Dark_Bra"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_dark_bra"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -178,7 +178,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_White_Cherry"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_white"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -193,7 +193,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_White_Cherry_Bra"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_white_bra"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -208,7 +208,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Laguna"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_laguna"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -223,7 +223,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Aqua"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_aqua"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -238,7 +238,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Green"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_green"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -253,7 +253,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Lavanda"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_lavanda"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -268,7 +268,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Violet_Sunset"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_violet_sunset"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -283,7 +283,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Violet_Sunset_Bra"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_violet_sunset_bra"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -298,7 +298,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Sunset"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_sunset"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -313,7 +313,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Sunrise"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_sunrise"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -328,7 +328,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Turbo"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_turbo"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -343,7 +343,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Night"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_nox"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -358,7 +358,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.CG_Icon_Dark_NY"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry_dark_ny"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -374,7 +374,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.PremiumIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_3_launcher"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -389,7 +389,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.TurboIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_5_launcher"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -404,7 +404,7 @@
             android:enabled="false"
             android:name="uz.unnarsx.cherrygram.NoxIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_2_launcher"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
 
             <intent-filter>
@@ -618,14 +618,15 @@
         <activity
             android:name="uz.unnarsx.cherrygram.core.helpers.AppRestartHelper"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:process=":cherrygram"
+            android:process=":gomin"
             android:exported="false"
             />
 
         <receiver
             android:name="uz.unnarsx.cherrygram.core.helpers.SleepHelper"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:process=":gomin" />
 
         <receiver
             android:name=".AutoMessageHeardReceiver"

@@ -14,26 +14,26 @@ import uz.unnarsx.cherrygram.core.configs.CherrygramCoreConfig
 object Constants {
 
     @JvmField
-    var CG_AUTHOR = "Updates: @CherrygramAPKs"
+    var CG_AUTHOR = "Updates: @gomin_ua"
 
     /** CG Links start**/
     @JvmField
-    var CG_CHANNEL_USERNAME = "cherrygram"
+    var CG_CHANNEL_USERNAME = "gomin_ua"
     @JvmField
-    var CG_CHANNEL_URL = "https://t.me/cherrygram"
+    var CG_CHANNEL_URL = "https://t.me/gomin_ua"
 
     @JvmField
-    var CG_APKS_CHANNEL_USERNAME = "CherrygramAPKs"
+    var CG_APKS_CHANNEL_USERNAME = "gomin_ua"
     @JvmField
-    var CG_APKS_CHANNEL_URL = "https://t.me/CherrygramAPKs"
+    var CG_APKS_CHANNEL_URL = "https://t.me/gomin_ua"
 
     @JvmField
-    var CG_CHAT_USERNAME = "CherrygramSupport"
+    var CG_CHAT_USERNAME = "gomin_ua"
     @JvmField
-    var CG_CHAT_URL = "https://t.me/CherrygramSupport"
+    var CG_CHAT_URL = "https://t.me/gomin_ua"
 
     @JvmField
-    var UPDATE_APP_URL = if (CherrygramCoreConfig.isPlayStoreBuild()) "https://play.google.com/store/apps/details?id=uz.unnarsx.cherrygram" else CG_CHANNEL_URL
+    var UPDATE_APP_URL = if (CherrygramCoreConfig.isPlayStoreBuild()) "https://play.google.com/store/apps/details?id=ua.gomin.messenger" else CG_CHANNEL_URL
 
     @JvmField
     var CG_PRIVACY_URL = "https://arslan4k1390.github.io/cherrygram/privacy"
@@ -43,7 +43,7 @@ object Constants {
     @JvmField
     var CG_CROWDIN_URL = "https://crowdin.com/project/cherrygram"
     @JvmField
-    var CG_GITHUB_URL = "https://github.com/arsLan4k1390/Cherrygram"
+    var CG_GITHUB_URL = "https://github.com/HollyLight28/Gomin"
 
     @JvmField
     var CG_SAFESTARS = "https://safestars.pro/?partner=cherrygram"
@@ -51,7 +51,7 @@ object Constants {
     var CG_SAFESTARS_RU = "https://safestars.pro/ru/?partner=cherrygram"
     /** CG Links finish**/
 
-    const val PACKAGE_NAME = "uz.unnarsx.cherrygram"
+    const val PACKAGE_NAME = "ua.gomin.messenger"
 
     /** CG Chats IDs start**/
     const val Cherrygram_Owner = 282287840L // Cherrygram Owner (Arslan)

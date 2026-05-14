@@ -267,10 +267,9 @@ public class AndroidUtilities {
 
     public static Typeface bold() {
         if (mediumTypeface == null) {
-            if (SharedConfig.useSystemBoldFont && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            mediumTypeface = getTypeface(TYPEFACE_ROBOTO_MEDIUM);
+            if (mediumTypeface == null && SharedConfig.useSystemBoldFont && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 mediumTypeface = Typeface.create(null, 500, false);
-            } else {
-                mediumTypeface = getTypeface(TYPEFACE_ROBOTO_MEDIUM);
             }
         }
         return mediumTypeface;
@@ -2405,7 +2404,7 @@ public class AndroidUtilities {
     public static Typeface getTypeface(String assetPath) {
         return typefaceCache.computeIfAbsent(assetPath, path -> {
             try {
-                if (CherrygramCoreConfig.INSTANCE.getSystemFonts()) {
+                if (CherrygramCoreConfig.INSTANCE.getSystemFonts() && !path.contains("playfair") && !path.contains("geist")) {
                     return FontHelper.createTypeface(path);
                 }
                 return FontHelper.createTypefaceFromAsset(path);
