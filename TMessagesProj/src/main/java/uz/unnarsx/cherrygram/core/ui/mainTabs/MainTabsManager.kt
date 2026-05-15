@@ -40,6 +40,7 @@ object MainTabsManager {
         var enabled: Boolean
     )
 
+    @JvmStatic
     @JvmOverloads
     fun getEnabledTabs(includeSearch: Boolean = false): List<Tab> {
         val enabled = loadTabs().filter { it.enabled }
@@ -158,6 +159,30 @@ object MainTabsManager {
                     }
                 }
             }
+        }
+    }
+
+    @JvmStatic
+    fun getTabTitle(type: TabType): Int {
+        return when (type) {
+            TabType.CHATS -> R.string.MainTabsChats
+            TabType.CONTACTS -> R.string.MainTabsContacts
+            TabType.CALLS -> R.string.Calls
+            TabType.SETTINGS -> R.string.Settings
+            TabType.PROFILE -> R.string.MainTabsProfile
+            TabType.SEARCH -> R.string.Search
+        }
+    }
+
+    @JvmStatic
+    fun getTabIcon(type: TabType): Int {
+        return when (type) {
+            TabType.CHATS -> R.drawable.tabs_chats_24
+            TabType.CONTACTS -> R.drawable.tabs_contacts_24
+            TabType.CALLS -> R.drawable.tabs_calls_24
+            TabType.SETTINGS -> R.drawable.msg_settings
+            TabType.PROFILE -> R.drawable.msg_settings
+            TabType.SEARCH -> R.drawable.ic_ab_search
         }
     }
 

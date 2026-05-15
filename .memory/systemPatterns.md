@@ -1,24 +1,21 @@
-# System Patterns - Gomin (Cherrygram Edition)
+# Gomin Architectural Patterns
 
-## API Configuration Pattern
-In Telegram/Cherrygram, API credentials are typically defined in `BuildVars.java`.
+### Dynamic Launcher Icons
+To ensure launcher icons work across different packages (e.g., when rebranding), always use `ctx.getPackageName()` instead of hardcoded strings in `LauncherIconController`:
+```java
+public ComponentName getComponentName(Context ctx) {
+    if (componentName == null) {
+        componentName = new ComponentName(ctx.getPackageName(), ctx.getPackageName() + "." + key);
+    }
+    return componentName;
+}
+```
 
-## Resource Management
-- Icons: `TMessagesProj/src/main/res/mipmap-*`
-- Layouts: `TMessagesProj/src/main/res/layout`
-- Fonts: Typically handled in `Typeface` logic or `assets/fonts`.
+### Font Mapping Strategy
+For Gomin, the following font mapping is enforced in `FontHelper.java`:
+- **Bold/Medium (Headers)** -> `fonts/playfair.ttf`
+- **Regular (Messages)** -> `fonts/geist.ttf`
+- **Early Init Protection**: Always check if `ApplicationLoader.applicationContext` is null before accessing assets.
 
-## Build Lock Recovery Pattern (Windows)
-When Gradle fails with `IllegalStateException: Could not find EOCD`, it indicates a corrupted APK or file lock by Gradle Daemon.
-Recovery steps:
-1. Kill all Java processes: `taskkill /F /IM java.exe`
-2. Manually delete the build directory: `rm -Recurse -Force <module>/build`
-3. Perform a clean build: `./gradlew clean` (if possible) followed by `assemble`
-
-## Font Management Pattern
-Custom fonts (Geist, Playfair Display) are injected by replacing standard Roboto constants in `AndroidUtilities.java`:
-- `TYPEFACE_ROBOTO_REGULAR` -> `fonts/geist.ttf`
-- `TYPEFACE_ROBOTO_MEDIUM` -> `fonts/playfair.ttf`
-
-## Package Rebranding Pattern
-All package-level constants and configurations should point to `ua.gomin.messenger`.
+### Resource Overlay
+Custom branding should be placed in `src/main/res-cherrygram/` (or equivalent) to override standard resources without modifying the base `res/` directory. This allows for cleaner merges with upstream Telegram updates.

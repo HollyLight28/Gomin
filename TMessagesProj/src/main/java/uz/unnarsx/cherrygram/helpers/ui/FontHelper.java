@@ -85,8 +85,11 @@ public class FontHelper {
     }
 
     public static Typeface createTypefaceFromAsset(String assetPath) {
+        if (ApplicationLoader.applicationContext == null) {
+            return Typeface.DEFAULT;
+        }
         String path = assetPath;
-        if (assetPath.equals("fonts/rmedium.ttf") || assetPath.equals("fonts/rbold.ttf")) {
+        if (assetPath.equals("fonts/rmedium.ttf") || assetPath.equals("fonts/rbold.ttf") || assetPath.contains("playfair")) {
             path = "fonts/playfair.ttf";
         } else if (assetPath.equals("fonts/rmediumitalic.ttf") || assetPath.equals("fonts/ritalic.ttf")) {
             path = "fonts/ritalic.ttf";
