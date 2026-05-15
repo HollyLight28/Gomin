@@ -18,7 +18,7 @@ jobs:
       with:
         submodules: recursive
 
-           - name: Set up Swap Space
+        - name: Set up Swap Space
                    uses: pierotofy/set-swap-space@master
                            with:
                                      swap-size-gb: 6
