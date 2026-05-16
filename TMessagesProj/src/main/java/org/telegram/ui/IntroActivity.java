@@ -620,7 +620,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             messageTextView.setText(AndroidUtilities.replaceTags(messages[position]));
 
             if (position == 0) {
-                RLottieImageView birdImageView = new RLottieImageView(container.getContext());
+                android.widget.ImageView birdImageView = new android.widget.ImageView(container.getContext());
                 birdImageView.setImageResource(R.drawable.cg_logo_bird);
                 birdImageView.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
                 frameLayout.addView(birdImageView, LayoutHelper.createFrame(140, 140, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 50, 0, 0));
