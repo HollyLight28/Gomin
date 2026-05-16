@@ -23,16 +23,27 @@ static def isMacOS() {
 }
 
 def getGitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        if (isMacOS()) { // Cause git is broken on Android Studio Meerkat Feature Drop | 2024.3.2
-            commandLine '/usr/bin/git', 'rev-parse', /*'--short',*/ 'HEAD'
-        } else {
-            commandLine 'git', 'rev-parse', /*'--short',*/ 'HEAD'
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            if (isMacOS()) { // Cause git is broken on Android Studio Meerkat Feature Drop | 2024.3.2
+                commandLine '/usr/bin/git', 'rev-parse', 'HEAD'
+            } else {
+                commandLine 'git', 'rev-parse', 'HEAD'
+            }
+            standardOutput = stdout
+            ignoreExitValue true
         }
-        standardOutput = stdout
+        def hash = stdout.toString().trim()
+        if (hash) {
+            println "DEBUG: Git Hash found: ${hash}"
+            return hash
+        }
+    } catch (Exception e) {
+        println "DEBUG: Failed to get git hash: ${e.message}"
     }
-    return stdout.toString().trim()/*.substring(0, 8)*/
+    println "DEBUG: Git Hash not found, using fallback: nagit"
+    return "nagit"
 }
 
 dependencies {
