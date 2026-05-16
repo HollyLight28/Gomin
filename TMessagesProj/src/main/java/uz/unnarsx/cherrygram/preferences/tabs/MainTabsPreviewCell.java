@@ -41,11 +41,11 @@ public class MainTabsPreviewCell extends FrameLayout {
             content.setGravity(Gravity.CENTER);
             
             ImageView imageView = new ImageView(context);
-            imageView.setImageResource(MainTabsManager.INSTANCE.getTabIcon(tab.getType()));
+            imageView.setImageResource(MainTabsManager.getTabIcon(tab.getType()));
             imageView.setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, resourcesProvider));
             content.addView(imageView, LayoutHelper.createLinear(24, 24));
             
-            if (CherrygramAppearanceConfig.INSTANCE.getShowMainTabsTitle()) {
+            if (CherrygramAppearanceConfig.getShowMainTabsTitle()) {
                 TextView textView = new TextView(context);
                 textView.setTextSize(10);
                 textView.setGravity(Gravity.CENTER);
