@@ -30,7 +30,6 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        # Кеш вимкнено навмисно через нестабільність сервісу кешування GitHub
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -44,6 +43,19 @@ jobs:
           -Dorg.gradle.workers.max=4 \
           -Dorg.gradle.jvmargs="-Xmx6g -XX:+HeapDumpOnOutOfMemoryError"
 
+    - name: Find and Prepare APK
+      id: find_apk
+      run: |
+        # Знайти будь-який apk файл у папках build
+        APK_PATH=$(find . -name "*.apk" | grep "debug" | head -n 1)
+        if [ -z "$APK_PATH" ]; then
+          echo "Error: APK not found!"
+          exit 1
+        fi
+        echo "Found APK at: $APK_PATH"
+        cp "$APK_PATH" gomin-debug.apk
+        echo "apk_path=gomin-debug.apk" >> $GITHUB_OUTPUT
+
     - name: Create Rolling Release
       id: create_release
       uses: ncipollo/release-action@v1
@@ -51,7 +63,7 @@ jobs:
         tag: "latest-debug"
         name: "Gomin - Останній білд (Debug)"
         body: "Це автоматично оновлюваний білд для тестування. Коміт: ${{ github.sha }}"
-        artifacts: "TMessagesProj_AppStandalone/build/outputs/apk/debug/*.apk"
+        artifacts: "gomin-debug.apk"
         allowUpdates: true
         removeArtifacts: true
         replacesArtifacts: true
