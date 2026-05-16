@@ -45,6 +45,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -620,9 +621,9 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             messageTextView.setText(AndroidUtilities.replaceTags(messages[position]));
 
             if (position == 0) {
-                android.widget.ImageView birdImageView = new android.widget.ImageView(container.getContext());
+                ImageView birdImageView = new ImageView(container.getContext());
                 birdImageView.setImageResource(R.drawable.cg_logo_bird);
-                birdImageView.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+                birdImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 frameLayout.addView(birdImageView, LayoutHelper.createFrame(140, 140, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 50, 0, 0));
                 
                 headerTextView.setTranslationY(dp(40));
