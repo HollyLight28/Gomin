@@ -5,37 +5,32 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build APK
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
       with:
         submodules: recursive
+        fetch-depth: 0
 
     - name: Set up Swap Space
       uses: pierotofy/set-swap-space@master
       with:
-        swap-size-gb: 6
+        swap-size-gb: 10
 
     - name: set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-
-    - name: Install NDK
-      run: |
-        echo "y" | sudo ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "ndk;21.4.7075529"
-        echo "ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/21.4.7075529" >> $GITHUB_ENV
+        # Кеш вимкнено навмисно через нестабільність сервісу кешування GitHub
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -46,33 +41,55 @@ jobs:
           -Pandroid.injected.abi=arm64-v8a \
           --no-daemon \
           --stacktrace \
-          -Dorg.gradle.workers.max=2 \
-          -Dorg.gradle.jvmargs="-Xmx3g -XX:+HeapDumpOnOutOfMemoryError"
+          -Dorg.gradle.workers.max=4 \
+          -Dorg.gradle.jvmargs="-Xmx6g -XX:+HeapDumpOnOutOfMemoryError"
 
-    - name: Find and Rename APK
-      run: |
-        APK_PATH=$(find TMessagesProj_AppStandalone/build/outputs/apk/debug/ -name "*.apk" | head -n 1)
-        cp "$APK_PATH" gomin-debug.apk
-        echo "APK_FILE=gomin-debug.apk" >> $GITHUB_ENV
-
-    - name: Upload Rolling Release
+    - name: Create Rolling Release
+      id: create_release
       uses: ncipollo/release-action@v1
       with:
         tag: "latest-debug"
         name: "Gomin - Останній білд (Debug)"
-        body: "Це автоматично оновлюваний білд для тестування на Pixel 7a. Дата збірки: ${{ github.event.head_commit.timestamp }}"
-        artifacts: "gomin-debug.apk"
+        body: "Це автоматично оновлюваний білд для тестування. Коміт: ${{ github.sha }}"
+        artifacts: "TMessagesProj_AppStandalone/build/outputs/apk/debug/*.apk"
         allowUpdates: true
         removeArtifacts: true
         replacesArtifacts: true
         makeLatest: true
         token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Notify Telegram
+    - name: Send Success Notification
+      if: success()
+      env:
+        BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       run: |
-        APK_URL="https://github.com/${{ github.repository }}/releases/download/latest-debug/gomin-debug.apk"
-        MESSAGE="📦 *Gomin Build Ready!*%0A%0A🚀 *Version:* 1.0.0%0A📅 *Date:* ${{ github.event.head_commit.timestamp }}%0A🔗 [Download APK]($APK_URL)"
-        curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-          -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
-          -d "text=$MESSAGE" \
-          -d "parse_mode=Markdown"
+        RESULT_URL="https://github.com/${{ github.repository }}/releases/tag/latest-debug"
+        COMMIT_MSG=$(git log -1 --pretty=%s)
+        ESCAPED_MSG=$(echo "$COMMIT_MSG" | sed 's/[_*-`>#+|{}.!\\-]/\\&/g')
+        ESCAPED_BRANCH=$(echo "${{ github.ref_name }}" | sed 's/[_*-`>#+|{}.!\\-]/\\&/g')
+        
+        MESSAGE="📦 *Gomin Build Notification* 🚀%0A%0AСтатус: ✅ *Успішно*%0AГілка: \`${ESCAPED_BRANCH}\`%0AКоміт: \`${ESCAPED_MSG}\`%0A%0A[📦 Завантажити APK з Релізу]($RESULT_URL)"
+        
+        curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+          -d "chat_id=${CHAT_ID}" \
+          -d "text=${MESSAGE}" \
+          -d "parse_mode=MarkdownV2"
+
+    - name: Send Failure Notification
+      if: failure()
+      env:
+        BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        LOG_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        COMMIT_MSG=$(git log -1 --pretty=%s)
+        ESCAPED_MSG=$(echo "$COMMIT_MSG" | sed 's/[_*-`>#+|{}.!\\-]/\\&/g')
+        ESCAPED_BRANCH=$(echo "${{ github.ref_name }}" | sed 's/[_*-`>#+|{}.!\\-]/\\&/g')
+        
+        MESSAGE="⚠️ *Gomin Build Notification* ❌%0A%0AСтатус: ❌ *Помилка*%0AГілка: \`${ESCAPED_BRANCH}\`%0AКоміт: \`${ESCAPED_MSG}\`%0A%0A[🔍 Подивитись логи]($LOG_URL)"
+        
+        curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+          -d "chat_id=${CHAT_ID}" \
+          -d "text=${MESSAGE}" \
+          -d "parse_mode=MarkdownV2"
