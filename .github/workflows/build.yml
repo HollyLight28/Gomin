@@ -34,10 +34,9 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Build Debug APK (Pixel 7a Optimized)
+    - name: Build Gomin (Universal APK + Release)
       run: |
-        ./gradlew :TMessagesProj_AppStandalone:assembleDebug \
-          -Pandroid.injected.abi=arm64-v8a \
+        ./gradlew :TMessagesProj_AppStandalone:assembleAfatStandalone \
           --no-daemon \
           --stacktrace \
           -Dorg.gradle.workers.max=4 \
@@ -46,24 +45,29 @@ jobs:
     - name: Find and Prepare APK
       id: find_apk
       run: |
-        # Знайти будь-який apk файл у папках build
-        APK_PATH=$(find . -name "*.apk" | grep "debug" | head -n 1)
+        # Знайти універсальний apk
+        APK_PATH=$(find . -name "*universal.apk" | head -n 1)
+        if [ -z "$APK_PATH" ]; then
+          # Якщо універсального немає, беремо будь-який релізний
+          APK_PATH=$(find . -name "*.apk" | grep "standalone" | head -n 1)
+        fi
+        
         if [ -z "$APK_PATH" ]; then
           echo "Error: APK not found!"
           exit 1
         fi
         echo "Found APK at: $APK_PATH"
-        cp "$APK_PATH" gomin-debug.apk
-        echo "apk_path=gomin-debug.apk" >> $GITHUB_OUTPUT
+        cp "$APK_PATH" gomin-release.apk
+        echo "apk_path=gomin-release.apk" >> $GITHUB_OUTPUT
 
     - name: Create Rolling Release
       id: create_release
       uses: ncipollo/release-action@v1
       with:
-        tag: "latest-debug"
-        name: "Gomin - Останній білд (Debug)"
-        body: "Це автоматично оновлюваний білд для тестування. Коміт: ${{ github.sha }}"
-        artifacts: "gomin-debug.apk"
+        tag: "latest-release"
+        name: "Gomin - Останній білд (Release)"
+        body: "Універсальний підписаний APK для Pixel 7a та інших пристроїв. Коміт: ${{ github.sha }}"
+        artifacts: "gomin-release.apk"
         allowUpdates: true
         removeArtifacts: true
         replacesArtifacts: true
@@ -76,7 +80,7 @@ jobs:
         BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       run: |
-        RESULT_URL="https://github.com/${{ github.repository }}/releases/tag/latest-debug"
+        RESULT_URL="https://github.com/${{ github.repository }}/releases/tag/latest-release"
         COMMIT_MSG=$(git log -1 --pretty=%s)
         ESCAPED_MSG=$(echo "$COMMIT_MSG" | sed 's/[_*-`>#+|{}.!\\-]/\\&/g')
         ESCAPED_BRANCH=$(echo "${{ github.ref_name }}" | sed 's/[_*-`>#+|{}.!\\-]/\\&/g')
