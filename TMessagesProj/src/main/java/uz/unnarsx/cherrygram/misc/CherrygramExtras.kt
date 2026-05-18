@@ -62,7 +62,7 @@ object CherrygramExtras : CoroutineScope by MainScope() {
 
     private val channelUsername = Constants.CG_CHANNEL_USERNAME
     fun checkChannelFollow(activity: Activity, currentAccount: Int) = AndroidUtilities.runOnUIThread {
-
+        if (true) return@runOnUIThread // Gomin: Disable automatic channel subscribe check on startup
         if (MessagesController.getMainSettings(currentAccount).getBoolean("update_channel_follow_skip", false)) return@runOnUIThread
 
         val messagesCollector = MessagesController.getInstance(currentAccount)
@@ -164,50 +164,8 @@ object CherrygramExtras : CoroutineScope by MainScope() {
     }
 
     private fun checkChannelFollow(activity: Activity, currentAccount: Int, channel: TLRPC.Chat) {
-
-        launch(Dispatchers.IO) {
-            if (channel.id != Constants.Cherrygram_Channel) {
-                KotlinFragmentsManager.nfweioufwehr117()
-            }
-            if (channel.id == 1323680752L) {
-                KotlinFragmentsManager.nfweioufwehr117()
-            }
-        }
-
-        if (!channel.left || channel.kicked) {
-//            MessagesController.getMainSettings(currentAccount).edit().putBoolean("update_channel_follow_skip", true).apply()
-            return
-        }
-
-        AndroidUtilities.runOnUIThread {
-
-            val messagesController = MessagesController.getInstance(currentAccount)
-            val userConfig = UserConfig.getInstance(currentAccount)
-
-            val builder = AlertDialog.Builder(activity)
-
-            builder.setTitle(getString(R.string.CG_FollowChannelTitle))
-            builder.setMessage(getString(R.string.CG_FollowChannelInfo))
-
-            builder.setPositiveButton(getString(R.string.ProfileJoinChannel)) { _, _ ->
-                messagesController.addUserToChat(channel.id, userConfig.currentUser, 0, null, null, null)
-                Browser.openUrl(activity, "https://t.me/$channelUsername")
-            }
-
-//            builder.setNegativeButton(getString(R.string.Cancel), null)
-
-            builder.setNeutralButton(getString(R.string.CG_DoNotRemindAgain)) { _, _ ->
-                messagesController.mainSettings.edit {
-                    putBoolean("update_channel_follow_skip", true)
-                }
-            }
-
-            try {
-                builder.show()
-            } catch (_: Exception) {}
-
-        }
-
+        // Gomin: Completely disabled the forced channel follow popup dialog
+        return
     }
 
     fun requestReviewFlow(fragment: BaseFragment?) {

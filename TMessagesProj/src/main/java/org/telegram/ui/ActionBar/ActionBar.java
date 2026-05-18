@@ -438,6 +438,7 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         titleTextView[i].setEmojiColor(titleTextView[i].getTextColor());
         if (gilroy) {
             titleTextView[i].setTypeface(FontHelper.createTypeface2(FontHelper.TYPEFACE_GILROY_EXTRABOLD));
+            titleTextView[i].getTextPaint().setFakeBoldText(true);
         } else {
             titleTextView[i].setTypeface(AndroidUtilities.bold());
         }

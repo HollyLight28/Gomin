@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- by t.me/arsLan-->
     <string name="CG_FollowChannelTitle">Подписаться на официальный канал</string>
@@ -511,10 +511,16 @@
     <string name="DP_Donate_Method_Rus">Для резидентов РФ</string>
     <string name="DP_Donate_Method_Uzb">Для резидентов Узбекистана</string>
     <string name="DP_Donate_Method_Surname">Пожалуйста, свяжитесь с **@arsLan**, если платежная система требует персональные данные получателя.</string>
+    <string name="DP_Donate_Exclusive">Эксклюзивно для тех, кто поддерживает</string>
+    <string name="DP_Donate_ExclusiveDesc">Поддержите проект и разблокируйте все функции.</string>
 
-    <string name="DP_Donate_Exclusive">Эксклюзив для поддержавших</string>
-    <string name="DP_Donate_ExclusiveDesc">Поддержите проект и откройте доступ ко всем возможностям.</string>
-    <!--Donations-->
-    <!--Gomin screens-->
+    <!-- Intro Page Customizations -->
+    <string name="CG_Page1Title">Gomin</string>
+    <string name="CG_Page1Message">Надежный и быстрый мессенджер\nна базе **API Telegram**.</string>
+    <string name="CG_Page2Message">**Gomin** доставляет сообщения быстрее,\nчем любое другое приложение.</string>
+    <string name="CG_Page3Message">**Gomin** предоставляет бесплатное неограниченное облако для чатов и медиа.</string>
+    <string name="CG_Page4Message">**Gomin** защищает ваши сообщения\nот хакерских атак.</string>
+    <string name="CG_Page5Message">**Gomin** не имеет ограничений на\nразмер ваших медиафайлов и чатов.</string>
+    <string name="CG_Page6Message">**Gomin** позволяет получить доступ к сообщениям с нескольких устройств.</string>
 
 </resources>

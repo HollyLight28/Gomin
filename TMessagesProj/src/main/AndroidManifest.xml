@@ -125,6 +125,8 @@
         tools:replace="android:supportsRtl"
         android:usesCleartextTraffic="true"
         android:enableOnBackInvokedCallback="true"
+        android:label="@string/CG_AppName"
+        android:icon="@mipmap/ic_launcher"
     >
         <!-- usesCleartextTraffic for browser supporting opening http:// links -->
 
@@ -938,6 +940,18 @@
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
             android:value="org.telegram.messenger.chromecast.ChromecastOptionsProvider" />
+
+        <!-- Legacy aliases to prevent icon disappearance on update -->
+        <activity-alias
+            android:enabled="false"
+            android:name="uz.unnarsx.cherrygram.CG_Icon_Cherry"
+            android:targetActivity="org.telegram.ui.LaunchActivity"
+            android:exported="true" />
+        <activity-alias
+            android:enabled="false"
+            android:name="uz.unnarsx.cherrygram.Gomin_Icon_Main"
+            android:targetActivity="org.telegram.ui.LaunchActivity"
+            android:exported="true" />
 
     </application>
 

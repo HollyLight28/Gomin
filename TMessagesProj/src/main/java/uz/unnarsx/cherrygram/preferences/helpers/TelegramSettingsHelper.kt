@@ -256,25 +256,8 @@ class TelegramSettingsHelper(
 
     /** Inject options start */
     fun injectChannelAdvice(items: ArrayList<UItem>) {
-        if (CherrygramExtras.shouldCheckFollow(fragment) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val channel = cachedCherryChannel
-            if (channel != null && (channel.left || channel.kicked)) {
-
-                items.add(
-                    SettingsActivity.SuggestionCell.Factory.of(
-                        getString(R.string.CG_FollowChannelTitle),
-                        getString(R.string.CG_FollowChannelInfo),
-                        getString(R.string.AppUpdateRemindMeLater),
-                        { checkChannelSubscription(false) },
-                        getString(R.string.ProfileJoinChannel),
-                        { checkChannelSubscription(true) }
-                    )
-                )
-
-                items.add(UItem.asShadow(null))
-            }
-        }
-
+        // Gomin: Completely disabled the forced channel follow card in settings.
+        return
     }
 
     fun injectAccounts(items: MutableList<UItem>, accountNumbers: ArrayList<Int>, user: TLRPC.User?) {
@@ -382,9 +365,9 @@ class TelegramSettingsHelper(
         items.add(
             SettingsActivity.SettingCell.Factory.of(
                 1390,
-                0xFFE54C7F.toInt(),
-                0xFFA33156.toInt(),
-                if (CGResourcesHelper.isAnyOfBraIconsEnabled()) R.drawable.cg_settings_bra else R.drawable.cg_settings,
+                Theme.getColor(Theme.key_windowBackgroundWhiteBlackText),
+                Theme.getColor(Theme.key_windowBackgroundWhiteBlackText),
+                R.drawable.ic_gomin_notification,
                 getString(R.string.CGP_AdvancedSettings)
             )
         )

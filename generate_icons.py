@@ -29,8 +29,8 @@ try:
     # We will resize the logo to 70% and pad the rest with black.
     
     for name, size in sizes.items():
-        # The logo inside the icon
-        inner_size = int(size * 0.70)
+        # The logo inside the icon (safe zone ~66%)
+        inner_size = int(size * 0.66)
         padding = (size - inner_size) // 2
         
         resized_img = img.resize((inner_size, inner_size), Image.Resampling.LANCZOS)
@@ -39,12 +39,18 @@ try:
         final_img = Image.new('RGB', (size, size), (0, 0, 0))
         final_img.paste(resized_img, (padding, padding))
         
-        # Save to the specific mipmap folder
-        dir_path = base_path.format(size=name)
+        # Save to the specific mipmap folder in res-cherrygram
+        dir_path = f"TMessagesProj/src/main/res-cherrygram/mipmap-{name}"
         if os.path.exists(dir_path):
-            file_path = os.path.join(dir_path, icon_name)
+            # Save legacy icon (square with logo inside)
+            file_path = os.path.join(dir_path, 'ic_launcher.png')
             final_img.save(file_path)
-            print(f"Saved {file_path} (size: {size}x{size}) with padding")
+            
+            # Save round icon (same image, just explicitly named for round requests)
+            round_file_path = os.path.join(dir_path, 'ic_launcher_round.png')
+            final_img.save(round_file_path)
+            
+            print(f"Saved {file_path} and round variant (size: {size}x{size}) with padding")
 
     print("Icon generation completed with safe-zone padding.")
 except Exception as e:

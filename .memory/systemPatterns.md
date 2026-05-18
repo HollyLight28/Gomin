@@ -16,6 +16,17 @@ For Gomin, the following font mapping is enforced in `FontHelper.java`:
 - **Bold/Medium (Headers)** -> `fonts/playfair.ttf`
 - **Regular (Messages)** -> `fonts/geist.ttf`
 - **Early Init Protection**: Always check if `ApplicationLoader.applicationContext` is null before accessing assets.
+- **Typeface Caching Pattern**: To prevent early static class loading from caching standard `Typeface.DEFAULT` permanently, bypass cache when `applicationContext` is null:
+```java
+public static Typeface getTypeface(String assetPath) {
+    if (ApplicationLoader.applicationContext == null) {
+        return FontHelper.createTypefaceFromAsset(assetPath);
+    }
+    return typefaceCache.computeIfAbsent(assetPath, path -> {
+        // Caching loader logic...
+    });
+}
+```
 
 ### Resource Overlay
 Custom branding should be placed in `src/main/res-cherrygram/` (or equivalent) to override standard resources without modifying the base `res/` directory. This allows for cleaner merges with upstream Telegram updates.

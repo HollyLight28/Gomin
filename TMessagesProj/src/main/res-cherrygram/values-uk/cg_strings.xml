@@ -423,6 +423,14 @@
     <string name="DP_Donate_Method_Surname">Будь ласка, зв\'яжіться з **@arsLan**, якщо платіжна система вимагає особисту інформацію одержувача.</string>
     <string name="DP_Donate_Exclusive">Ексклюзивно для тих, хто підтримує</string>
     <string name="DP_Donate_ExclusiveDesc">Підтримайте проект і розблокуйте всі функції.</string>
-    <!--Donations-->
-    <!--Гомін screens-->
+
+    <!-- Intro Page Customizations -->
+    <string name="CG_Page1Title">Гомін</string>
+    <string name="CG_Page1Message">Надійний та швидкий месенджер\nна базі **API Telegram**.</string>
+    <string name="CG_Page2Message">**Гомін** доставляє повідомлення швидше,\nніж будь-який інший додаток.</string>
+    <string name="CG_Page3Message">**Гомін** надає безкоштовне необмежене хмарне сховище для чатів та медіа.</string>
+    <string name="CG_Page4Message">**Гомін** захищає ваші повідомлення\nвід хакерських атак.</string>
+    <string name="CG_Page5Message">**Гомін** не має обмежень на\nрозмір ваших медіафайлів та чатів.</string>
+    <string name="CG_Page6Message">**Гомін** дозволяє отримувати доступ до ваших повідомлень з кількох пристроїв.</string>
+
 </resources>

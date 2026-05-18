@@ -254,7 +254,7 @@ public class AndroidUtilities {
     public final static String TYPEFACE_ROBOTO_CONDENSED_BOLD = "fonts/rcondensedbold.ttf";
     public final static String TYPEFACE_ROBOTO_REGULAR = "fonts/geist.ttf";
     public final static String TYPEFACE_ROBOTO_ITALIC = "fonts/ritalic.ttf";
-    public final static String TYPEFACE_ROBOTO_MEDIUM = "fonts/playfair.ttf";
+    public final static String TYPEFACE_ROBOTO_MEDIUM = "fonts/geist.ttf";
     public final static String TYPEFACE_ROBOTO_EXTRA_BOLD = "fonts/rextrabold.ttf";
     public final static String TYPEFACE_ROBOTO_MEDIUM_ITALIC = "fonts/rmediumitalic.ttf";
     public final static String TYPEFACE_ROBOTO_MONO = "fonts/rmono.ttf";
@@ -266,13 +266,15 @@ public class AndroidUtilities {
     public static ThreadLocal<byte[]> bufferLocal = new ThreadLocal<>();
 
     public static Typeface bold() {
-        if (mediumTypeface == null) {
-            mediumTypeface = getTypeface(TYPEFACE_ROBOTO_MEDIUM);
+        if (mediumTypeface == null || mediumTypeface == Typeface.DEFAULT) {
+            if (ApplicationLoader.applicationContext != null) {
+                mediumTypeface = getTypeface(TYPEFACE_ROBOTO_MEDIUM);
+            }
             if (mediumTypeface == null && SharedConfig.useSystemBoldFont && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 mediumTypeface = Typeface.create(null, 500, false);
             }
         }
-        return mediumTypeface;
+        return mediumTypeface == null ? Typeface.DEFAULT : mediumTypeface;
     }
 
     private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<>();
@@ -2402,6 +2404,9 @@ public class AndroidUtilities {
     }
 
     public static Typeface getTypeface(String assetPath) {
+        if (ApplicationLoader.applicationContext == null) {
+            return FontHelper.createTypefaceFromAsset(assetPath);
+        }
         return typefaceCache.computeIfAbsent(assetPath, path -> {
             try {
                 if (CherrygramCoreConfig.INSTANCE.getSystemFonts() && !path.contains("playfair") && !path.contains("geist")) {

@@ -520,10 +520,16 @@
     <string name="DP_Donate_Method_Rus">For residents of the Russian Federation</string>
     <string name="DP_Donate_Method_Uzb">For residents of Uzbekistan</string>
     <string name="DP_Donate_Method_Surname">Please contact **@arsLan** if the payment system requires the recipient\'s personal information.</string>
-
     <string name="DP_Donate_Exclusive">Exclusive for supporters</string>
     <string name="DP_Donate_ExclusiveDesc">Support the project and unlock all features.</string>
-    <!--Donations-->
-    <!--Gomin screens-->
+
+    <!-- Intro Page Customizations -->
+    <string name="CG_Page1Title">Gomin</string>
+    <string name="CG_Page1Message">A fast and secure messenger\npowered by **Telegram API**.</string>
+    <string name="CG_Page2Message">**Gomin** delivers messages faster than\nany other application.</string>
+    <string name="CG_Page3Message">**Gomin** provides free unlimited cloud storage for chats and media.</string>
+    <string name="CG_Page4Message">**Gomin** keeps your messages safe\nfrom hacker attacks.</string>
+    <string name="CG_Page5Message">**Gomin** has no limits on\nthe size of your media and chats.</string>
+    <string name="CG_Page6Message">**Gomin** lets you access your messages\nfrom multiple devices.</string>
 
 </resources>

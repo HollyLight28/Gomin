@@ -32,7 +32,7 @@ import java.util.Set;
 
 public class FontHelper {
 
-    public final static String TYPEFACE_GILROY_EXTRABOLD = "fonts/playfair.ttf";
+    public final static String TYPEFACE_GILROY_EXTRABOLD = "fonts/geist.ttf";
 
     private static final String TEST_TEXT;
     private static final int CANVAS_SIZE = 40;
@@ -88,29 +88,11 @@ public class FontHelper {
         if (ApplicationLoader.applicationContext == null) {
             return Typeface.DEFAULT;
         }
-        String path = assetPath;
-        if (assetPath.equals("fonts/rmedium.ttf") || assetPath.equals("fonts/rbold.ttf") || assetPath.contains("playfair")) {
-            path = "fonts/playfair.ttf";
-        } else if (assetPath.equals("fonts/rmediumitalic.ttf") || assetPath.equals("fonts/ritalic.ttf")) {
-            path = "fonts/ritalic.ttf";
-        } else {
-            path = "fonts/geist.ttf";
-        }
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Typeface.Builder builder = new Typeface.Builder(ApplicationLoader.applicationContext.getAssets(), path);
-            if (path.contains("rextrabold")) {
-                builder.setWeight(800);
-            }
-            if (path.contains("medium") || path.contains("rbold") || path.contains("playfair")) {
-                builder.setWeight(700);
-            }
-            if (path.contains("italic")) {
-                builder.setItalic(true);
-            }
-            return builder.build();
-        } else {
-            return Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), path);
+        try {
+            return Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), assetPath);
+        } catch (Exception e) {
+            FileLog.e(e);
+            return Typeface.DEFAULT;
         }
     }
 
@@ -118,39 +100,8 @@ public class FontHelper {
         if (assetPath == null || assetPath.isEmpty()) {
             return Typeface.DEFAULT;
         }
-
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Typeface.Builder builder = new Typeface.Builder(ApplicationLoader.applicationContext.getAssets(), assetPath);
-
-                String lower = assetPath.toLowerCase();
-
-                if (lower.contains("thin")) {
-                    builder.setWeight(100);
-                } else if (lower.contains("extralight")) {
-                    builder.setWeight(200);
-                } else if (lower.contains("light")) {
-                    builder.setWeight(300);
-                } else if (lower.contains("regular") || lower.contains("book")) {
-                    builder.setWeight(400);
-                } else if (lower.contains("medium") || lower.contains("playfair")) {
-                    builder.setWeight(500);
-                } else if (lower.contains("semibold")) {
-                    builder.setWeight(600);
-                } else if ((lower.contains("bold") || lower.contains("playfair")) && !lower.contains("extrabold")) {
-                    builder.setWeight(700);
-                } else if (lower.contains("extrabold") || lower.contains("black")) {
-                    builder.setWeight(800);
-                } else {
-                    builder.setWeight(400);
-                }
-
-                builder.setItalic(lower.contains("italic"));
-
-                return builder.build();
-            } else {
-                return Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), assetPath);
-            }
+            return Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), assetPath);
         } catch (Exception e) {
             FileLog.e(e);
             return Typeface.DEFAULT;

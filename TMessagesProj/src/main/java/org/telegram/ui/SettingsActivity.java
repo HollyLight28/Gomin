@@ -1210,7 +1210,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             setOrientation(HORIZONTAL);
 
             iconView = new ImageView(context);
-            iconView.setScaleType(ImageView.ScaleType.CENTER);
+            iconView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             iconView.setBackground(iconBackground = new Background());
 
             textLayout = new LinearLayout(context);
@@ -1258,9 +1258,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
                 addView(valueView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL, 20, 0, 0, 0));
                 addView(textLayout, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1, Gravity.CENTER_VERTICAL | Gravity.FILL_HORIZONTAL, 20, 0, 18, 0));
-                addView(iconView, LayoutHelper.createLinear(28, 28, Gravity.CENTER_VERTICAL | Gravity.RIGHT, 0, 0, 18, 0));
+                addView(iconView, LayoutHelper.createLinear(34, 34, Gravity.CENTER_VERTICAL | Gravity.RIGHT, 0, 0, 18, 0));
             } else {
-                addView(iconView, LayoutHelper.createLinear(28, 28, Gravity.CENTER_VERTICAL | Gravity.LEFT, 18, 0, 0, 0));
+                addView(iconView, LayoutHelper.createLinear(34, 34, Gravity.CENTER_VERTICAL | Gravity.LEFT, 18, 0, 0, 0));
                 addView(textLayout, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1, Gravity.CENTER_VERTICAL | Gravity.FILL_HORIZONTAL, 18, 0, 20, 0));
                 addView(valueView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL, 0, 0, 20, 0));
 
@@ -1293,7 +1293,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
             iconBackground.setColor(iconColorTop, iconColorBottom);
             iconView.setImageResource(icon);
-            iconView.setColorFilter(new PorterDuffColorFilter(MonetHelper.getSettingsIconForegroundColor(Color.WHITE), PorterDuff.Mode.SRC_IN));
+            iconView.setColorFilter(new PorterDuffColorFilter(iconColorTop, PorterDuff.Mode.SRC_IN));
             titleView.setText(title);
             subtitleView.setVisibility((twoLines = !TextUtils.isEmpty(subtitle)) ? View.VISIBLE : View.GONE);
             subtitleView.setText(subtitle);
@@ -1333,20 +1333,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
             @Override
             public void draw(@NonNull Canvas canvas) {
-                final float r = dp(10);
-                AndroidUtilities.rectTmp.set(getBounds());
-                matrix.reset();
-                matrix.postTranslate(AndroidUtilities.rectTmp.left, AndroidUtilities.rectTmp.top);
-                canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, paint);
-
-                if (border) {
-                    final float sw = dp(1);
-                    strokePaint.setStrokeWidth(sw);
-                    matrix.reset();
-                    matrix.postTranslate(AndroidUtilities.rectTmp.left, AndroidUtilities.rectTmp.top);
-                    AndroidUtilities.rectTmp.inset(sw / 2.0f, sw / 2.0f);
-                    canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, strokePaint);
-                }
+                // Background shape removed for monochrome icon design
             }
 
             @Override

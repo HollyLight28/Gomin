@@ -4713,7 +4713,7 @@ public class Theme {
                 );
         sortAccents(themeInfo);
         themes.add(themeInfo);
-        themesDict.put("Dark Blue", currentNightTheme = themeInfo);
+        themesDict.put("Dark Blue", themeInfo);
 
         themeInfo = new ThemeInfo();
         themeInfo.name = "Arctic Blue";
@@ -4808,7 +4808,7 @@ public class Theme {
                 new int[]    {                            34,                            47,                            52,                            48,                            54,                            50,                            37,                            56,                            48,                            49,                            40,                            64,                            38,                            48 }
         );
         themes.add(themeInfo);
-        themesDict.put("AMOLED", themeInfo);
+        themesDict.put("AMOLED", currentNightTheme = themeInfo);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             themeInfo = new ThemeInfo();
@@ -4913,8 +4913,10 @@ public class Theme {
                 applyingTheme = themesDict.get("Blue");
                 applyingTheme.currentAccentId = DEFALT_THEME_ACCENT_ID;
             } else if ("Dark".equals(theme)) {
-                currentNightTheme = themeDarkBlue;
-                themeDarkBlue.currentAccentId = 9;
+                currentNightTheme = themesDict.get("AMOLED");
+                if (currentNightTheme != null) {
+                    currentNightTheme.currentAccentId = 9;
+                }
             } else if (theme != null) {
                 ThemeInfo t = themesDict.get(theme);
                 if (t != null) {
@@ -7369,7 +7371,7 @@ public class Theme {
             currentThemeDeleted = true;
         }
         if (themeInfo == currentNightTheme) {
-            currentNightTheme = themesDict.get("Dark Blue");
+            currentNightTheme = themesDict.get("AMOLED");
         }
 
         themeInfo.removeObservers();
@@ -7755,7 +7757,7 @@ public class Theme {
                         if (currentDayTheme == info) {
                             currentDayTheme = defaultTheme;
                         } else if (currentNightTheme == info) {
-                            currentNightTheme = themesDict.get("Dark Blue");
+                            currentNightTheme = themesDict.get("AMOLED");
                             isNightTheme = true;
                         }
                         if (currentTheme == info) {

@@ -42,6 +42,8 @@ import android.view.Display;
 import android.view.Gravity;
 import android.view.TextureView;
 import android.view.View;
+import android.view.Window;
+import android.os.Build;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -144,19 +146,19 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                 LocaleController.getString(R.string.Page6Title)
         };
         messages = new String[]{
-                LocaleController.getString(R.string.Page1Message),
-                LocaleController.getString(R.string.Page2Message),
-                LocaleController.getString(R.string.Page3Message),
-                LocaleController.getString(R.string.Page5Message),
-                LocaleController.getString(R.string.Page4Message),
-                LocaleController.getString(R.string.Page6Message)
+                LocaleController.getString(R.string.CG_Page1Message),
+                LocaleController.getString(R.string.CG_Page2Message),
+                LocaleController.getString(R.string.CG_Page3Message),
+                LocaleController.getString(R.string.CG_Page5Message),
+                LocaleController.getString(R.string.CG_Page4Message),
+                LocaleController.getString(R.string.CG_Page6Message)
         };
         return true;
     }
 
     @Override
     public View createView(Context context) {
-        titles[0] = LocaleController.getString(R.string.Page1Title);
+        titles[0] = LocaleController.getString(R.string.CG_Page1Title);
 
 
         actionBar.setAddToContainer(false);
@@ -379,7 +381,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
         ScaleStateListAnimator.apply(startMessagingButton, .02f, 1.2f);
         startMessagingButton.setText(LocaleController.getString(R.string.StartMessaging));
         startMessagingButton.setGravity(Gravity.CENTER);
-        startMessagingButton.setTypeface(AndroidUtilities.bold());
+        startMessagingButton.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
         startMessagingButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         startMessagingButton.setPadding(dp(34), 0, dp(34), 0);
         frameContainerView.addView(startMessagingButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 16, 0, 16, 76));
@@ -398,6 +400,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
 
         switchLanguageTextView = new TextView(context);
         switchLanguageTextView.setGravity(Gravity.CENTER);
+        switchLanguageTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
         switchLanguageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         frameContainerView.addView(switchLanguageTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 30, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0, 0, 20));
         switchLanguageTextView.setOnClickListener(v -> {
@@ -447,6 +450,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
     @Override
     public void onResume() {
         super.onResume();
+        updateColors(true);
         if (justCreated) {
             if (LocaleController.isRTL) {
                 viewPager.setCurrentItem(6);
@@ -589,6 +593,8 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             FrameLayout frameLayout = new FrameLayout(container.getContext()) {
                 @Override
                 protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+                    super.onLayout(changed, left, top, right, bottom);
+
                     int oneFourth = (bottom - top) / 4;
                     int y = (oneFourth * 3 - dp(275)) / 2;
                     y += dp(ICON_HEIGHT_DP);
@@ -611,6 +617,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
 
             messageTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+            messageTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
             messageTextView.setLineSpacing(dpf2(2.33f), 1f);
             messageTextView.setGravity(Gravity.CENTER);
             frameLayout.addView(messageTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.LEFT, 16, 286, 16, 0));
@@ -624,10 +631,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                 ImageView birdImageView = new ImageView(container.getContext());
                 birdImageView.setImageResource(R.drawable.cg_logo_bird);
                 birdImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                frameLayout.addView(birdImageView, LayoutHelper.createFrame(140, 140, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 50, 0, 0));
-                
-                headerTextView.setTranslationY(dp(40));
-                messageTextView.setTranslationY(dp(40));
+                frameLayout.addView(birdImageView, LayoutHelper.createFrame(130, 130, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 180, 0, 0));
             }
 
             return frameLayout;
@@ -794,7 +798,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                 return false;
             }
 
-            GLES20.glGenTextures(23, textures, 0);
+            GLES20.glGenTextures(24, textures, 0);
             loadTexture(R.drawable.intro_fast_arrow_shadow, 0);
             loadTexture(R.drawable.intro_fast_arrow, 1);
             loadTexture(R.drawable.intro_fast_body, 2);
@@ -816,17 +820,9 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             loadTexture(R.drawable.intro_powerful_star, 18);
             loadTexture(R.drawable.intro_private_door, 19);
             loadTexture(R.drawable.intro_private_screw, 20);
-            loadTexture(R.drawable.cg_logo_bird, 21);
-            loadTexture(v -> {
-                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                paint.setColor(ThemeColors.CHERRYGRAM_COLOR); // It's logo color, it should not be colored by the theme
-                int size = dp(ICON_HEIGHT_DP);
-                Bitmap bm = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-                Canvas c = new Canvas(bm);
-                c.drawCircle(size / 2f, size / 2f, size / 2f, paint);
-                return bm;
-            }, 22);
-            loadTexture(telegramMaskProvider, 23);
+            loadTexture(v -> Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), 21);
+            loadTexture(v -> Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), 22);
+            loadTexture(v -> Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), 23);
 
             updateTelegramTextures();
             updatePowerfulTextures();
@@ -987,9 +983,23 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
     }
 
     private void updateColors(boolean fromTheme) {
+        int backgroundColor = Theme.isCurrentThemeDark() ? 0xff000000 : Theme.getColor(Theme.key_windowBackgroundWhite);
         startMessagingButtonBackground.setColors(new int[]{getThemedColor(Theme.key_cgGradient2), getThemedColor(Theme.key_cgGradient1)});
-        logoDrawable.setColorFilter(Theme.multAlpha(getThemedColor(Theme.key_actionBarDefaultTitle), 0.9f), PorterDuff.Mode.MULTIPLY);
-        fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+        if (logoDrawable != null) {
+            logoDrawable.setColorFilter(Theme.multAlpha(getThemedColor(Theme.key_actionBarDefaultTitle), 0.9f), PorterDuff.Mode.MULTIPLY);
+        }
+        fragmentView.setBackgroundColor(backgroundColor);
+        if (getParentActivity() != null) {
+            Window window = getParentActivity().getWindow();
+            if (window != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    window.setNavigationBarColor(backgroundColor);
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    AndroidUtilities.setLightNavigationBar(getParentActivity(), !Theme.isCurrentThemeDark());
+                }
+            }
+        }
         switchLanguageTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4));
         startMessagingButton.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
         startMessagingButton.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(24), Color.TRANSPARENT, Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
@@ -998,13 +1008,13 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
         if (fromTheme) {
             if (eglThread != null) {
                 eglThread.postRunnable(()->{
-                    eglThread.loadTexture(R.drawable.intro_powerful_mask, 17, Theme.getColor(Theme.key_windowBackgroundWhite), true);
+                    eglThread.loadTexture(R.drawable.intro_powerful_mask, 17, backgroundColor, true);
                     eglThread.updatePowerfulTextures();
 
-                    eglThread.loadTexture(eglThread.telegramMaskProvider, 23, true);
+                    eglThread.loadTexture(v -> Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888), 23, true);
                     eglThread.updateTelegramTextures();
 
-                    Intro.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                    Intro.setBackgroundColor(backgroundColor);
                 });
             }
             for (int i = 0; i < viewPager.getChildCount(); i++) {
@@ -1014,12 +1024,17 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                 TextView messageTextView = ch.findViewWithTag(pagerMessageTag);
                 messageTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             }
-        } else Intro.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+        } else Intro.setBackgroundColor(backgroundColor);
+    }
+
+    @Override
+    public int getNavigationBarColor() {
+        return Theme.isCurrentThemeDark() ? 0xff000000 : Theme.getColor(Theme.key_windowBackgroundWhite);
     }
 
     @Override
     public boolean isLightStatusBar() {
-        int color = Theme.getColor(Theme.key_windowBackgroundWhite, null, true);
+        int color = Theme.isCurrentThemeDark() ? 0xff000000 : Theme.getColor(Theme.key_windowBackgroundWhite, null, true);
         return ColorUtils.calculateLuminance(color) > 0.7f;
     }
 }
