@@ -254,7 +254,7 @@ public class AndroidUtilities {
     public final static String TYPEFACE_ROBOTO_CONDENSED_BOLD = "fonts/rcondensedbold.ttf";
     public final static String TYPEFACE_ROBOTO_REGULAR = "fonts/geist.ttf";
     public final static String TYPEFACE_ROBOTO_ITALIC = "fonts/ritalic.ttf";
-    public final static String TYPEFACE_ROBOTO_MEDIUM = "fonts/geist.ttf";
+    public final static String TYPEFACE_ROBOTO_MEDIUM = "fonts/geist.ttf_medium";
     public final static String TYPEFACE_ROBOTO_EXTRA_BOLD = "fonts/rextrabold.ttf";
     public final static String TYPEFACE_ROBOTO_MEDIUM_ITALIC = "fonts/rmediumitalic.ttf";
     public final static String TYPEFACE_ROBOTO_MONO = "fonts/rmono.ttf";
@@ -2405,14 +2405,21 @@ public class AndroidUtilities {
 
     public static Typeface getTypeface(String assetPath) {
         if (ApplicationLoader.applicationContext == null) {
-            return FontHelper.createTypefaceFromAsset(assetPath);
+            return FontHelper.createTypefaceFromAsset(assetPath.replace("_medium", ""));
         }
         return typefaceCache.computeIfAbsent(assetPath, path -> {
             try {
-                if (CherrygramCoreConfig.INSTANCE.getSystemFonts() && !path.contains("playfair") && !path.contains("geist")) {
-                    return FontHelper.createTypeface(path);
+                String realPath = path.replace("_medium", "");
+                Typeface t;
+                if (CherrygramCoreConfig.INSTANCE.getSystemFonts() && !realPath.contains("playfair") && !realPath.contains("geist")) {
+                    t = FontHelper.createTypeface(realPath);
+                } else {
+                    t = FontHelper.createTypefaceFromAsset(realPath);
                 }
-                return FontHelper.createTypefaceFromAsset(path);
+                if (path.endsWith("_medium")) {
+                    return Typeface.create(t, Typeface.BOLD);
+                }
+                return t;
             } catch (Exception e) {
                 FileLog.e("Could not get typeface '" + assetPath + "' because " + e.getMessage());
                 return null;
