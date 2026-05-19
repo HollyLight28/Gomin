@@ -13694,7 +13694,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     textCell.setColors(Theme.key_windowBackgroundWhiteGrayIcon, Theme.key_windowBackgroundWhiteBlackText);
                     textCell.setTag(Theme.key_windowBackgroundWhiteBlackText);
                     if (position == cgSettingsRow) {
-                        textCell.setTextAndIcon(LocaleController.getString(R.string.CGP_AdvancedSettings), R.drawable.ic_gomin_notification, true);
+                        textCell.setTextAndIcon(LocaleController.getString(R.string.CGP_AdvancedSettings), R.mipmap.ic_launcher, true);
                         textCell.setImageLeft(23);
                     } else if (position == settingsTimerRow) {
                         TLRPC.EncryptedChat encryptedChat = getMessagesController().getEncryptedChat(DialogObject.getEncryptedChatId(dialogId));

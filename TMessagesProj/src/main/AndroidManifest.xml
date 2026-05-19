@@ -126,7 +126,7 @@
         android:usesCleartextTraffic="true"
         android:enableOnBackInvokedCallback="true"
         android:label="@string/CG_AppName"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon_launcher_cherry"
     >
         <!-- usesCleartextTraffic for browser supporting opening http:// links -->
 
@@ -134,7 +134,7 @@
             android:enabled="true"
             android:name="ua.gomin.messenger.Gomin_Icon_Main"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:roundIcon="@mipmap/ic_launcher"
             android:exported="true">
 
@@ -150,7 +150,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Dark"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -165,7 +165,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Dark_Bra"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -180,7 +180,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_White_Cherry"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -195,7 +195,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_White_Cherry_Bra"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -210,7 +210,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Laguna"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -225,7 +225,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Aqua"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -240,7 +240,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Green"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -255,7 +255,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Lavanda"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -270,7 +270,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Violet_Sunset"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -285,7 +285,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Violet_Sunset_Bra"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -300,7 +300,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Sunset"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -315,7 +315,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Sunrise"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -330,7 +330,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Turbo"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -345,7 +345,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Night"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -360,7 +360,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Dark_NY"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -376,7 +376,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.PremiumIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -391,7 +391,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.TurboIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -406,7 +406,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.NoxIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher"
+            android:icon="@mipmap/icon_launcher_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -479,13 +479,13 @@
                 <data android:host="www.keepassdx.com" android:scheme="http" />
                 <data android:host="www.keepassdx.com" android:scheme="https" />
             </intent-filter>
-            <intent-filter android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:priority="1">
+            <intent-filter android:icon="@mipmap/icon_launcher_cherry" android:roundIcon="@mipmap/ic_launcher" android:priority="1">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="tonsite" />
             </intent-filter>
-            <intent-filter android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:priority="1">
+            <intent-filter android:icon="@mipmap/icon_launcher_cherry" android:roundIcon="@mipmap/ic_launcher" android:priority="1">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -531,7 +531,7 @@
             android:stateNotNeeded="true"
             android:theme="@style/Theme.TMessages.Transparent"
             android:exported="true">
-            <intent-filter android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:priority="1">
+            <intent-filter android:icon="@mipmap/icon_launcher_cherry" android:roundIcon="@mipmap/ic_launcher" android:priority="1">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -544,7 +544,7 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
-            <intent-filter android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher">
+            <intent-filter android:icon="@mipmap/icon_launcher_cherry" android:roundIcon="@mipmap/ic_launcher">
                 <action android:name="org.telegram.passport.AUTHORIZE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
@@ -563,7 +563,7 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
-            <intent-filter android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher">
+            <intent-filter android:icon="@mipmap/icon_launcher_cherry" android:roundIcon="@mipmap/ic_launcher">
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
@@ -573,7 +573,7 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
-            <intent-filter android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher">
+            <intent-filter android:icon="@mipmap/icon_launcher_cherry" android:roundIcon="@mipmap/ic_launcher">
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
@@ -582,7 +582,7 @@
 <!--            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"-->
 <!--            android:hardwareAccelerated="true"-->
 <!--            android:windowSoftInputMode="adjustPan">-->
-<!--            <intent-filter android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/icon_launcher_round">-->
+<!--            <intent-filter android:icon="@mipmap/icon_launcher_cherry" android:roundIcon="@mipmap/icon_launcher_round">-->
 <!--                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>-->
 <!--            </intent-filter>-->
 <!--        </activity>-->
