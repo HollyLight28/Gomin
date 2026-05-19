@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<drawable xmlns:android="http://schemas.android.com/apk/res/android">
-    @drawable/notification
-</drawable>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/notification" />
+</layer-list>
