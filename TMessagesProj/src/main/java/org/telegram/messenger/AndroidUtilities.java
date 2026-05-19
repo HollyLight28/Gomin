@@ -254,7 +254,7 @@ public class AndroidUtilities {
     public final static String TYPEFACE_ROBOTO_CONDENSED_BOLD = "fonts/rcondensedbold.ttf";
     public final static String TYPEFACE_ROBOTO_REGULAR = "fonts/geist.ttf";
     public final static String TYPEFACE_ROBOTO_ITALIC = "fonts/ritalic.ttf";
-    public final static String TYPEFACE_ROBOTO_MEDIUM = "fonts/geist.ttf_medium";
+    public final static String TYPEFACE_ROBOTO_MEDIUM = "fonts/geist_medium.ttf";
     public final static String TYPEFACE_ROBOTO_EXTRA_BOLD = "fonts/rextrabold.ttf";
     public final static String TYPEFACE_ROBOTO_MEDIUM_ITALIC = "fonts/rmediumitalic.ttf";
     public final static String TYPEFACE_ROBOTO_MONO = "fonts/rmono.ttf";
@@ -268,13 +268,29 @@ public class AndroidUtilities {
     public static Typeface bold() {
         if (mediumTypeface == null || mediumTypeface == Typeface.DEFAULT) {
             if (ApplicationLoader.applicationContext != null) {
-                mediumTypeface = getTypeface(TYPEFACE_ROBOTO_MEDIUM);
+                Typeface loaded = getTypeface(TYPEFACE_ROBOTO_MEDIUM);
+                if (loaded != null && loaded != Typeface.DEFAULT) {
+                    mediumTypeface = loaded;
+                }
             }
-            if (mediumTypeface == null && SharedConfig.useSystemBoldFont && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if ((mediumTypeface == null || mediumTypeface == Typeface.DEFAULT) && SharedConfig.useSystemBoldFont && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 mediumTypeface = Typeface.create(null, 500, false);
             }
         }
         return mediumTypeface == null ? Typeface.DEFAULT : mediumTypeface;
+    }
+
+    private static Typeface regularTypeface;
+    public static Typeface regular() {
+        if (regularTypeface == null || regularTypeface == Typeface.DEFAULT) {
+            if (ApplicationLoader.applicationContext != null) {
+                Typeface loaded = getTypeface(TYPEFACE_ROBOTO_REGULAR);
+                if (loaded != null && loaded != Typeface.DEFAULT) {
+                    regularTypeface = loaded;
+                }
+            }
+        }
+        return regularTypeface == null ? Typeface.DEFAULT : regularTypeface;
     }
 
     private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<>();
@@ -2405,21 +2421,15 @@ public class AndroidUtilities {
 
     public static Typeface getTypeface(String assetPath) {
         if (ApplicationLoader.applicationContext == null) {
-            return FontHelper.createTypefaceFromAsset(assetPath.replace("_medium", ""));
+            return FontHelper.createTypefaceFromAsset(assetPath);
         }
         return typefaceCache.computeIfAbsent(assetPath, path -> {
             try {
-                String realPath = path.replace("_medium", "");
-                Typeface t;
-                if (CherrygramCoreConfig.INSTANCE.getSystemFonts() && !realPath.contains("playfair") && !realPath.contains("geist")) {
-                    t = FontHelper.createTypeface(realPath);
+                if (CherrygramCoreConfig.INSTANCE.getSystemFonts() && !path.contains("playfair") && !path.contains("geist")) {
+                    return FontHelper.createTypeface(path);
                 } else {
-                    t = FontHelper.createTypefaceFromAsset(realPath);
+                    return FontHelper.createTypefaceFromAsset(path);
                 }
-                if (path.endsWith("_medium")) {
-                    return Typeface.create(t, Typeface.BOLD);
-                }
-                return t;
             } catch (Exception e) {
                 FileLog.e("Could not get typeface '" + assetPath + "' because " + e.getMessage());
                 return null;

@@ -32,7 +32,7 @@ import java.util.Set;
 
 public class FontHelper {
 
-    public final static String TYPEFACE_GILROY_EXTRABOLD = "fonts/geist.ttf_medium";
+    public final static String TYPEFACE_GILROY_EXTRABOLD = "fonts/geist_medium.ttf";
 
     private static final String TEST_TEXT;
     private static final int CANVAS_SIZE = 40;
@@ -101,12 +101,7 @@ public class FontHelper {
             return Typeface.DEFAULT;
         }
         try {
-            String realPath = assetPath.replace("_medium", "");
-            Typeface t = Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), realPath);
-            if (assetPath.endsWith("_medium")) {
-                return Typeface.create(t, Typeface.BOLD);
-            }
-            return t;
+            return Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), assetPath);
         } catch (Exception e) {
             FileLog.e(e);
             return Typeface.DEFAULT;
