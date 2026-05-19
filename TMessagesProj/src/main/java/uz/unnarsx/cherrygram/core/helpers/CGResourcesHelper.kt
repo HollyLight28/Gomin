@@ -153,12 +153,12 @@ object CGResourcesHelper {
     /** Misc start */
     @JvmStatic
     fun getProperNotificationIcon(): Int { // App notification icon
-        return R.drawable.ic_gomin_notification
+        return R.drawable.notification
     }
 
     @JvmStatic
     fun getResidentNotificationIcon(): Int {
-        return R.drawable.ic_gomin_notification
+        return R.drawable.notification
     }
 
     fun isAnyOfBraIconsEnabled(): Boolean {

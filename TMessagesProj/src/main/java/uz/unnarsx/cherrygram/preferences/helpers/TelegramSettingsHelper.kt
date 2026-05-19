@@ -367,7 +367,7 @@ class TelegramSettingsHelper(
                 1390,
                 Theme.getColor(Theme.key_windowBackgroundWhiteBlackText),
                 Theme.getColor(Theme.key_windowBackgroundWhiteBlackText),
-                R.drawable.ic_gomin_notification,
+                R.mipmap.ic_launcher,
                 getString(R.string.CGP_AdvancedSettings)
             )
         )

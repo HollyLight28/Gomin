@@ -1,2 +1,4 @@
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/notification" />
+<?xml version="1.0" encoding="utf-8"?>
+<drawable xmlns:android="http://schemas.android.com/apk/res/android">
+    @drawable/notification
+</drawable>
