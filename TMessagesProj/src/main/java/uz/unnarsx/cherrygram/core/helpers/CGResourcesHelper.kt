@@ -162,10 +162,7 @@ object CGResourcesHelper {
     }
 
     fun isAnyOfBraIconsEnabled(): Boolean {
-        return (LauncherIconController.isEnabled(LauncherIconController.LauncherIcon.DARK_CHERRY_BRA)
-                || LauncherIconController.isEnabled(LauncherIconController.LauncherIcon.WHITE_CHERRY_BRA)
-                || LauncherIconController.isEnabled(LauncherIconController.LauncherIcon.VIOLET_SUNSET_CHERRY_BRA)
-        )
+        return false
     }
 
     fun createDateAndTime(date: Long): String {

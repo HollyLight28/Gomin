@@ -76,6 +76,11 @@ public class GeminiPreferencesEntry extends UniversalFragment {
         geminiApiKeyField.setHint("\uD83D\uDD11");
         geminiApiKeyField.getEditText().setSingleLine(false);
         geminiApiKeyField.getEditText().setFilters(getInputFilter());
+        geminiApiKeyField.getEditText().addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(android.text.Editable s) { doOnDone(); }
+        });
         if (!TextUtils.isEmpty(CherrygramMessagesConfig.INSTANCE.getGeminiApiKey())) {
             geminiApiKeyField.getEditText().setText(CherrygramMessagesConfig.INSTANCE.getGeminiApiKey());
         }
@@ -98,7 +103,12 @@ public class GeminiPreferencesEntry extends UniversalFragment {
         geminiModelNameField.setHint("\uD83E\uDD16");
         geminiModelNameField.getEditText().setSingleLine(true);
         geminiModelNameField.getEditText().setFilters(getInputFilter());
-        geminiModelNameField.getEditText().setHint(getString(R.string.CP_GeminiAI_Sample) + " gemini-1.5-flash");
+        geminiModelNameField.getEditText().setHint(getString(R.string.CP_GeminiAI_Sample) + " gemini-1.5-pro");
+        geminiModelNameField.getEditText().addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(android.text.Editable s) { doOnDone(); }
+        });
         geminiModelNameField.getEditText().setText(CherrygramMessagesConfig.INSTANCE.getGeminiModelName());
         geminiModelNameField.setMinimumHeight(200);
         geminiModelNameField.setPadding(dp(16), dp(12), dp(16), dp(12));
@@ -127,7 +137,12 @@ public class GeminiPreferencesEntry extends UniversalFragment {
         });
         geminiSystemPromptField.setHint("⚙️");
         geminiSystemPromptField.getEditText().setSingleLine(false);
-        geminiModelNameField.getEditText().setHint(getString(R.string.CP_GeminiAI_System_Prompt));
+        geminiSystemPromptField.getEditText().setHint(getString(R.string.CP_GeminiAI_System_Prompt));
+        geminiSystemPromptField.getEditText().addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(android.text.Editable s) { doOnDone(); }
+        });
         geminiSystemPromptField.getEditText().setText(CherrygramMessagesConfig.INSTANCE.getGeminiSystemPrompt());
         geminiSystemPromptField.setMinimumHeight(200);
         geminiSystemPromptField.setPadding(dp(16), dp(12), dp(16), dp(12));
@@ -196,33 +211,23 @@ public class GeminiPreferencesEntry extends UniversalFragment {
     }
 
     private void doOnDone() {
-        /*if (geminiApiKeyField.getEditText().length() == 0) {
-            Vibrator v = (Vibrator) fragment.getParentActivity().getSystemService(Context.VIBRATOR_SERVICE);
-            if (v != null) {
-                v.vibrate(200);
-            }
-            AndroidUtilities.shakeView(geminiApiKeyField);
-            return;
-        }*/
-        CherrygramMessagesConfig.INSTANCE.setGeminiApiKey(
-                geminiApiKeyField.getEditText().getText().toString()
-        );
+        if (geminiApiKeyField != null && geminiApiKeyField.getEditText() != null) {
+            CherrygramMessagesConfig.INSTANCE.setGeminiApiKey(
+                    geminiApiKeyField.getEditText().getText().toString().trim()
+            );
+        }
 
-        /*if (geminiModelNameField.getEditText().length() == 0) {
-            Vibrator v = (Vibrator) fragment.getParentActivity().getSystemService(Context.VIBRATOR_SERVICE);
-            if (v != null) {
-                v.vibrate(200);
-            }
-            AndroidUtilities.shakeView(geminiModelNameField);
-            return;
-        }*/
-        CherrygramMessagesConfig.INSTANCE.setGeminiModelName(
-                geminiModelNameField.getEditText().getText().toString()
-        );
+        if (geminiModelNameField != null && geminiModelNameField.getEditText() != null) {
+            CherrygramMessagesConfig.INSTANCE.setGeminiModelName(
+                    geminiModelNameField.getEditText().getText().toString().trim()
+            );
+        }
 
-        CherrygramMessagesConfig.INSTANCE.setGeminiSystemPrompt(
-                geminiSystemPromptField.getEditText().getText().toString()
-        );
+        if (geminiSystemPromptField != null && geminiSystemPromptField.getEditText() != null) {
+            CherrygramMessagesConfig.INSTANCE.setGeminiSystemPrompt(
+                    geminiSystemPromptField.getEditText().getText().toString()
+            );
+        }
     }
 
     private CharSequence getGeminiApiKeyAdvice() {

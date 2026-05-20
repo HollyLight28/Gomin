@@ -1,34 +1,30 @@
-# Gomin Project State - 2026-05-20
+# CURRENT MISSION
+1. Fix the NullPointerException crash when opening Gemini AI preferences screen in Gomin settings.
+2. Replace the settings gear icon for Gomin Settings with a beautiful, filled turquoise gear without a background circle (monochrome design, no white color, with a transparent center hole showing the dark theme background).
+3. Fix the crash in the launcher icon selector inside Standalone/Debug mode (self-healing PackageManager wrapper).
+4. Restore the corrupted/broken launcher bird foreground icon using coordinates from the notifications icon.
+5. Re-enable all custom gradient launcher icons by applying the restored white bird vector foreground on top of the original backgrounds.
+6. Prevent the contact synchronization popup loop from firing on app startup.
 
-## [CURRENT MISSION]: Commit and push the true bold and regular Nunito fonts, trigger GitHub CI/CD, and run a local Standalone build for verification.
+# COMPLETED ATOMIC STEPS
+1. Rebranded `Constants.kt` -> All links point to `@ua_gomin` and `@ua_gominchat`. SafeStars removed.
+2. Modified `CGPreferencesEntry.java` -> Removed obsolete bottom buttons. Added `Gomin AI` directly to the main menu.
+3. Modified `GeminiPreferencesEntry.java` -> Fixed NPE crash and hint setup. Added `TextWatcher` safety checks.
+4. Fully restored and validated `icon_foreground_gomin.xml` with perfect bird vector paths from `notification.xml`.
+5. Re-enabled all launcher icons in `LauncherIconController.java` using the correct vector backgrounds and the restored white bird foreground.
+6. Restored `isAnyOfBraIconsEnabled()` in `CGResourcesHelper.kt` to fully support Bra-versioned icons.
+7. Created `gomin_settings_gear.xml` filled settings gear in `res-solar` with a native `#FF00B4DB` (turquoise) fill.
+8. Updated Gomin Advanced Settings in `TelegramSettingsHelper.kt` to vibrant solid turquoise (`0xFF00B4DB`) with the filled gear.
+9. Modified `DialogsActivity.java` to disable automatic contacts sync permission prompt loop on launch.
 
-## [COMPLETED ATOMIC STEPS]
-- Проаналізовано директорії збірки на наявність APK-файлів.
-- Виявлено та задокументовано відмінності між Standalone, Debug та Release збірками.
-- Завантажено оригінальні файли `PlusJakartaSans-Regular.ttf` та `PlusJakartaSans-SemiBold.ttf` з репозиторію Tokotype.
-- Зроблено бекапи (`geist.ttf.bak` / `geist_medium.ttf.bak`) та проведено "гарячу заміну" шрифтів в ассетах `TMessagesProj/src/main/assets/fonts/` (записано Plus Jakarta Sans поверх geist). Це виключає зміни коду Java/Kotlin та забезпечує максимальну стабільність.
-- Отримано повне підтвердження від користувача на стратегію "гарячої заміни" шрифтів (підміна бінарників).
-- Успішно завершено Gradle-збірку Standalone версії (`task-761`) за 5 хвилин 2 секунди.
-- **Нове дослідження**: За допомогою скрипта інспекції `inspect_font.py` підтверджено, що поточні активні файли `geist.ttf` та `geist_medium.ttf` (які є Plus Jakarta Sans) містять рівно **0 кириличних гліфів** в таблиці `cmap`. Це повністю пояснює тихий фолбек (silent fallback) на Roboto для українського тексту на фізичному пристрої.
-- **Верифікація Nunito**: Перевірено та підключено якісні статичні файли шрифту Nunito (інтегровано як `geist.ttf` та `geist_medium.ttf` в ассети). Вони містять повну підтримку українських літер (`і`, `ї`, `є`, `І`, `Ї`, `Є`) з приємними округлими закінченнями літер, які неможливо сплутати з квадратними Roboto.
-- **Діагностика товщини шрифтів**: Виявлено, що попередні файли `geist.ttf` та `geist_medium.ttf` в ассетах проекту мали практично однаковий розмір (~132 KB), оскільки обидва містили Regular-вагу шрифту. Це викликало надмірно тонкі заголовки чатів та вкладок.
-- **Завантаження офіційних шрифтів**: За допомогою Google Fonts API завантажено справжні оригінальні TTF-файли:
-  - `Nunito-Regular` (125 504 байт)
-  - `Nunito-Bold` (125 440 байт)
-- **Верифікація кирилиці**: Скриптом `check_glyphs.py` математично підтверджено наявність усіх українських символів (`і`, `ї`, `є` тощо) в обох файлах.
-- **Успішна гаряча заміна**: Нові верифіковані Regular та Bold шрифти успішно скопійовані замість `geist.ttf` та `geist_medium.ttf` в ассети.
-- **Ініціалізація Git операцій**: Отримано запит від користувача зробити коміт та пуш для автоматичної збірки на GitHub.
+# OPEN PROBLEMS
+Pending user approval.
 
-## [MODIFIED FILES]
-- `TMessagesProj/src/main/assets/fonts/geist.ttf` -> Замінено на офіційний Nunito Regular з повною підтримкою української кирилиці та округлими гліфами.
-- `TMessagesProj/src/main/assets/fonts/geist_medium.ttf` -> Замінено на офіційний Nunito Bold з повною підтримкою української кирилиці для жирних заголовків та табів.
-- `.memory/activeContext.md` -> Оновлення контексту поточної місії та списку модифікованих файлів.
-
-## [OPEN PROBLEMS]
-- Жодних критичних проблем не виявлено.
-
-## [GIT COMMIT MESSAGE]
-```
-rebrand: integrate true bold and regular Nunito static fonts
-```
-
+# MODIFIED FILES
+- `TMessagesProj\src\main\java\uz\unnarsx\cherrygram\preferences\GeminiPreferencesEntry.java` -> Crash fix & layout hint.
+- `TMessagesProj\src\main\java\org\telegram\ui\LauncherIconController.java` -> Re-enabled all launcher icons with self-healing guards.
+- `TMessagesProj\src\main\java\uz\unnarsx\cherrygram\core\helpers\CGResourcesHelper.kt` -> Re-enabled Bra launcher icons helper.
+- `TMessagesProj\src\main\res-cherrygram\drawable\icon_foreground_gomin.xml` -> Recovered bird paths.
+- `TMessagesProj\src\main\res-solar\drawable\gomin_settings_gear.xml` -> Filled settings gear asset with native turquoise fill.
+- `TMessagesProj\src\main\java\uz\unnarsx\cherrygram\preferences\helpers\TelegramSettingsHelper.kt` -> Set turquoise settings gear.
+- `TMessagesProj\src\main\java\org\telegram\ui\DialogsActivity.java` -> Disabled startup contacts permission request.

@@ -365,9 +365,9 @@ class TelegramSettingsHelper(
         items.add(
             SettingsActivity.SettingCell.Factory.of(
                 1390,
-                Theme.getColor(Theme.key_windowBackgroundWhiteBlackText),
-                Theme.getColor(Theme.key_windowBackgroundWhiteBlackText),
-                R.mipmap.ic_launcher,
+                0xFF00B4DB.toInt(),
+                0xFF00B4DB.toInt(),
+                R.drawable.gomin_settings_gear,
                 getString(R.string.CGP_AdvancedSettings)
             )
         )

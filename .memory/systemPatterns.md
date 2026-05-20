@@ -1,13 +1,16 @@
 # Gomin Architectural Patterns
 
-### Dynamic Launcher Icons
-To ensure launcher icons work across different packages (e.g., when rebranding), always use `ctx.getPackageName()` instead of hardcoded strings in `LauncherIconController`:
+### Dynamic Launcher Icons & Self-Healing
+To ensure launcher icons work across different packages and standalone/debug suffix setups, always wrap PackageManager calls in try-catch structures and fall back to the default icon on exceptions:
 ```java
-public ComponentName getComponentName(Context ctx) {
-    if (componentName == null) {
-        componentName = new ComponentName(ctx.getPackageName(), ctx.getPackageName() + "." + key);
+public static boolean isEnabled(LauncherIcon icon) {
+    try {
+        Context ctx = ApplicationLoader.applicationContext;
+        int i = ctx.getPackageManager().getComponentEnabledSetting(icon.getComponentName(ctx));
+        return i == PackageManager.COMPONENT_ENABLED_STATE_ENABLED || i == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT && icon == LauncherIcon.GOMIN;
+    } catch (Throwable e) {
+        return icon == LauncherIcon.GOMIN;
     }
-    return componentName;
 }
 ```
 
@@ -29,4 +32,14 @@ public static Typeface getTypeface(String assetPath) {
 ```
 
 ### Resource Overlay
-Custom branding should be placed in `src/main/res-cherrygram/` (or equivalent) to override standard resources without modifying the base `res/` directory. This allows for cleaner merges with upstream Telegram updates.
+Custom branding should be placed in `src/main/res-cherrygram/` or `src/main/res-solar/` to override standard resources without modifying the base `res/` directory. This allows for cleaner merges with upstream Telegram updates.
+
+### Safe Asynchronous Form Preference State Synchronization
+When building dynamic forms using TextWatcher (e.g. `GeminiPreferencesEntry.java`), always ensure that downstream views are null-safe. TextWatcher fires on `setText()` during initial `fillItems()` before downstream views are constructed.
+```java
+private void doOnDone() {
+    if (geminiApiKeyField != null && geminiApiKeyField.getEditText() != null) {
+        CherrygramMessagesConfig.INSTANCE.setGeminiApiKey(geminiApiKeyField.getEditText().getText().toString().trim());
+    }
+}
+```

@@ -24,9 +24,9 @@ object CherrygramMessagesConfig {
     private val sharedPreferences: SharedPreferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE)
 
     /** Gemini AI start */
-    var geminiApiKey by sharedPreferences.string("CP_GeminiApiKey", " ")
-    var geminiModelName by sharedPreferences.string("CP_GeminiModelName", " ")
-    var geminiSystemPrompt by sharedPreferences.string("CP_GeminiSystemPrompt", " ")
+    var geminiApiKey by sharedPreferences.string("CP_GeminiApiKey", "")
+    var geminiModelName by sharedPreferences.string("CP_GeminiModelName", "")
+    var geminiSystemPrompt by sharedPreferences.string("CP_GeminiSystemPrompt", "")
     var geminiTemperatureValue by sharedPreferences.int("CP_GeminiTemperature", 5)
 
     const val TRANSCRIPTION_PROVIDER_TELEGRAM = 0

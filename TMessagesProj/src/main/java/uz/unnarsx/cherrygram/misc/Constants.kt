@@ -14,23 +14,23 @@ import uz.unnarsx.cherrygram.core.configs.CherrygramCoreConfig
 object Constants {
 
     @JvmField
-    var CG_AUTHOR = "Updates: @gomin_ua"
+    var CG_AUTHOR = "Updates: @ua_gomin"
 
     /** CG Links start**/
     @JvmField
-    var CG_CHANNEL_USERNAME = "gomin_ua"
+    var CG_CHANNEL_USERNAME = "ua_gomin"
     @JvmField
-    var CG_CHANNEL_URL = "https://t.me/gomin_ua"
+    var CG_CHANNEL_URL = "https://t.me/ua_gomin"
 
     @JvmField
-    var CG_APKS_CHANNEL_USERNAME = "gomin_ua"
+    var CG_APKS_CHANNEL_USERNAME = "ua_gomin"
     @JvmField
-    var CG_APKS_CHANNEL_URL = "https://t.me/gomin_ua"
+    var CG_APKS_CHANNEL_URL = "https://t.me/ua_gomin"
 
     @JvmField
-    var CG_CHAT_USERNAME = "gomin_ua"
+    var CG_CHAT_USERNAME = "ua_gominchat"
     @JvmField
-    var CG_CHAT_URL = "https://t.me/gomin_ua"
+    var CG_CHAT_URL = "https://t.me/ua_gominchat"
 
     @JvmField
     var UPDATE_APP_URL = if (CherrygramCoreConfig.isPlayStoreBuild()) "https://play.google.com/store/apps/details?id=ua.gomin.messenger" else CG_CHANNEL_URL
@@ -46,9 +46,9 @@ object Constants {
     var CG_GITHUB_URL = "https://github.com/HollyLight28/Gomin"
 
     @JvmField
-    var CG_SAFESTARS = "https://safestars.pro/?partner=cherrygram"
+    var CG_SAFESTARS = "https://t.me/ua_gomin"
     @JvmField
-    var CG_SAFESTARS_RU = "https://safestars.pro/ru/?partner=cherrygram"
+    var CG_SAFESTARS_RU = "https://t.me/ua_gomin"
     /** CG Links finish**/
 
     const val PACKAGE_NAME = "ua.gomin.messenger"

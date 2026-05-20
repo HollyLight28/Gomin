@@ -242,10 +242,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         int contactsPos = MainTabsManager.INSTANCE.getPosition(MainTabsManager.TabType.CONTACTS);
         if (contactsPos != -1 && tabsView != null && tabs.length > contactsPos && tabs[contactsPos] != null) {
             final boolean hasPermission = Build.VERSION.SDK_INT >= 23 && ContactsController.hasContactsPermission();
-            if (hasPermission) {
-                MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts2", true).apply();
-            }
-            if (Build.VERSION.SDK_INT >= 23 && UserConfig.getInstance(currentAccount).syncContacts && !ContactsController.hasContactsPermission()) {
+            if (Build.VERSION.SDK_INT >= 23 && UserConfig.getInstance(currentAccount).syncContacts && !hasPermission) {
                 tabs[contactsPos].setCounter("!", true, true);
             } else {
                 tabs[contactsPos].setCounter(null, true, true);

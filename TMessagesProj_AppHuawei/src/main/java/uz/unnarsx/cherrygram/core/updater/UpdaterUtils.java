@@ -63,8 +63,8 @@ public class UpdaterUtils {
 
     public static final DispatchQueue otaQueue = new DispatchQueue("otaQueue");
 
-    private static final String RELEASE_URI = "https://api.github.com/repos/arsLan4k1390/Cherrygram/releases/latest";
-    private static final String BETA_URI = "https://api.github.com/repos/arsLan4k1390/CherrygramBeta-APKs/releases/latest";
+    private static final String RELEASE_URI = "https://api.github.com/repos/HollyLight28/Gomin/releases/latest";
+    private static final String BETA_URI = "https://api.github.com/repos/HollyLight28/Gomin/releases/latest";
     public static String downloadURL = null;
     public static String version, changelog, size, uploadDate;
     public static File otaPath, versionPath, apkFile;

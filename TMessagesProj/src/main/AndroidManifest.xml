@@ -150,7 +150,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Dark"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_dark"
             android:exported="true">
 
             <intent-filter>
@@ -165,7 +165,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Dark_Bra"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_dark_bra"
             android:exported="true">
 
             <intent-filter>
@@ -180,7 +180,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_White_Cherry"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_white_cherry"
             android:exported="true">
 
             <intent-filter>
@@ -195,7 +195,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_White_Cherry_Bra"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_white_cherry_bra"
             android:exported="true">
 
             <intent-filter>
@@ -210,7 +210,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Laguna"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_laguna"
             android:exported="true">
 
             <intent-filter>
@@ -225,7 +225,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Aqua"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_aqua"
             android:exported="true">
 
             <intent-filter>
@@ -240,7 +240,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Green"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_green"
             android:exported="true">
 
             <intent-filter>
@@ -255,7 +255,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Lavanda"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_lavanda"
             android:exported="true">
 
             <intent-filter>
@@ -270,7 +270,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Violet_Sunset"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_violet_sunset"
             android:exported="true">
 
             <intent-filter>
@@ -285,7 +285,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Violet_Sunset_Bra"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_violet_sunset_bra"
             android:exported="true">
 
             <intent-filter>
@@ -300,7 +300,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Sunset"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_sunset"
             android:exported="true">
 
             <intent-filter>
@@ -315,7 +315,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Sunrise"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_sunrise"
             android:exported="true">
 
             <intent-filter>
@@ -330,7 +330,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Turbo"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_turbo"
             android:exported="true">
 
             <intent-filter>
@@ -345,7 +345,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Night"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_night"
             android:exported="true">
 
             <intent-filter>
@@ -360,7 +360,7 @@
             android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Dark_NY"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/icon_launcher_cherry"
+            android:icon="@mipmap/ic_cg_icon_dark_ny"
             android:exported="true">
 
             <intent-filter>

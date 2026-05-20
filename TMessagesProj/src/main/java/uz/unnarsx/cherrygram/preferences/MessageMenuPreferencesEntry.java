@@ -120,9 +120,9 @@ public class MessageMenuPreferencesEntry extends BaseFragment {
             boolean requireDonate;
 
             if (position == messageMenuItemsCompactView) {
-                requireDonate = !DonatesManager.INSTANCE.checkAllDonatedAccounts() && !DonatesManager.INSTANCE.checkAllDonatedAccountsForMarketplace();
+                requireDonate = false;
             } else {
-                requireDonate = !DonatesManager.INSTANCE.checkAllDonatedAccountsForMarketplace();
+                requireDonate = false;
             }
 
             var holder = listView.findViewHolderForAdapterPosition(position);
@@ -243,7 +243,7 @@ public class MessageMenuPreferencesEntry extends BaseFragment {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            boolean requireDonate = !DonatesManager.INSTANCE.checkAllDonatedAccountsForMarketplace();
+            boolean requireDonate = false;
             switch (holder.getItemViewType()) {
                 case VIEW_TYPE_SHADOW:
                     ShadowSectionCell shadowSectionCell = (ShadowSectionCell) holder.itemView;
@@ -272,9 +272,9 @@ public class MessageMenuPreferencesEntry extends BaseFragment {
                     textCheckCell.setEnabled(!requireDonate, null);
 
                     if (position == messageMenuItemsCompactView) {
-                        requireDonate = !DonatesManager.INSTANCE.checkAllDonatedAccounts() && !DonatesManager.INSTANCE.checkAllDonatedAccountsForMarketplace();
+                        requireDonate = false;
                     } else {
-                        requireDonate = !DonatesManager.INSTANCE.checkAllDonatedAccountsForMarketplace();
+                        requireDonate = false;
                     }
                     if (requireDonate) textCheckCell.setCheckBoxIcon(R.drawable.permission_locked);
 

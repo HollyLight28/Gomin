@@ -101,7 +101,7 @@ public class ApiClient {
         int errorResponseCode = 0;
         String errorResponseMessage = " ";
 
-        if (connection == null && connection.getErrorStream() == null) return;
+        if (connection == null || connection.getErrorStream() == null) return;
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
             StringBuilder errorJsonString = new StringBuilder();

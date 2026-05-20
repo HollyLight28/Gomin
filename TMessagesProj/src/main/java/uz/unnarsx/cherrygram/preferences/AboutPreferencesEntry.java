@@ -75,7 +75,7 @@ public class AboutPreferencesEntry extends UniversalFragment {
         );
         items.add(SettingsHelper.asTextDetail(updatesRow, R.drawable.msg_retry_solar, getString(R.string.UP_Category_Updates), getLastCheckUpdateTime()));
         items.add(UItem.asButton(bugReportRow, R.drawable.bug_solar, getString(R.string.CG_CopyReportDetails)));
-        items.add(UItem.asButton(debugPrefsRow, R.drawable.test_tube_solar, "Debug // WIP"));
+        // items.add(UItem.asButton(debugPrefsRow, R.drawable.test_tube_solar, "Debug // WIP"));
         items.add(UItem.asShadow(null));
 
         items.add(UItem.asHeader(getString(R.string.CGP_Links)));
