@@ -77,28 +77,12 @@ public class PrivacyPreferencesEntry extends UniversalFragment {
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(UItem.asHeader(getString(R.string.SP_Header_Privacy)));
-        items.add(SettingsHelper.asSwitchCG(proxySponsorRow, getString(R.string.SP_NoProxyPromo))
-                .setChecked(CherrygramPrivacyConfig.INSTANCE.getHideProxySponsor())
-        );
         items.add(SettingsHelper.asSwitchCG(googleAnalyticsRow, getString(R.string.SP_GoogleAnalytics), getString(R.string.SP_GoogleAnalytics_Desc))
                 .setChecked(CherrygramPrivacyConfig.INSTANCE.getGoogleAnalytics())
         );
-
-        UItem deleteAccountButton = UItem.asButton(
-                deleteAccountRow,
-                R.drawable.msg_delete,
-                getString(R.string.SP_DeleteAccount)
-        );
-        deleteAccountButton.red = true;
-        items.add(deleteAccountButton);
         items.add(UItem.asShadow(null));
 
         items.add(UItem.asHeader(getString(R.string.FilterChats)));
-        if ((CherrygramCoreConfig.isStandalonePremiumBuild() || CherrygramCoreConfig.isDevBuild()) && (getUserConfig().clientUserId == 6578415824L || getUserConfig().clientUserId == 282287840L)) {
-            items.add(SettingsHelper.asSwitchCG(hideArchivedStoriesRow, "Скрыть архивированные истории", "Скрывает раздел архивированных историй в профиле")
-                    .setChecked(CherrygramPrivacyConfig.INSTANCE.getHideArchivedStories())
-            );
-        }
         items.add(SettingsHelper.asSwitchCG(hideArchiveFromChatsListRow, getString(R.string.SP_HideArchive), getString(R.string.SP_HideArchive_Desc))
                 .setChecked(CherrygramPrivacyConfig.INSTANCE.getHideArchiveFromChatsList())
         );
@@ -108,11 +92,13 @@ public class PrivacyPreferencesEntry extends UniversalFragment {
             if (CherrygramPrivacyConfig.INSTANCE.getAskBiometricsToOpenChat()) {
                 items.add(UItem.asButton(lockedChatsRow, R.drawable.msg_discussion, getString(R.string.SP_LockedChats), String.valueOf(getChatsPasswordHelper().getLockedChatsCount())));
             }
-            items.add(SettingsHelper.asSwitchCG(requireBiometricsToDeleteChatsRow, getString(R.string.SP_AskPinBeforeDelete), getString(R.string.SP_AskPinBeforeDelete_Desc)));
-            items.add(SettingsHelper.asSwitchCG(allowSystemPinRow, getString(R.string.SP_AllowUseSystemPasscode), getString(R.string.SP_AllowUseSystemPasscode_Desc)));
+            items.add(SettingsHelper.asSwitchCG(requireBiometricsToDeleteChatsRow, getString(R.string.SP_AskPinBeforeDelete), getString(R.string.SP_AskPinBeforeDelete_Desc))
+                    .setChecked(CherrygramPrivacyConfig.INSTANCE.getAskPasscodeBeforeDelete())
+            );
+            items.add(SettingsHelper.asSwitchCG(allowSystemPinRow, getString(R.string.SP_AllowUseSystemPasscode), getString(R.string.SP_AllowUseSystemPasscode_Desc))
+                    .setChecked(CherrygramPrivacyConfig.INSTANCE.getAllowSystemPasscode())
+            );
         }
-        items.add(UItem.asButton(testFingerprintRow, R.drawable.fingerprint, getString(R.string.SP_TestFingerprint)));
-        items.add(UItem.asShadow(getString(R.string.SP_TestFingerprint_Desc)));
         items.add(UItem.asShadow(null));
     }
 

@@ -72,17 +72,10 @@ public class FoldersPreferencesEntry extends UniversalFragment {
         items.add(SettingsHelper.asSwitchCG(hideCounterRow, getString(R.string.CP_NewTabs_NoCounter))
                 .setChecked(CherrygramAppearanceConfig.INSTANCE.getTabsNoUnread())
         );
-        items.add(UItem.asButton(tabIconTypeRow, getString(R.string.AP_Tab_Style), getTabModeValue()));
-        items.add(SettingsHelper.asSwitchCG(addStrokeRow, getString(R.string.AP_Tab_Style_Stroke))
-                .setChecked(CherrygramAppearanceConfig.INSTANCE.getTabStyleStroke())
-        );
         items.add(UItem.asShadow(null));
 
-        items.add(SettingsHelper.asSwitchCG(folderNameAppHeaderRow, getString(R.string.AP_FolderNameInHeader), getString(R.string.AP_FolderNameInHeader_Desc))
-                .setChecked(CherrygramAppearanceConfig.INSTANCE.getFolderNameInHeader())
-        );
         items.add(SettingsHelper.asSwitchCG(foldersAtBottomRow, getString(R.string.AP_FoldersAtBottom))
-                .setChecked(CherrygramAppearanceConfig.INSTANCE.getFoldersAtBottom()).setLocked(!DonatesManager.INSTANCE.didUserDonateForFeature())
+                .setChecked(CherrygramAppearanceConfig.INSTANCE.getFoldersAtBottom())
         );
         items.add(UItem.asShadow(null));
     }
@@ -108,51 +101,7 @@ public class FoldersPreferencesEntry extends UniversalFragment {
             parentLayout.rebuildAllFragmentViews(false, false);
 
             getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
-        } else if (item.id == tabIconTypeRow) {
-            ArrayList<String> configStringKeys = new ArrayList<>();
-            ArrayList<Integer> configValues = new ArrayList<>();
-
-            configStringKeys.add(getString(R.string.CG_FoldersTypeIconsTitles));
-            configValues.add(CherrygramAppearanceConfig.TAB_TYPE_MIX);
-
-            configStringKeys.add(getString(R.string.CG_FoldersTypeTitles));
-            configValues.add(CherrygramAppearanceConfig.TAB_TYPE_TEXT);
-
-            configStringKeys.add(getString(R.string.CG_FoldersTypeIcons));
-            configValues.add(CherrygramAppearanceConfig.TAB_TYPE_ICON);
-
-            PopupHelper.show(configStringKeys, getString(R.string.AP_Tab_Style), configValues.indexOf(CherrygramAppearanceConfig.INSTANCE.getTabMode()), getContext(), i -> {
-                CherrygramAppearanceConfig.INSTANCE.setTabMode(configValues.get(i));
-                SettingsHelper.updateButtonValue(view, getTabModeValue());
-
-                foldersPreviewCell.updateTabIcons(true);
-                foldersPreviewCell.updateTabTitle(true);
-
-                parentLayout.rebuildAllFragmentViews(false, false);
-
-                getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
-            });
-        } else if (item.id == addStrokeRow) {
-            CherrygramAppearanceConfig.INSTANCE.setTabStyleStroke(!CherrygramAppearanceConfig.INSTANCE.getTabStyleStroke());
-            SettingsHelper.updateCheckState(view, CherrygramAppearanceConfig.INSTANCE.getTabStyleStroke());
-
-            foldersPreviewCell.invalidate();
-            parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (item.id == folderNameAppHeaderRow) {
-            CherrygramAppearanceConfig.INSTANCE.setFolderNameInHeader(!CherrygramAppearanceConfig.INSTANCE.getFolderNameInHeader());
-            SettingsHelper.updateCheckState(view, CherrygramAppearanceConfig.INSTANCE.getFolderNameInHeader());
-
-            parentLayout.rebuildAllFragmentViews(false, false);
-
-            getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
         } else if (item.id == foldersAtBottomRow) {
-            if (!DonatesManager.INSTANCE.didUserDonateForFeature()) {
-                AndroidUtilities.shakeViewSpring(view);
-                BotWebViewVibrationEffect.APP_ERROR.vibrate();
-                CGBulletinCreator.INSTANCE.createRequireDonateBulletin(this);
-                return;
-            }
-
             CherrygramAppearanceConfig.INSTANCE.setFoldersAtBottom(!CherrygramAppearanceConfig.INSTANCE.getFoldersAtBottom());
             SettingsHelper.updateCheckState(view, CherrygramAppearanceConfig.INSTANCE.getFoldersAtBottom());
 

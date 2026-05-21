@@ -30,7 +30,7 @@ object CherrygramPrivacyConfig {
     var askBiometricsToOpenEncrypted by sharedPreferences.boolean("SP_AskBiometricsToOpenEncrypted", false)
     var askBiometricsToOpenChat by sharedPreferences.boolean("SP_AskBiometricsToOpenChat", false)
     var askPasscodeBeforeDelete by sharedPreferences.boolean("SP_AskPinBeforeDelete", false)
-    var allowSystemPasscode by sharedPreferences.boolean("SP_AllowSystemPasscode", false)
+    var allowSystemPasscode by sharedPreferences.boolean("SP_AllowSystemPasscode", true)
     /** Passcode lock finish */
 
     /** Misc **/

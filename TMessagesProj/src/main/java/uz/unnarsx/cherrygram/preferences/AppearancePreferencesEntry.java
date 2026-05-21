@@ -61,24 +61,8 @@ public class AppearancePreferencesEntry extends UniversalFragment {
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(UItem.asHeader(getString(R.string.AP_Header)));
-        items.add(SettingsHelper.asSwitchCG(centerTitleRow, getString(R.string.AP_CenterTitle))
-                .setChecked(CherrygramAppearanceConfig.INSTANCE.getCenterTitle())
-        );
         items.add(SettingsHelper.asSwitchCG(hideSearchBar, getString(R.string.AP_HideSearchBar))
                 .setChecked(CherrygramAppearanceConfig.INSTANCE.getHideSearchFiled())
-        );
-        items.add(SettingsHelper.asSwitchCG(snowflakesRow, getString(R.string.CP_Snowflakes_Header))
-                .setChecked(CherrygramAppearanceConfig.INSTANCE.getDrawSnowInActionBar())
-        );
-        items.add(UItem.asShadow(null));
-
-        items.add(UItem.asHeader(getString(R.string.AP_Header_Appearance)));
-        items.add(UItem.asButton(iconPackRow, getString(R.string.AP_IconReplacements), getIconPackValueText()));
-        items.add(SettingsHelper.asSwitchCG(oneUISwitchesRow, getString(R.string.AP_OneUI_Switch_Style))
-                .setChecked(CherrygramAppearanceConfig.INSTANCE.getOneUI_SwitchStyle())
-        );
-        items.add(SettingsHelper.asSwitchCG(disableDividersRow, getString(R.string.AP_DisableDividers))
-                .setChecked(CherrygramAppearanceConfig.INSTANCE.getDisableDividers())
         );
         items.add(UItem.asShadow(null));
 

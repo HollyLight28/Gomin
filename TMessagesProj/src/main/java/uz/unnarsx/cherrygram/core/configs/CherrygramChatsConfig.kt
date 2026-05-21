@@ -29,30 +29,30 @@ object CherrygramChatsConfig: CoroutineScope by CoroutineScope(
     private val sharedPreferences: SharedPreferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE)
 
     /** Appearance start */
-    var centerChatTitle by sharedPreferences.boolean("AP_CenterChatTitle", true)
-    var unreadBadgeOnBackButton by sharedPreferences.boolean("CP_UnreadBadgeOnBackButton", false)
+    var centerChatTitle by sharedPreferences.boolean("AP_CenterChatTitle", false)
+    var unreadBadgeOnBackButton by sharedPreferences.boolean("CP_UnreadBadgeOnBackButton", true)
 
     /** Chat shortcuts start */
     var shortcut_JumpToBegin by sharedPreferences.boolean("CP_Shortcut_JumpToBegin", true)
-    var shortcut_DeleteAll by sharedPreferences.boolean("CP_Shortcut_DeleteAll", true)
+    var shortcut_DeleteAll by sharedPreferences.boolean("CP_Shortcut_DeleteAll", false)
     var shortcut_SavedMessages by sharedPreferences.boolean("CP_Shortcut_SavedMessages", false)
     var shortcut_Browser by sharedPreferences.boolean("CP_Shortcut_Browser", false)
     /** Chat shortcuts finish */
 
     /** Admin shortcuts start */
-    var admins_Reactions by sharedPreferences.boolean("CP_Admins_Reactions", false)
-    var admins_Permissions by sharedPreferences.boolean("CP_Admins_Permissions", false)
-    var admins_Administrators by sharedPreferences.boolean("CP_Admins_Administrators", false)
-    var admins_Members by sharedPreferences.boolean("CP_Admins_Members", false)
-    var admins_Statistics by sharedPreferences.boolean("CP_Admins_Statistics", false)
-    var admins_RecentActions by sharedPreferences.boolean("CP_Admins_RecentActions", false)
+    var admins_Reactions by sharedPreferences.boolean("CP_Admins_Reactions", true)
+    var admins_Permissions by sharedPreferences.boolean("CP_Admins_Permissions", true)
+    var admins_Administrators by sharedPreferences.boolean("CP_Admins_Administrators", true)
+    var admins_Members by sharedPreferences.boolean("CP_Admins_Members", true)
+    var admins_Statistics by sharedPreferences.boolean("CP_Admins_Statistics", true)
+    var admins_RecentActions by sharedPreferences.boolean("CP_Admins_RecentActions", true)
     /** Admin shortcuts finish */
 
-    var customWallpapers by sharedPreferences.boolean("CP_CustomWallpapers", true)
-    var drawSnowInChat by sharedPreferences.boolean("AP_DrawSnowInChat", false && SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_AVERAGE)
+    var customWallpapers by sharedPreferences.boolean("CP_CustomWallpapers", false)
+    var drawSnowInChat by sharedPreferences.boolean("AP_DrawSnowInChat", false)
     var discussInsteadOfMute by sharedPreferences.boolean("CP_DiscussInsteadOfMute", true)
-    var hideMuteUnmuteButton by sharedPreferences.boolean("CP_HideMuteUnmuteButton", false)
-    var hideSendAsChannel by sharedPreferences.boolean("CP_HideSendAsChannel", false)
+    var hideMuteUnmuteButton by sharedPreferences.boolean("CP_HideMuteUnmuteButton", true)
+    var hideSendAsChannel by sharedPreferences.boolean("CP_HideSendAsChannel", true)
     var slider_RecentEmojisAmplifier by sharedPreferences.int("CP_Slider_RecentEmojisAmplifier", 45)
     var slider_RecentStickersAmplifier by sharedPreferences.int("CP_Slider_RecentStickersAmplifier", 20)
     /** Appearance finish */
@@ -61,15 +61,15 @@ object CherrygramChatsConfig: CoroutineScope by CoroutineScope(
     var hideKeyboardOnScrollIntensity by sharedPreferences.int("CP_HideKeyboardOnScrollIntensity", 5)
 
     /** Actions start */
-    var autoQuoteReplies by sharedPreferences.boolean("CP_AutoQuoteReplies", false)
+    var autoQuoteReplies by sharedPreferences.boolean("CP_AutoQuoteReplies", true)
     var disableSwipeToNext by sharedPreferences.boolean("CP_DisableSwipeToNext", false)
     var disableVibration by sharedPreferences.boolean("CP_DisableVibration", false)
     /** Actions finish */
 
     /** Media start */
-    var largePhotos by sharedPreferences.boolean("CP_LargePhotos", SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_AVERAGE)
+    var largePhotos by sharedPreferences.boolean("CP_LargePhotos", true)
     var playVideoOnVolume by sharedPreferences.boolean("CP_PlayVideo", false)
-    var autoPauseVideo by sharedPreferences.boolean("CP_AutoPauseVideo", false)
+    var autoPauseVideo by sharedPreferences.boolean("CP_AutoPauseVideo", true)
     var videoSeekDuration by sharedPreferences.int("CP_VideoSeekDuration", 10)
     /** Media finish */
 
@@ -84,7 +84,7 @@ object CherrygramChatsConfig: CoroutineScope by CoroutineScope(
     const val VIBRATION_WAVE_FORM = 2
     const val VIBRATION_KEYBOARD_TAP = 3
     const val VIBRATION_LONG = 4
-    var vibrateInChats by sharedPreferences.int("CP_VibrationInChats", VIBRATION_DISABLE)
+    var vibrateInChats by sharedPreferences.int("CP_VibrationInChats", VIBRATION_CLICK)
     /** Notifications finish */
 
     /** Misc start */

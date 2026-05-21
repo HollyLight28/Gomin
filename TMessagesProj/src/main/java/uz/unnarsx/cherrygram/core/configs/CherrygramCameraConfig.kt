@@ -32,7 +32,7 @@ object CherrygramCameraConfig {
     /** Camera type finish */
 
     /** Camera start */
-    var disableAttachCamera by sharedPreferences.boolean("CP_DisableAttachCam", true)
+    var disableAttachCamera by sharedPreferences.boolean("CP_DisableAttachCam", false)
     var useDualCamera by sharedPreferences.boolean("CP_UseDualCameraX", false)
 
     const val Camera16to9 = 0
@@ -52,18 +52,17 @@ object CherrygramCameraConfig {
     const val CameraXFpsRange30to30 = 2
     const val CameraXFpsRange30to60 = 3
     const val CameraXFpsRange60to60 = 4
-    var cameraXFpsRange by sharedPreferences.int("CP_CameraXFpsRangeValueF",
-        if (SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_AVERAGE) CameraXFpsRange25to30 else CameraXFpsRangeDefault)
+    var cameraXFpsRange by sharedPreferences.int("CP_CameraXFpsRangeValueF", CameraXFpsRangeDefault)
     /** CameraX FPS finish */
 
-    var cameraStabilisation by sharedPreferences.boolean("CP_CameraStabilisation", false)
+    var cameraStabilisation by sharedPreferences.boolean("CP_CameraStabilisation", true)
     var centerCameraControlButtons by sharedPreferences.boolean("CP_CenterCameraControlButtons", true)
 
     const val EXPOSURE_SLIDER_NONE = 0
     const val EXPOSURE_SLIDER_BOTTOM = 1
     const val EXPOSURE_SLIDER_RIGHT = 2
     const val EXPOSURE_SLIDER_LEFT = 3
-    var exposureSlider by sharedPreferences.int("CP_ExposureSlider", EXPOSURE_SLIDER_RIGHT)
+    var exposureSlider by sharedPreferences.int("CP_ExposureSlider", EXPOSURE_SLIDER_NONE)
 
     var rearCam by sharedPreferences.boolean("CP_RearCam", false)
 

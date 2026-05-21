@@ -25,9 +25,9 @@ object CherrygramAppearanceConfig {
     private val sharedPreferences: SharedPreferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE)
 
     /** Header start */
-    var centerTitle by sharedPreferences.boolean("AP_CenterTitle", true)
+    var centerTitle by sharedPreferences.boolean("AP_CenterTitle", false)
     var hideSearchFiled by sharedPreferences.boolean("AP_HideSearchField", true)
-    var drawSnowInActionBar by sharedPreferences.boolean("AP_DrawSnowInActionBar", false && SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_AVERAGE)
+    var drawSnowInActionBar by sharedPreferences.boolean("AP_DrawSnowInActionBar", false)
     /** Header finish */
 
     /** Appearance start */
@@ -42,7 +42,7 @@ object CherrygramAppearanceConfig {
         }
     }
 
-    var oneUI_SwitchStyle by sharedPreferences.boolean("AP_OneUI_SwitchStyle", true)
+    var oneUI_SwitchStyle by sharedPreferences.boolean("AP_OneUI_SwitchStyle", false)
     var disableDividers by sharedPreferences.boolean("AP_DisableDividers", true)
     /** Appearance finish */
 
@@ -55,7 +55,7 @@ object CherrygramAppearanceConfig {
     const val TAB_TYPE_ICON = 2
     var tabMode by sharedPreferences.int("AP_TabMode", TAB_TYPE_MIX)
 
-    var tabStyleStroke by sharedPreferences.boolean("AP_TabStyleAddStroke", false)
+    var tabStyleStroke by sharedPreferences.boolean("AP_TabStyleAddStroke", true)
     var folderNameInHeader by sharedPreferences.boolean("AP_FolderNameInHeader", false)
     var foldersAtBottom by sharedPreferences.boolean("AP_FoldersAtBottom", false)
     /** Folders finish */

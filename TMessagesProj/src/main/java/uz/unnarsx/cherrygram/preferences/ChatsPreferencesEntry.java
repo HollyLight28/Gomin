@@ -84,32 +84,7 @@ public class ChatsPreferencesEntry extends UniversalFragment {
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(UItem.asHeader(getString(R.string.AP_Header_Appearance)));
-        items.add(SettingsHelper.asSwitchCG(centerTitleRow, getString(R.string.AP_CenterTitle))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getCenterChatTitle())
-        );
-        items.add(SettingsHelper.asSwitchCG(unreadBadgeRow, getString(R.string.CP_UnreadBadgeOnBackButton), getString(R.string.CP_UnreadBadgeOnBackButton_Desc))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getUnreadBadgeOnBackButton())
-        );
         items.add(UItem.asButton(chatMenuShortcutsRow, R.drawable.msg_list, getString(R.string.CP_ChatMenuShortcuts)));
-        items.add(UItem.asShadow(null));
-
-        items.add(SettingsHelper.asSwitchCG(customBackgroundInChatsRow, getString(R.string.CP_CustomWallpapers), getString(R.string.CP_CustomWallpapers_Desc))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getCustomWallpapers())
-        );
-        items.add(SettingsHelper.asSwitchCG(snowflakesRow, getString(R.string.CP_Snowflakes_Header))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getDrawSnowInChat())
-        );
-        items.add(UItem.asShadow(null));
-
-        items.add(SettingsHelper.asSwitchCG(hideBottomBarRow, getString(R.string.CP_HideMuteUnmuteButton))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getHideMuteUnmuteButton())
-        );
-        items.add(SettingsHelper.asSwitchCG(sendAsChannelButtonRow, getString(R.string.CP_HideSendAsChannel), getString(R.string.CP_HideSendAsChannelDesc))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getHideSendAsChannel())
-        );
-        items.add(UItem.asButton(recentEmojisStickersRow, 0, getString(R.string.CP_Slider_RecentEmojisAndStickers)));
-        items.add(UItem.asShadow(null));
-
         items.add(UItem.asButton(messagesPreferencesRow, R.drawable.msg_discussion, getString(R.string.MessagesSettings)));
         items.add(UItem.asShadow(null));
 
@@ -122,90 +97,23 @@ public class ChatsPreferencesEntry extends UniversalFragment {
         items.add(UItem.asShadow(null));
 
         items.add(UItem.asHeader(getString(R.string.ActionsChartTitle)));
-        items.add(SettingsHelper.asSwitchCG(autoQuoteRow, getString(R.string.CP_AutoQuoteReplies), getString(R.string.CP_AutoQuoteReplies_Desc))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getAutoQuoteReplies())
-        );
         items.add(SettingsHelper.asSwitchCG(disableSwipeToNextRow, getString(R.string.CP_DisableSwipeToNext), getString(R.string.CP_DisableSwipeToNext_Desc))
                 .setChecked(CherrygramChatsConfig.INSTANCE.getDisableSwipeToNext())
-        );
-        items.add(SettingsHelper.asSwitchCG(disableVibrationRow, getString(R.string.CP_DisableVibration))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getDisableVibration())
-        );
-        items.add(UItem.asShadow(null));
-
-        items.add(UItem.asHeader(getString(R.string.CP_HideKbdOnScroll)));
-        items.add(
-                UItem.asIntSlideView(
-                        1,
-                        0,
-                        CherrygramChatsConfig.INSTANCE.getHideKeyboardOnScrollIntensity(),
-                        10,
-                        val -> val == 0 ? getString(R.string.VibrationDisabled) : String.valueOf(val),
-                        CherrygramChatsConfig.INSTANCE::setHideKeyboardOnScrollIntensity
-                )
-        );
-        items.add(UItem.asShadow(null));
-
-        items.add(UItem.asHeader(getString(R.string.CP_Header_Record)));
-        items.add(SettingsHelper.asSwitchCG(largePhotosRow, getString(R.string.EP_PhotosSize))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getLargePhotos())
-        );
-        items.add(SettingsHelper.asSwitchCG(playVideoOnVolumeBtnRow, getString(R.string.CP_PlayVideo), getString(R.string.CP_PlayVideo_Desc))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getPlayVideoOnVolume())
-        );
-        items.add(SettingsHelper.asSwitchCG(autoPauseVideoRow, getString(R.string.CP_AutoPauseVideo), getString(R.string.CP_AutoPauseVideo_Desc))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getAutoPauseVideo())
-        );
-        items.add(UItem.asShadow(null));
-
-        items.add(UItem.asHeader(getString(R.string.CP_VideoSeekDuration)));
-        items.add(
-                UItem.asIntSlideView(
-                        1,
-                        0,
-                        CherrygramChatsConfig.INSTANCE.getVideoSeekDuration(),
-                        25,
-                        val -> val == 0 ? getString(R.string.VibrationDisabled) : String.valueOf(val),
-                        CherrygramChatsConfig.INSTANCE::setVideoSeekDuration
-                )
         );
         items.add(UItem.asShadow(null));
 
         items.add(UItem.asHeader(getString(R.string.SettingsNotifications)));
         items.add(UItem.asButton(notificationSoundRow, getString(R.string.NotificationsSound), getNotificationSoundValue()));
-        items.add(UItem.asButton(vibrateInChatsRow, getString(R.string.CP_VibrateInChats), getVibrationValue()));
-        items.add(UItem.asShadow(getString(R.string.CP_VibrateInChats_Desc)));
         items.add(UItem.asShadow(null));
     }
 
     @Override
     protected void onClick(UItem item, View view, int position, float x, float y) {
-        if (item.id == centerTitleRow) {
-            CherrygramChatsConfig.INSTANCE.setCenterChatTitle(!CherrygramChatsConfig.INSTANCE.getCenterChatTitle());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getCenterChatTitle());
-
-            getParentLayout().rebuildAllFragmentViews(false, false);
-        } else if (item.id == unreadBadgeRow) {
-            CherrygramChatsConfig.INSTANCE.setUnreadBadgeOnBackButton(!CherrygramChatsConfig.INSTANCE.getUnreadBadgeOnBackButton());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getUnreadBadgeOnBackButton());
-        } else if (item.id == chatMenuShortcutsRow) {
+        if (item.id == chatMenuShortcutsRow) {
             showChatMenuItemsConfigurator(this);
         } else if (item.id == customBackgroundInChatsRow) {
             CherrygramChatsConfig.INSTANCE.setCustomWallpapers(!CherrygramChatsConfig.INSTANCE.getCustomWallpapers());
             SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getCustomWallpapers());
-        } else if (item.id == snowflakesRow) {
-            CherrygramChatsConfig.INSTANCE.setDrawSnowInChat(!CherrygramChatsConfig.INSTANCE.getDrawSnowInChat());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getDrawSnowInChat());
-
-            getParentLayout().rebuildAllFragmentViews(false, false);
-        } else if (item.id == hideBottomBarRow) {
-            CherrygramChatsConfig.INSTANCE.setHideMuteUnmuteButton(!CherrygramChatsConfig.INSTANCE.getHideMuteUnmuteButton());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getHideMuteUnmuteButton());
-        } else if (item.id == sendAsChannelButtonRow) {
-            CherrygramChatsConfig.INSTANCE.setHideSendAsChannel(!CherrygramChatsConfig.INSTANCE.getHideSendAsChannel());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getHideSendAsChannel());
-        } else if (item.id == recentEmojisStickersRow) {
-            AlertDialogSwitchers.showRecentEmojisAndStickers(this);
         } else if (item.id == messagesPreferencesRow) {
             CherrygramPreferencesNavigator.INSTANCE.createMessages(this);
         } else if (item.id == customChatRow) {
@@ -213,28 +121,9 @@ public class ChatsPreferencesEntry extends UniversalFragment {
             SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getCustomChatForSavedMessages());
 
             listView.adapter.update(true);
-        } else if (item.id == autoQuoteRow) {
-            CherrygramChatsConfig.INSTANCE.setAutoQuoteReplies(!CherrygramChatsConfig.INSTANCE.getAutoQuoteReplies());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getAutoQuoteReplies());
         } else if (item.id == disableSwipeToNextRow) {
             CherrygramChatsConfig.INSTANCE.setDisableSwipeToNext(!CherrygramChatsConfig.INSTANCE.getDisableSwipeToNext());
             SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getDisableSwipeToNext());
-        } else if (item.id == disableVibrationRow) {
-            CherrygramChatsConfig.INSTANCE.setDisableVibration(!CherrygramChatsConfig.INSTANCE.getDisableVibration());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getDisableVibration());
-
-            CGBulletinCreator.INSTANCE.createRestartBulletin(this);
-        } else if (item.id == largePhotosRow) {
-            CherrygramChatsConfig.INSTANCE.setLargePhotos(!CherrygramChatsConfig.INSTANCE.getLargePhotos());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getLargePhotos());
-
-            CGBulletinCreator.INSTANCE.createRestartBulletin(this);
-        } else if (item.id == playVideoOnVolumeBtnRow) {
-            CherrygramChatsConfig.INSTANCE.setPlayVideoOnVolume(!CherrygramChatsConfig.INSTANCE.getPlayVideoOnVolume());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getPlayVideoOnVolume());
-        } else if (item.id == autoPauseVideoRow) {
-            CherrygramChatsConfig.INSTANCE.setAutoPauseVideo(!CherrygramChatsConfig.INSTANCE.getAutoPauseVideo());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getAutoPauseVideo());
         } else if (item.id == notificationSoundRow) {
             showNotificationSoundSelector(() -> {
                 SettingsHelper.updateButtonValue(view, getNotificationSoundValue());
