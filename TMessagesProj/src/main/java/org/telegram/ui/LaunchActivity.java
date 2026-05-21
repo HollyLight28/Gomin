@@ -7274,6 +7274,10 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             if (actionBarLayout == null || actionBarLayout.getFragmentStack().isEmpty()) {
                 return;
             }
+            if (!MessagesController.getGlobalNotificationsSettings().getBoolean("askUpdateContacts", true)) {
+                ContactsController.getInstance(account).syncPhoneBookByAlert((HashMap<String, ContactsController.Contact>) args[1], (Boolean) args[2], (Boolean) args[3], true);
+                return;
+            }
             final int type = (Integer) args[0];
             final HashMap<String, ContactsController.Contact> contactHashMap = (HashMap<String, ContactsController.Contact>) args[1];
             final boolean first = (Boolean) args[2];
@@ -7285,8 +7289,14 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             builder.setTitle(LocaleController.getString(R.string.UpdateContactsTitle));
             builder.setMessage(LocaleController.getString(R.string.UpdateContactsMessage));
             builder.setPositiveButton(LocaleController.getString(R.string.OK), (dialogInterface, i) -> ContactsController.getInstance(account).syncPhoneBookByAlert(contactHashMap, first, schedule, false));
-            builder.setNegativeButton(LocaleController.getString(R.string.Cancel), (dialog, which) -> ContactsController.getInstance(account).syncPhoneBookByAlert(contactHashMap, first, schedule, true));
-            builder.setOnBackButtonListener((dialogInterface, i) -> ContactsController.getInstance(account).syncPhoneBookByAlert(contactHashMap, first, schedule, true));
+            builder.setNegativeButton(LocaleController.getString(R.string.Cancel), (dialog, which) -> {
+                MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askUpdateContacts", false).apply();
+                ContactsController.getInstance(account).syncPhoneBookByAlert(contactHashMap, first, schedule, true);
+            });
+            builder.setOnBackButtonListener((dialogInterface, i) -> {
+                MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askUpdateContacts", false).apply();
+                ContactsController.getInstance(account).syncPhoneBookByAlert(contactHashMap, first, schedule, true);
+            });
             AlertDialog dialog = builder.create();
             fragment.showDialog(dialog);
             dialog.setCanceledOnTouchOutside(false);

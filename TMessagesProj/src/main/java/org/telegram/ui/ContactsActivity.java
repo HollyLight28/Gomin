@@ -1268,12 +1268,13 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
             Activity activity = getParentActivity();
             if (activity != null) {
                 checkPermission = false;
-                if (activity.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED/* ||
+                if (askAboutContacts && activity.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED/* ||
                     activity.checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED*/) {
                     if (activity.shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)/* ||
                         activity.shouldShowRequestPermissionRationale(Manifest.permission.WRITE_CONTACTS)*/) {
                         AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
                             askAboutContacts = param != 0;
+                            MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).apply();
                             if (param == 0) {
                                 return;
                             }
@@ -1311,6 +1312,7 @@ public class ContactsActivity extends BaseFragment implements FactorAnimator.Tar
                 MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts2", false).commit();
                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.contactsPermissionBadgeCheck);
                 askAboutContacts = param != 0;
+                MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).apply();
                 if (param == 0) {
                     return;
                 }
