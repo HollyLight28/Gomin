@@ -462,6 +462,8 @@
     <string name="SP_GhostMode_HideTyping_Desc">No one will see that you are typing, recording voice or uploading files.</string>
     <string name="SP_GhostMode_HideStoryViews">Anonymous stories</string>
     <string name="SP_GhostMode_HideStoryViews_Desc">View stories without appearing in the viewers list.</string>
+    <string name="SP_GhostMode_HideOnline">Hide online status</string>
+    <string name="SP_GhostMode_HideOnline_Desc">Your status will always be shown as "recently".</string>
 
     <string name="SP_DeleteAccount">Delete Telegram account</string>
     <!--Security Preferences-->

@@ -28,6 +28,7 @@ object CherrygramPrivacyConfig {
     var ghostModeReadMessages by sharedPreferences.boolean("SP_GhostModeReadMessages", false)
     var ghostModeHideTyping by sharedPreferences.boolean("SP_GhostModeHideTyping", false)
     var ghostModeHideStoryViews by sharedPreferences.boolean("SP_GhostModeHideStoryViews", false)
+    var ghostModeHideOnline by sharedPreferences.boolean("SP_GhostModeHideOnline", false)
     /** Ghost Mode finish */
 
     /** Passcode lock start */

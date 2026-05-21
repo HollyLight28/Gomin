@@ -65,6 +65,7 @@ public class PrivacyPreferencesEntry extends UniversalFragment {
     private final int ghostModeReadMessagesRow = 10;
     private final int ghostModeHideTypingRow = 11;
     private final int ghostModeHideStoryViewsRow = 12;
+    private final int ghostModeHideOnlineRow = 13;
 
     @Override
     protected CharSequence getTitle() {
@@ -89,6 +90,9 @@ public class PrivacyPreferencesEntry extends UniversalFragment {
         );
         items.add(SettingsHelper.asSwitchCG(ghostModeHideStoryViewsRow, getString(R.string.SP_GhostMode_HideStoryViews), getString(R.string.SP_GhostMode_HideStoryViews_Desc))
                 .setChecked(CherrygramPrivacyConfig.INSTANCE.getGhostModeHideStoryViews())
+        );
+        items.add(SettingsHelper.asSwitchCG(ghostModeHideOnlineRow, getString(R.string.SP_GhostMode_HideOnline), getString(R.string.SP_GhostMode_HideOnline_Desc))
+                .setChecked(CherrygramPrivacyConfig.INSTANCE.getGhostModeHideOnline())
         );
         items.add(UItem.asShadow(null));
 
@@ -129,6 +133,9 @@ public class PrivacyPreferencesEntry extends UniversalFragment {
         } else if (item.id == ghostModeHideStoryViewsRow) {
             CherrygramPrivacyConfig.INSTANCE.setGhostModeHideStoryViews(!CherrygramPrivacyConfig.INSTANCE.getGhostModeHideStoryViews());
             SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getGhostModeHideStoryViews());
+        } else if (item.id == ghostModeHideOnlineRow) {
+            CherrygramPrivacyConfig.INSTANCE.setGhostModeHideOnline(!CherrygramPrivacyConfig.INSTANCE.getGhostModeHideOnline());
+            SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getGhostModeHideOnline());
         } else
         if (item.id == proxySponsorRow) {
             CherrygramPrivacyConfig.INSTANCE.setHideProxySponsor(!CherrygramPrivacyConfig.INSTANCE.getHideProxySponsor());

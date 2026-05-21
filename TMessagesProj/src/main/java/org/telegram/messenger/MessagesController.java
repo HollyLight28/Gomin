@@ -10106,7 +10106,7 @@ public class MessagesController extends BaseController implements NotificationCe
                         }
 
                         TL_account.updateStatus req = new TL_account.updateStatus();
-                        req.offline = false;
+                        req.offline = uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig.INSTANCE.getGhostModeHideOnline();
                         statusRequest = getConnectionsManager().sendRequest(req, (response, error) -> {
                             if (error == null) {
                                 lastStatusUpdateTime = System.currentTimeMillis();
@@ -13907,24 +13907,28 @@ public class MessagesController extends BaseController implements NotificationCe
             markMessageAsRead(messageObject.getDialogId(), messageObject.messageOwner.random_id, Integer.MIN_VALUE);
         } else {
             if (messageObject.messageOwner.peer_id.channel_id != 0) {
-                TLRPC.TL_channels_readMessageContents req = new TLRPC.TL_channels_readMessageContents();
-                req.channel = getInputChannel(messageObject.messageOwner.peer_id.channel_id);
-                if (req.channel == null) {
-                    return;
-                }
-                req.id.add(messageObject.getId());
-                getConnectionsManager().sendRequest(req, (response, error) -> {
-
-                });
-            } else {
-                TLRPC.TL_messages_readMessageContents req = new TLRPC.TL_messages_readMessageContents();
-                req.id.add(messageObject.getId());
-                getConnectionsManager().sendRequest(req, (response, error) -> {
-                    if (error == null) {
-                        TLRPC.TL_messages_affectedMessages res = (TLRPC.TL_messages_affectedMessages) response;
-                        processNewDifferenceParams(-1, res.pts, -1, res.pts_count);
+                if (!uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig.INSTANCE.getGhostModeReadMessages()) {
+                    TLRPC.TL_channels_readMessageContents req = new TLRPC.TL_channels_readMessageContents();
+                    req.channel = getInputChannel(messageObject.messageOwner.peer_id.channel_id);
+                    if (req.channel == null) {
+                        return;
                     }
-                });
+                    req.id.add(messageObject.getId());
+                    getConnectionsManager().sendRequest(req, (response, error) -> {
+
+                    });
+                }
+            } else {
+                if (!uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig.INSTANCE.getGhostModeReadMessages()) {
+                    TLRPC.TL_messages_readMessageContents req = new TLRPC.TL_messages_readMessageContents();
+                    req.id.add(messageObject.getId());
+                    getConnectionsManager().sendRequest(req, (response, error) -> {
+                        if (error == null) {
+                            TLRPC.TL_messages_affectedMessages res = (TLRPC.TL_messages_affectedMessages) response;
+                            processNewDifferenceParams(-1, res.pts, -1, res.pts_count);
+                        }
+                    });
+                }
             }
         }
     }
@@ -13932,24 +13936,28 @@ public class MessagesController extends BaseController implements NotificationCe
     public void markMentionMessageAsRead(int mid, long channelId, long did) {
         getMessagesStorage().markMentionMessageAsRead(-channelId, mid, did);
         if (channelId != 0) {
-            TLRPC.TL_channels_readMessageContents req = new TLRPC.TL_channels_readMessageContents();
-            req.channel = getInputChannel(channelId);
-            if (req.channel == null) {
-                return;
-            }
-            req.id.add(mid);
-            getConnectionsManager().sendRequest(req, (response, error) -> {
-
-            });
-        } else {
-            TLRPC.TL_messages_readMessageContents req = new TLRPC.TL_messages_readMessageContents();
-            req.id.add(mid);
-            getConnectionsManager().sendRequest(req, (response, error) -> {
-                if (error == null) {
-                    TLRPC.TL_messages_affectedMessages res = (TLRPC.TL_messages_affectedMessages) response;
-                    processNewDifferenceParams(-1, res.pts, -1, res.pts_count);
+            if (!uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig.INSTANCE.getGhostModeReadMessages()) {
+                TLRPC.TL_channels_readMessageContents req = new TLRPC.TL_channels_readMessageContents();
+                req.channel = getInputChannel(channelId);
+                if (req.channel == null) {
+                    return;
                 }
-            });
+                req.id.add(mid);
+                getConnectionsManager().sendRequest(req, (response, error) -> {
+
+                });
+            }
+        } else {
+            if (!uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig.INSTANCE.getGhostModeReadMessages()) {
+                TLRPC.TL_messages_readMessageContents req = new TLRPC.TL_messages_readMessageContents();
+                req.id.add(mid);
+                getConnectionsManager().sendRequest(req, (response, error) -> {
+                    if (error == null) {
+                        TLRPC.TL_messages_affectedMessages res = (TLRPC.TL_messages_affectedMessages) response;
+                        processNewDifferenceParams(-1, res.pts, -1, res.pts_count);
+                    }
+                });
+            }
         }
     }
 
