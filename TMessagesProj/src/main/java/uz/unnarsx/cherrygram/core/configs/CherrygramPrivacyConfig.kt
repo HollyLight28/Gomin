@@ -24,6 +24,12 @@ object CherrygramPrivacyConfig {
     var googleAnalytics by sharedPreferences.boolean("SP_GoogleAnalytics", ApplicationLoader.checkPlayServices())
     /** Privacy finish */
 
+    /** Ghost Mode start */
+    var ghostModeReadMessages by sharedPreferences.boolean("SP_GhostModeReadMessages", false)
+    var ghostModeHideTyping by sharedPreferences.boolean("SP_GhostModeHideTyping", false)
+    var ghostModeHideStoryViews by sharedPreferences.boolean("SP_GhostModeHideStoryViews", false)
+    /** Ghost Mode finish */
+
     /** Passcode lock start */
     var hideArchiveFromChatsList by sharedPreferences.boolean("SP_HideArchiveFromChatsList", false)
     var askBiometricsToOpenArchive by sharedPreferences.boolean("SP_AskBiometricsToOpenArchive", false)

@@ -85,7 +85,7 @@ object CGResourcesHelper {
 
     @JvmStatic
     fun getAboutString(): String {
-        return getAppName() + " v" + getCherryVersion() + " (" + getAbiCode() + ")" +
+        return getAppName() + " v" + getCherryVersion() +
                     "\n" +
                     "Based on Telegram v" + BuildVars.BUILD_VERSION_STRING + " (" + getSourceCodeVersion() + ")" +
                     "\n" +

@@ -85,7 +85,6 @@ public class ChatsPreferencesEntry extends UniversalFragment {
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(UItem.asHeader(getString(R.string.AP_Header_Appearance)));
         items.add(UItem.asButton(chatMenuShortcutsRow, R.drawable.msg_list, getString(R.string.CP_ChatMenuShortcuts)));
-        items.add(UItem.asButton(messagesPreferencesRow, R.drawable.msg_discussion, getString(R.string.MessagesSettings)));
         items.add(UItem.asShadow(null));
 
         items.add(SettingsHelper.asSwitchCG(customChatRow, getString(R.string.EP_CustomChat), getString(R.string.EP_CustomChat_Desc))
@@ -114,8 +113,6 @@ public class ChatsPreferencesEntry extends UniversalFragment {
         } else if (item.id == customBackgroundInChatsRow) {
             CherrygramChatsConfig.INSTANCE.setCustomWallpapers(!CherrygramChatsConfig.INSTANCE.getCustomWallpapers());
             SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getCustomWallpapers());
-        } else if (item.id == messagesPreferencesRow) {
-            CherrygramPreferencesNavigator.INSTANCE.createMessages(this);
         } else if (item.id == customChatRow) {
             CherrygramChatsConfig.INSTANCE.setCustomChatForSavedMessages(!CherrygramChatsConfig.INSTANCE.getCustomChatForSavedMessages());
             SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getCustomChatForSavedMessages());

@@ -69,8 +69,8 @@ public class AboutPreferencesEntry extends UniversalFragment {
                 SettingsHelper.asTextDetail(
                         readmeRow,
                         0,
-                        CGResourcesHelper.getAppName() + " " + CGResourcesHelper.getCherryVersion() + " | " + "Telegram " + BuildVars.BUILD_VERSION_STRING,
-                        getString(R.string.CGP_About_Desc)
+                        CGResourcesHelper.getAppName() + " v" + CGResourcesHelper.getCherryVersion(),
+                        "Based on Telegram v" + BuildVars.BUILD_VERSION_STRING
                 )
         );
         items.add(SettingsHelper.asTextDetail(updatesRow, R.drawable.msg_retry_solar, getString(R.string.UP_Category_Updates), getLastCheckUpdateTime()));

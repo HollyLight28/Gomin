@@ -2,8 +2,8 @@
 <resources>
     <!-- by t.me/arsLan-->
     <string name="CG_AppName" translatable="false">Gomin</string>
-    <string name="CG_FollowChannelTitle">Subscribe to the official channel</string>
-    <string name="CG_FollowChannelInfo">Join the channel to stay up to date with all the news and features of Gomin!</string>
+    <string name="CG_FollowChannelTitle">Subscribe to Gomin</string>
+    <string name="CG_FollowChannelInfo">Join our channel to stay up to date with all the news and features of Gomin!</string>
     <string name="CG_DoNotRemindAgain">Don\'t remind again</string>
 
     <!--Telegram screens-->
@@ -454,6 +454,14 @@
     <string name="SP_TestFingerprint_Desc">If fingerprint authentication is already enabled and you do not see the features, try pressing the \"Test Fingerprint\" button to resolve the issue.</string>
     <string name="SP_BiometricUnavailable_Test_Fixed">Fingerprint has been detected successfully!</string>
     <string name="SP_BiometricUnavailable_Test_Wrong_Desc">Try to reboot your device or check system settings.</string>
+
+    <string name="SP_GhostMode_Header">Gomin Ghost</string>
+    <string name="SP_GhostMode_ReadMessages">Invisible read</string>
+    <string name="SP_GhostMode_ReadMessages_Desc">Messages will remain unread for others, but you can read them normally.</string>
+    <string name="SP_GhostMode_HideTyping">Hide typing status</string>
+    <string name="SP_GhostMode_HideTyping_Desc">No one will see that you are typing, recording voice or uploading files.</string>
+    <string name="SP_GhostMode_HideStoryViews">Anonymous stories</string>
+    <string name="SP_GhostMode_HideStoryViews_Desc">View stories without appearing in the viewers list.</string>
 
     <string name="SP_DeleteAccount">Delete Telegram account</string>
     <!--Security Preferences-->

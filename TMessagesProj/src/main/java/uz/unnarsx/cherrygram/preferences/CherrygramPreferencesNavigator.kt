@@ -22,7 +22,6 @@ object CherrygramPreferencesNavigator {
     fun createAppearance(fragment: BaseFragment) = fragment.presentFragment(AppearancePreferencesEntry())
     fun createFoldersPrefs(fragment: BaseFragment) = fragment.presentFragment(FoldersPreferencesEntry())
     fun createTabs(fragment: BaseFragment) = fragment.presentFragment(MainTabsPreferencesEntry())
-    fun createMessagesAndProfiles(fragment: BaseFragment) = fragment.presentFragment(MessagesAndProfilesPreferencesEntry())
 
     fun createChats(fragment: BaseFragment) = fragment.presentFragment(ChatsPreferencesEntry())
     fun createMessages(fragment: BaseFragment) = fragment.presentFragment(MessagesPreferencesEntry())

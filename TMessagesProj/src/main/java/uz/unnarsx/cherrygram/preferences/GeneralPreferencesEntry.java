@@ -12,6 +12,7 @@ import org.telegram.ui.Components.UniversalFragment;
 import java.util.ArrayList;
 
 import org.telegram.messenger.R;
+import uz.unnarsx.cherrygram.core.configs.CherrygramAppearanceConfig;
 import uz.unnarsx.cherrygram.core.configs.CherrygramCoreConfig;
 import uz.unnarsx.cherrygram.core.crashlytics.FirebaseAnalyticsHelper;
 import uz.unnarsx.cherrygram.core.ui.CGBulletinCreator;
@@ -21,6 +22,7 @@ public class GeneralPreferencesEntry extends UniversalFragment {
 
     private final int silenceNonContactsRow = 1;
     private final int hideStoriesRow = 2;
+    private final int showIDRow = 3;
 
     @Override
     protected CharSequence getTitle() {
@@ -47,6 +49,12 @@ public class GeneralPreferencesEntry extends UniversalFragment {
                 .setChecked(CherrygramCoreConfig.INSTANCE.getHideStories())
         );
         items.add(UItem.asShadow(null));
+
+        items.add(UItem.asHeader(getString(R.string.CP_ProfileReplyBackground)));
+        items.add(SettingsHelper.asSwitchCG(showIDRow, getString(R.string.AP_ShowID))
+                .setChecked(CherrygramAppearanceConfig.INSTANCE.getShowIDDC())
+        );
+        items.add(UItem.asShadow(null));
     }
 
     @Override
@@ -59,6 +67,11 @@ public class GeneralPreferencesEntry extends UniversalFragment {
             SettingsHelper.updateCheckState(view, CherrygramCoreConfig.INSTANCE.getHideStories());
 
             CGBulletinCreator.INSTANCE.createRestartBulletin(this);
+        } else if (item.id == showIDRow) {
+            CherrygramAppearanceConfig.INSTANCE.setShowIDDC(!CherrygramAppearanceConfig.INSTANCE.getShowIDDC());
+            SettingsHelper.updateCheckState(view, CherrygramAppearanceConfig.INSTANCE.getShowIDDC());
+
+            parentLayout.rebuildAllFragmentViews(false, false);
         }
     }
 

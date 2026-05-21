@@ -31,6 +31,7 @@ public class CGPreferencesEntry extends UniversalFragment {
 
     private final int generalRow = 1;
     private final int appearanceRow = 2;
+    private final int messagesRow = 13;
     private final int chatsRow = 3;
     private final int cameraRow = 4;
     private final int experimentalRow = 5;
@@ -57,6 +58,7 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(UItem.asHeader(getString(R.string.AP_Header_General)));
         items.add(UItem.asButton(generalRow, R.drawable.msg_settings_solar, getString(R.string.AP_Header_General)));
         items.add(UItem.asButton(appearanceRow, R.drawable.msg_theme_solar, getString(R.string.AP_Header_Appearance)));
+        items.add(UItem.asButton(messagesRow, R.drawable.msg_customize, getString(R.string.MessagesSettings)));
         items.add(UItem.asButton(chatsRow, R.drawable.msg_msgbubble3_solar, getString(R.string.FilterChats)));
         items.add(UItem.asButton(cameraRow, R.drawable.camera_solar, getString(R.string.CP_Category_Camera)));
 //        items.add(UItem.asButton(experimentalRow, R.drawable.msg_fave_solar, getString(R.string.EP_Category_Experimental)));
@@ -78,6 +80,8 @@ public class CGPreferencesEntry extends UniversalFragment {
             CherrygramPreferencesNavigator.INSTANCE.createGeneral(this);
         } else if (item.id == appearanceRow) {
             CherrygramPreferencesNavigator.INSTANCE.createAppearance(this);
+        } else if (item.id == messagesRow) {
+            CherrygramPreferencesNavigator.INSTANCE.createMessages(this);
         } else if (item.id == chatsRow) {
             CherrygramPreferencesNavigator.INSTANCE.createChats(this);
         } else if (item.id == cameraRow) {
@@ -100,6 +104,9 @@ public class CGPreferencesEntry extends UniversalFragment {
             return true;
         } else if (item.id == appearanceRow) {
             AndroidUtilities.addToClipboard("tg://" + DeeplinkHelper.DeepLinksRepo.CG_Appearance);
+            return true;
+        } else if (item.id == messagesRow) {
+            AndroidUtilities.addToClipboard("tg://" + DeeplinkHelper.DeepLinksRepo.CG_Messages);
             return true;
         } else if (item.id == chatsRow) {
             AndroidUtilities.addToClipboard("tg://" + DeeplinkHelper.DeepLinksRepo.CG_Chats);

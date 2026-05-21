@@ -69,7 +69,6 @@ public class AppearancePreferencesEntry extends UniversalFragment {
         items.add(UItem.asHeader(getString(R.string.LocalMiscellaneousCache)));
         items.add(UItem.asButton(foldersRow, R.drawable.msg_folders, getString(R.string.CP_Filters_Header)));
         items.add(UItem.asButton(bottomTabsRow, R.drawable.tabs_reorder, getString(R.string.CP_MainTabs_Header)));
-        items.add(UItem.asButton(messagesAndProfilesRow, R.drawable.msg_customize, getString(R.string.CP_ProfileReplyBackground)));
         items.add(UItem.asShadow(null));
     }
 
@@ -126,8 +125,6 @@ public class AppearancePreferencesEntry extends UniversalFragment {
             CherrygramPreferencesNavigator.INSTANCE.createFoldersPrefs(this);
         } else if (item.id == bottomTabsRow) {
             CherrygramPreferencesNavigator.INSTANCE.createTabs(this);
-        } else if (item.id == messagesAndProfilesRow) {
-            CherrygramPreferencesNavigator.INSTANCE.createMessagesAndProfiles(this);
         }
     }
 

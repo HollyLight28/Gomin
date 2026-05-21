@@ -2,7 +2,7 @@
 <resources>
     <!-- by t.me/arsLan-->
     <string name="CG_AppName" translatable="false">Гомін</string>
-    <string name="CG_FollowChannelTitle">Підписатися на офіційний канал</string>
+    <string name="CG_FollowChannelTitle">Підписатися на Гомін</string>
     <string name="CG_FollowChannelInfo">Долучайтеся до нашого каналу, щоб бути в курсі всіх новин та можливостей Гомін!</string>
     <string name="CG_DoNotRemindAgain">Не нагадувати</string>
     <!--Telegram screens-->

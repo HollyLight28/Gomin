@@ -62,6 +62,10 @@ public class PrivacyPreferencesEntry extends UniversalFragment {
 
     private final int hideArchivedStoriesRow = 1390;
 
+    private final int ghostModeReadMessagesRow = 10;
+    private final int ghostModeHideTypingRow = 11;
+    private final int ghostModeHideStoryViewsRow = 12;
+
     @Override
     protected CharSequence getTitle() {
         FirebaseAnalyticsHelper.INSTANCE.trackEventWithEmptyBundle("privacy_preferences_screen");
@@ -76,6 +80,18 @@ public class PrivacyPreferencesEntry extends UniversalFragment {
 
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
+        items.add(UItem.asHeader(getString(R.string.SP_GhostMode_Header)));
+        items.add(SettingsHelper.asSwitchCG(ghostModeReadMessagesRow, getString(R.string.SP_GhostMode_ReadMessages), getString(R.string.SP_GhostMode_ReadMessages_Desc))
+                .setChecked(CherrygramPrivacyConfig.INSTANCE.getGhostModeReadMessages())
+        );
+        items.add(SettingsHelper.asSwitchCG(ghostModeHideTypingRow, getString(R.string.SP_GhostMode_HideTyping), getString(R.string.SP_GhostMode_HideTyping_Desc))
+                .setChecked(CherrygramPrivacyConfig.INSTANCE.getGhostModeHideTyping())
+        );
+        items.add(SettingsHelper.asSwitchCG(ghostModeHideStoryViewsRow, getString(R.string.SP_GhostMode_HideStoryViews), getString(R.string.SP_GhostMode_HideStoryViews_Desc))
+                .setChecked(CherrygramPrivacyConfig.INSTANCE.getGhostModeHideStoryViews())
+        );
+        items.add(UItem.asShadow(null));
+
         items.add(UItem.asHeader(getString(R.string.SP_Header_Privacy)));
         items.add(SettingsHelper.asSwitchCG(googleAnalyticsRow, getString(R.string.SP_GoogleAnalytics), getString(R.string.SP_GoogleAnalytics_Desc))
                 .setChecked(CherrygramPrivacyConfig.INSTANCE.getGoogleAnalytics())
@@ -104,6 +120,16 @@ public class PrivacyPreferencesEntry extends UniversalFragment {
 
     @Override
     protected void onClick(UItem item, View view, int position, float x, float y) {
+        if (item.id == ghostModeReadMessagesRow) {
+            CherrygramPrivacyConfig.INSTANCE.setGhostModeReadMessages(!CherrygramPrivacyConfig.INSTANCE.getGhostModeReadMessages());
+            SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getGhostModeReadMessages());
+        } else if (item.id == ghostModeHideTypingRow) {
+            CherrygramPrivacyConfig.INSTANCE.setGhostModeHideTyping(!CherrygramPrivacyConfig.INSTANCE.getGhostModeHideTyping());
+            SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getGhostModeHideTyping());
+        } else if (item.id == ghostModeHideStoryViewsRow) {
+            CherrygramPrivacyConfig.INSTANCE.setGhostModeHideStoryViews(!CherrygramPrivacyConfig.INSTANCE.getGhostModeHideStoryViews());
+            SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getGhostModeHideStoryViews());
+        } else
         if (item.id == proxySponsorRow) {
             CherrygramPrivacyConfig.INSTANCE.setHideProxySponsor(!CherrygramPrivacyConfig.INSTANCE.getHideProxySponsor());
             SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getHideProxySponsor());

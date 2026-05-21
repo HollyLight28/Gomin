@@ -117,7 +117,7 @@ public class DeeplinkHelper {
                     return;
                 }
                 case DeepLinksRepo.CG_Messages_And_Profiles -> {
-                    CherrygramPreferencesNavigator.INSTANCE.createMessagesAndProfiles(fragment);
+                    CherrygramPreferencesNavigator.INSTANCE.createGeneral(fragment);
                     return;
                 }
                 case DeepLinksRepo.CG_Premium -> {

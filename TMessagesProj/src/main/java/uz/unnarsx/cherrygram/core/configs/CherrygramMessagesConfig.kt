@@ -36,15 +36,15 @@ object CherrygramMessagesConfig {
 
     /** Appearance start */
     /** Message menu start */
-    var blurMessageMenuBackground by sharedPreferences.boolean("CP_BlurMessageMenuBackground", false)
+    var blurMessageMenuBackground by sharedPreferences.boolean("CP_BlurMessageMenuBackground", true)
     var msgMenuUnifiedScroll by sharedPreferences.boolean("CP_MsgMenuUnifiedScrollForce", true)
     var msgMenuAutoScroll by sharedPreferences.boolean("CP_MsgMenuAutoScroll", true)
     var msgMenuFixedHeight by sharedPreferences.boolean("CP_MsgMenuFixedHeightForce", true)
-    var blurMessageMenuItems by sharedPreferences.boolean("CP_BlurMessageMenuItems", false)
-    var msgMenuNativeBlur by sharedPreferences.boolean("CP_MsgMenuNativeBlur", Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+    var blurMessageMenuItems by sharedPreferences.boolean("CP_BlurMessageMenuItems", true)
+    var msgMenuNativeBlur by sharedPreferences.boolean("CP_MsgMenuNativeBlur", true)
     /** Message menu items start */
     var showSaveForNotifications by sharedPreferences.boolean("CP_ShowSaveForNotifications", true)
-    var showGemini by sharedPreferences.boolean("CP_ShowGemini", GeminiButtonsLayout.geminiButtonsVisible())
+    var showGemini by sharedPreferences.boolean("CP_ShowGemini", true)
     var showReply by sharedPreferences.boolean("CP_ShowReply", true)
     var showSaveToGallery by sharedPreferences.boolean("CP_ShowSaveToGallery", true)
     var showCopyPhoto by sharedPreferences.boolean("CP_ShowCopyPhoto", true)
@@ -52,16 +52,16 @@ object CherrygramMessagesConfig {
     var showSaveToDownloads by sharedPreferences.boolean("CP_ShowSaveToDownloads", true)
     var showShare by sharedPreferences.boolean("CP_ShowShare", true)
     var showClearFromCache by sharedPreferences.boolean("CP_ShowClearFromCache", true)
-    var showForward by sharedPreferences.boolean("CP_ShowForward", false)
-    var showForwardWoAuthorship by sharedPreferences.boolean("CP_ShowForward_WO_Authorship", false)
+    var showForward by sharedPreferences.boolean("CP_ShowForward", true)
+    var showForwardWoAuthorship by sharedPreferences.boolean("CP_ShowForward_WO_Authorship", true)
     var showViewHistory by sharedPreferences.boolean("CP_ShowViewHistory", true)
-    var showSaveMessage by sharedPreferences.boolean("CP_ShowSaveMessage", false)
+    var showSaveMessage by sharedPreferences.boolean("CP_ShowSaveMessage", true)
     var showReport by sharedPreferences.boolean("CP_ShowReport", true)
 
     var showJSON by sharedPreferences.boolean("CP_ShowJSON", false)
-    var jacksonJSON_Provider by sharedPreferences.boolean("CP_JacksonJSON_Provider", Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+    var jacksonJSON_Provider by sharedPreferences.boolean("CP_JacksonJSON_Provider", true)
 
-    var msgMenuItemsCompactView by sharedPreferences.boolean("CP_MsgMenuItemsCompactView", false)
+    var msgMenuItemsCompactView by sharedPreferences.boolean("CP_MsgMenuItemsCompactView", true)
     /** Message menu items finish */
     /** Message menu finish */
 
@@ -74,11 +74,11 @@ object CherrygramMessagesConfig {
 
     /** Direct share start */
     var shareDrawStoryButton by sharedPreferences.boolean("CP_ShareDrawStoryButton", true)
-    var usersDrawShareButton by sharedPreferences.boolean("CP_UsersDrawShareButton", false)
-    var supergroupsDrawShareButton by sharedPreferences.boolean("CP_SupergroupsDrawShareButton", false)
+    var usersDrawShareButton by sharedPreferences.boolean("CP_UsersDrawShareButton", true)
+    var supergroupsDrawShareButton by sharedPreferences.boolean("CP_SupergroupsDrawShareButton", true)
     var channelsDrawShareButton by sharedPreferences.boolean("CP_ChannelsDrawShareButton", true)
     var botsDrawShareButton by sharedPreferences.boolean("CP_BotsDrawShareButton", true)
-    var stickersDrawShareButton by sharedPreferences.boolean("CP_StickersDrawShareButton", false)
+    var stickersDrawShareButton by sharedPreferences.boolean("CP_StickersDrawShareButton", true)
     /** Direct share finish */
 
     var hideStickerTime by sharedPreferences.boolean("CP_TimeOnStick", false)
@@ -104,7 +104,7 @@ object CherrygramMessagesConfig {
     const val LEFT_BUTTON_SAVE_MESSAGE= 2
     const val LEFT_BUTTON_DIRECT_SHARE = 3
     const val LEFT_BUTTON_FORWARD_WO_CAPTION = 4
-    var leftBottomButton by sharedPreferences.int("CP_LeftBottomButtonAction", LEFT_BUTTON_FORWARD_WO_AUTHORSHIP)
+    var leftBottomButton by sharedPreferences.int("CP_LeftBottomButtonAction", LEFT_BUTTON_REPLY)
 
     const val DOUBLE_TAP_ACTION_NONE = 0
     const val DOUBLE_TAP_ACTION_REACTION = 1
@@ -122,7 +122,7 @@ object CherrygramMessagesConfig {
     const val MESSAGE_SLIDE_ACTION_TRANSLATE_GEMINI = 4
     var messageSlideAction by sharedPreferences.int("CP_MessageSlideAction", MESSAGE_SLIDE_ACTION_REPLY)
 
-    var deleteForAll by sharedPreferences.boolean("CP_DeleteForAll", false)
+    var deleteForAll by sharedPreferences.boolean("CP_DeleteForAll", true)
     /** Actions finish */
 
     /** Telegram Premium start */

@@ -59,20 +59,15 @@ public class MessagesPreferencesEntry extends UniversalFragment {
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         items.add(UItem.asHeader(getString(R.string.AP_Header_Appearance)));
-        items.add(UItem.asButton(messageMenuRow, R.drawable.msg_list, getString(R.string.CP_MessageMenu)));
-        items.add(UItem.asButton(messageSizeRow, R.drawable.msg_photo_settings, getString(R.string.CP_Messages_Size)));
-        items.add(UItem.asButton(directShareRow, R.drawable.msg_share, getString(R.string.DirectShare)));
         items.add(SettingsHelper.asSwitchCG(hideTimeOnStickersRow, getString(R.string.CP_TimeOnStick))
                 .setChecked(CherrygramMessagesConfig.INSTANCE.getHideStickerTime())
         );
         items.add(SettingsHelper.asSwitchCG(showForwardDateRow, getString(R.string.CP_ForwardMsgDate))
                 .setChecked(CherrygramMessagesConfig.INSTANCE.getMsgForwardDate())
         );
-        items.add(SettingsHelper.asSwitchCG(pencilIconForEditedRow, getString(R.string.AP_ShowPencilIcon))
-                .setChecked(CherrygramMessagesConfig.INSTANCE.getShowPencilIcon())
-        );
         items.add(UItem.asShadow(null));
 
+        items.add(UItem.asHeader(getString(R.string.CP_GeminiAI_Header)));
         items.add(UItem.asButton(geminiSettingsRow, R.drawable.magic_stick_solar, getString(R.string.CP_GeminiAI_Header)));
         items.add(UItem.asButton(voiceTranscriptionRow, getString(R.string.CP_GeminiAI_VoiceTranscriptionProvider), getTranscriptionProviderValue()));
         items.add(UItem.asShadow(null));
@@ -82,24 +77,6 @@ public class MessagesPreferencesEntry extends UniversalFragment {
         items.add(UItem.asButton(leftBottomBtnRow, getString(R.string.CP_LeftBottomButtonAction), getLeftBottomButtonValue()));
         items.add(UItem.asButton(doubleTapRow, getString(R.string.CP_DoubleTapAction), getDoubleTapActionValue()));
         items.add(UItem.asButton(slideActionRow, getString(R.string.CG_MsgSlideAction), getSlideActionValue()));
-        items.add(SettingsHelper.asSwitchCG(deleteForAllRow, getString(R.string.CP_DeleteForAll), getString(R.string.CP_DeleteForAll_Desc))
-                .setChecked(CherrygramMessagesConfig.INSTANCE.getDeleteForAll())
-        );
-        items.add(UItem.asShadow(null));
-
-        items.add(UItem.asHeader(getString(R.string.TelegramPremium)));
-        items.add(SettingsHelper.asSwitchCG(reactionsOverlayRow, getString(R.string.CP_DisableReactionsOverlay), getString(R.string.CP_DisableReactionsOverlay_Desc))
-                .setChecked(CherrygramMessagesConfig.INSTANCE.getDisableReactionsOverlay())
-        );
-        items.add(SettingsHelper.asSwitchCG(reactionAnimationRow, getString(R.string.CP_DisableReactionAnim), getString(R.string.CP_DisableReactionAnim_Desc))
-                .setChecked(CherrygramMessagesConfig.INSTANCE.getDisableReactionAnim())
-        );
-        items.add(SettingsHelper.asSwitchCG(tapsOnPremiumStickersRow, getString(R.string.CP_DisablePremStickAnim), getString(R.string.CP_DisablePremStickAnim_Desc))
-                .setChecked(CherrygramMessagesConfig.INSTANCE.getDisablePremStickAnim())
-        );
-        items.add(SettingsHelper.asSwitchCG(premiumStickersAutoplayRow, getString(R.string.CP_DisablePremStickAutoPlay), getString(R.string.CP_DisablePremStickAutoPlay_Desc))
-                .setChecked(CherrygramMessagesConfig.INSTANCE.getDisablePremStickAutoPlay())
-        );
         items.add(UItem.asShadow(null));
     }
 
