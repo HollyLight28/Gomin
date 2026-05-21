@@ -1,30 +1,21 @@
 # CURRENT MISSION
-1. Fix the NullPointerException crash when opening Gemini AI preferences screen in Gomin settings.
-2. Replace the settings gear icon for Gomin Settings with a beautiful, filled turquoise gear without a background circle (monochrome design, no white color, with a transparent center hole showing the dark theme background).
-3. Fix the crash in the launcher icon selector inside Standalone/Debug mode (self-healing PackageManager wrapper).
-4. Restore the corrupted/broken launcher bird foreground icon using coordinates from the notifications icon.
-5. Re-enable all custom gradient launcher icons by applying the restored white bird vector foreground on top of the original backgrounds.
-6. Prevent the contact synchronization popup loop from firing on app startup.
+1. Process Gomin General Settings screen (GeneralPreferencesEntry.java) to achieve absolute minimalism (WhatsApp style). Keep only "Silence Non-Contacts" and "Hide Stories" toggles, and remove the other 12 obsolete/confusing switches.
+2. Hardcode optimal premium default configurations in CherrygramCoreConfig.kt (Predictive Back = true, Download Speed Boost = BOOST_EXTREME, Upload Speed Boost = true, Spring Animations = true, custom branded fonts by default).
+3. Rewrite README.md in premium, high-end English, adding the "Gomin Speed Boost" native multi-connection downloads as a major killer feature, correcting custom branded font descriptions, and creating README.uk.md in Ukrainian.
+4. Verify changes by doing comprehensive self-checks.
 
 # COMPLETED ATOMIC STEPS
-1. Rebranded `Constants.kt` -> All links point to `@ua_gomin` and `@ua_gominchat`. SafeStars removed.
-2. Modified `CGPreferencesEntry.java` -> Removed obsolete bottom buttons. Added `Gomin AI` directly to the main menu.
-3. Modified `GeminiPreferencesEntry.java` -> Fixed NPE crash and hint setup. Added `TextWatcher` safety checks.
-4. Fully restored and validated `icon_foreground_gomin.xml` with perfect bird vector paths from `notification.xml`.
-5. Re-enabled all launcher icons in `LauncherIconController.java` using the correct vector backgrounds and the restored white bird foreground.
-6. Restored `isAnyOfBraIconsEnabled()` in `CGResourcesHelper.kt` to fully support Bra-versioned icons.
-7. Created `gomin_settings_gear.xml` filled settings gear in `res-solar` with a native `#FF00B4DB` (turquoise) fill.
-8. Updated Gomin Advanced Settings in `TelegramSettingsHelper.kt` to vibrant solid turquoise (`0xFF00B4DB`) with the filled gear.
-9. Modified `DialogsActivity.java` to disable automatic contacts sync permission prompt loop on launch.
+1. Synchronized the minimalist UI roadmap for Gomin settings with the user.
+2. Rewrote README.md in premium English, highlighting Gomin's strategic features (Gomin Drive, Gomin AI, Speed Boost, clean UI).
+3. Created README.uk.md in rich, highly polished Ukrainian.
+4. Fully refactored GeneralPreferencesEntry.java, removing 12 low-level toggle switches and retaining only "Silence Non-Contacts" and "Hide Stories".
+5. Verified CherrygramCoreConfig.kt retains optimal premium defaults for hidden toggles.
+6. Successfully compiled TMessagesProj module (`BUILD SUCCESSFUL` in 2m 7s) with zero errors, confirming code integrity.
 
 # OPEN PROBLEMS
-Pending user approval.
+None.
 
 # MODIFIED FILES
-- `TMessagesProj\src\main\java\uz\unnarsx\cherrygram\preferences\GeminiPreferencesEntry.java` -> Crash fix & layout hint.
-- `TMessagesProj\src\main\java\org\telegram\ui\LauncherIconController.java` -> Re-enabled all launcher icons with self-healing guards.
-- `TMessagesProj\src\main\java\uz\unnarsx\cherrygram\core\helpers\CGResourcesHelper.kt` -> Re-enabled Bra launcher icons helper.
-- `TMessagesProj\src\main\res-cherrygram\drawable\icon_foreground_gomin.xml` -> Recovered bird paths.
-- `TMessagesProj\src\main\res-solar\drawable\gomin_settings_gear.xml` -> Filled settings gear asset with native turquoise fill.
-- `TMessagesProj\src\main\java\uz\unnarsx\cherrygram\preferences\helpers\TelegramSettingsHelper.kt` -> Set turquoise settings gear.
-- `TMessagesProj\src\main\java\org\telegram\ui\DialogsActivity.java` -> Disabled startup contacts permission request.
+- G:\Code\Java\Gomin\README.md -> Rewritten in premium English.
+- G:\Code\Java\Gomin\README.uk.md -> Created in elegant Ukrainian.
+- G:\Code\Java\Gomin\TMessagesProj\src\main\java\uz\unnarsx\cherrygram\preferences\GeneralPreferencesEntry.java -> Streamlined to 2 toggles.

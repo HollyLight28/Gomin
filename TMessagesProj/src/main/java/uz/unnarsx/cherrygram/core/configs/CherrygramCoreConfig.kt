@@ -61,7 +61,7 @@ object CherrygramCoreConfig: CoroutineScope by CoroutineScope(
     var springAnimation by sharedPreferences.int("CG_SpringAnimation", ANIMATION_SPRING)
 
     var actionbarCrossfade by sharedPreferences.boolean("CG_ActionbarCrossfade", true)
-    var predictiveBack by sharedPreferences.boolean("CG_PredictiveBack", false)
+    var predictiveBack by sharedPreferences.boolean("CG_PredictiveBack", true)
     /** Animations finish */
 
     /** Notifications start */
@@ -96,9 +96,9 @@ object CherrygramCoreConfig: CoroutineScope by CoroutineScope(
     const val BOOST_NONE = 0
     const val BOOST_AVERAGE = 1
     const val BOOST_EXTREME = 2
-    var downloadSpeedBoost by sharedPreferences.int("EP_DownloadSpeedBoost", BOOST_NONE)
+    var downloadSpeedBoost by sharedPreferences.int("EP_DownloadSpeedBoost", BOOST_EXTREME)
 
-    var uploadSpeedBoost by sharedPreferences.boolean("EP_UploadSpeedBoost", false)
+    var uploadSpeedBoost by sharedPreferences.boolean("EP_UploadSpeedBoost", true)
     var slowNetworkMode by sharedPreferences.boolean("EP_SlowNetworkMode", false)
     /** Network finish */
 
