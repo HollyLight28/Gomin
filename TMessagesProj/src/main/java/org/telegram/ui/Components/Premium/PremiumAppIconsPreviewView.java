@@ -157,10 +157,17 @@ public class PremiumAppIconsPreviewView extends FrameLayout implements PagerHead
             drawable.onDraw(canvas);
             canvas.restore();
             invalidate();
+
+            canvas.save();
             AndroidUtilities.rectTmp.set(0, 0, getWidth(), getHeight());
+            android.graphics.Path clipPath = new android.graphics.Path();
+            clipPath.addRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.dp(AppIconsSelectorCell.ICONS_ROUND_RADIUS), AndroidUtilities.dp(AppIconsSelectorCell.ICONS_ROUND_RADIUS), android.graphics.Path.Direction.CW);
+            canvas.clipPath(clipPath);
+
             canvas.drawRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.dp(AppIconsSelectorCell.ICONS_ROUND_RADIUS), AndroidUtilities.dp(AppIconsSelectorCell.ICONS_ROUND_RADIUS), paint);
 
             super.draw(canvas);
+            canvas.restore();
         }
     }
 }
