@@ -200,7 +200,7 @@ public class ConnectionsManager extends BaseController {
     public ConnectionsManager(int instance) {
         super(instance);
         connectionState = native_getConnectionState(currentAccount);
-        String deviceModel;
+        String deviceModel = "Gomin Android";
         String systemLangCode;
         String langCode;
         String appVersion;
@@ -215,7 +215,6 @@ public class ConnectionsManager extends BaseController {
         try {
             systemLangCode = LocaleController.getSystemLocaleStringIso639().toLowerCase();
             langCode = LocaleController.getLocaleStringIso639().toLowerCase();
-            deviceModel = "Gomin Android";
             PackageInfo pInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
             appVersion = pInfo.versionName + " (" + pInfo.versionCode + ")";
             if (BuildVars.DEBUG_PRIVATE_VERSION) {
@@ -227,7 +226,6 @@ public class ConnectionsManager extends BaseController {
         } catch (Exception e) {
             systemLangCode = "en";
             langCode = "";
-            deviceModel = "Gomin Android";
             appVersion = "App version unknown";
             systemVersion = "SDK " + Build.VERSION.SDK_INT;
         }
