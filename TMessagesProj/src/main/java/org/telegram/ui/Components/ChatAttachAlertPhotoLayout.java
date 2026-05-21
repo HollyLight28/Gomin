@@ -3448,7 +3448,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
         if (cameraView != null) {
             if (!cameraOpened) {
                 cameraView.setTranslationX(cameraViewLocation[0]);
-                // cameraView.setTranslationY(cameraViewLocation[1] + currentPanTranslationY);
+                cameraView.setTranslationY(cameraViewLocation[1] + currentPanTranslationY);
             }
             int finalWidth = itemSize;
             int finalHeight = itemSize * 2 + dp(GAP);
