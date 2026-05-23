@@ -477,6 +477,28 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         setTitle(value, rightDrawable, false);
     }
 
+    public void setHeaderRound(float radius) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, -AndroidUtilities.dp(radius), view.getWidth(), view.getHeight(), AndroidUtilities.dp(radius));
+                }
+            });
+            setClipToOutline(true);
+        }
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (lastTitle != null && (lastTitle.toString().equalsIgnoreCase("Гомін") || lastTitle.toString().equalsIgnoreCase("Gomin"))) {
+            setHeaderRound(20);
+        } else {
+            setHeaderRound(0);
+        }
+    }
+
     public void setTitle(CharSequence value, Drawable rightDrawable, boolean gilroy) {
         if (value != null && titleTextView[0] == null) {
             createTitleTextView(0, gilroy);
@@ -485,8 +507,10 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
             titleTextView[0].setVisibility(value != null && !isSearchFieldVisible ? VISIBLE : INVISIBLE);
             titleTextView[0].setText(lastTitle = value);
             if (value != null && (value.toString().equalsIgnoreCase("Гомін") || value.toString().equalsIgnoreCase("Gomin"))) {
-                titleTextView[0].setTextSize(22); // Збільшуємо шрифт
-                titleTextView[0].setLetterSpacing(0.05f); // Додаємо легку відстань між букваks
+                titleTextView[0].setTextSize(22);
+                titleTextView[0].setLetterSpacing(0.05f);
+                titleTextView[0].setAlpha(0f);
+                titleTextView[0].animate().alpha(1f).setDuration(400).start(); // Плавна поява
             } else {
                 titleTextView[0].setTextSize(20);
                 titleTextView[0].setLetterSpacing(0f);

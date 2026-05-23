@@ -5,6 +5,8 @@
 4. Implement a custom black-red patriotic "ОУН-УПА" gradient icon with a white outline and white bird.
 5. Create and integrate a premium black bird foreground vector for the clean white icon (`WHITE_CHERRY`) to solve the low-contrast invisible bird issue.
 6. Synchronize in-app icon changing menu scales with real launcher XML parameters for pixel-perfect parity.
+7. Secure local keystore signing configuration and GitHub Actions workflows, resolving security alerts and enabling smooth seamless updates.
+8. Compile and distribute a local standalone release build (copied directly to desktop).
 
 # COMPLETED ATOMIC STEPS
 1. Set `disableAttachCamera` to `true` by default in `CherrygramCameraConfig.kt` to hide the buggy inline preview in the photo grid and default to the clean bottom bar camera button.
@@ -16,6 +18,11 @@
 7. Created `icon_background_black_red.xml` (revolutionary black-red gradient background with white outline) and assigned it to `VIOLET_SUNSET_CHERRY`.
 8. Updated `cg_strings.xml` to rename the Violet Sunset selector label to "ОУН-УПА".
 9. Designed and implemented premium vector background gradients with thick white outlines (`strokeWidth="3.5"`, `radius="74"`) in `icon_background_default.xml` (Telegram blue), `icon_background_dark.xml` (charcoal dark), `icon_background_white.xml` (clean white + gray ring), `icon_background_aqua.xml` (aqua blue), `icon_background_lavanda.xml` (lavender), `icon_background_sunset.xml` (sunset), and integrated them with adaptive icon XMLs in `res-cherrygram/mipmap-anydpi-v26/` at `25%` inset.
+10. Created `keystore.properties` in root and added it to `.gitignore` to securely store local signing passwords.
+11. Refactored `TMessagesProj_AppStandalone/build.gradle` to dynamically load signing configurations from `keystore.properties` or environment variables fallback.
+12. Updated `.github/workflows/build.yml` to inject signing variables (`SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`) into the Gradle build task using GitHub Secrets.
+13. Verified compilation successfully with `.\gradlew :TMessagesProj:compileDebugJavaWithJavac` (BUILD SUCCESSFUL in 3m 59s).
+14. Committed and pushed all changes cleanly to GitHub (branch `main`).
 
 # OPEN PROBLEMS
 None.
@@ -42,4 +49,7 @@ None.
 - `TMessagesProj/src/main/res-cherrygram/mipmap-anydpi-v26/ic_cg_icon_aqua.xml`
 - `TMessagesProj/src/main/res-cherrygram/mipmap-anydpi-v26/ic_cg_icon_lavanda.xml`
 - `TMessagesProj/src/main/res-cherrygram/mipmap-anydpi-v26/ic_cg_icon_violet_sunset.xml`
-
+- `keystore.properties` [NEW, ignored]
+- `.gitignore`
+- `TMessagesProj_AppStandalone/build.gradle`
+- `.github/workflows/build.yml`

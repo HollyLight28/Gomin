@@ -313,9 +313,9 @@ public class SharedConfig {
     public static boolean allowBigEmoji;
     public static boolean useSystemEmoji;
     public static boolean useSystemBoldFont;
-    public static int fontSize = 18;
+    public static int fontSize = 17;
     public static boolean fontSizeIsDefault;
-    public static int bubbleRadius = 17;
+    public static int bubbleRadius = 12;
     public static int ivFontSize = 16;
     public static boolean proxyRotationEnabled;
     public static int proxyRotationTimeout;

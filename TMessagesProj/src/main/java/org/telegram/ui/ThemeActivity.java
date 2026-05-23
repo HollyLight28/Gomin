@@ -305,6 +305,19 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
         private TextPaint textPaint;
         private int lastWidth;
 
+        private int getFontSize(float progress) {
+            int step = Math.round(progress * 2);
+            if (step == 0) return 16;
+            if (step == 1) return 17;
+            return 19;
+        }
+
+        private float getFontProgress(int size) {
+            if (size <= 16) return 0f;
+            if (size == 17) return 0.5f;
+            return 1f;
+        }
+
         public TextSizeCell(Context context) {
             super(context);
 
@@ -315,11 +328,11 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
 
             sizeBar = new SeekBarView(context);
             sizeBar.setReportChanges(true);
-            sizeBar.setSeparatorsCount(endFontSize - startFontSize + 1);
+            sizeBar.setSeparatorsCount(3);
             sizeBar.setDelegate(new SeekBarView.SeekBarViewDelegate() {
                 @Override
                 public void onSeekBarDrag(boolean stop, float progress) {
-                    setFontSize(Math.round(startFontSize + (endFontSize - startFontSize) * progress));
+                    setFontSize(getFontSize(progress));
                 }
 
                 @Override
@@ -328,12 +341,12 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
 
                 @Override
                 public CharSequence getContentDescription() {
-                    return String.valueOf(Math.round(startFontSize + (endFontSize - startFontSize) * sizeBar.getProgress()));
+                    return String.valueOf(getFontSize(sizeBar.getProgress()));
                 }
 
                 @Override
                 public int getStepsCount() {
-                    return endFontSize - startFontSize;
+                    return 2;
                 }
             });
             sizeBar.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
@@ -357,7 +370,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             int width = MeasureSpec.getSize(widthMeasureSpec);
             if (lastWidth != width) {
-                sizeBar.setProgress((SharedConfig.fontSize - startFontSize) / (float) (endFontSize - startFontSize));
+                sizeBar.setProgress(getFontProgress(SharedConfig.fontSize));
                 lastWidth = width;
             }
         }
@@ -663,9 +676,9 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
             themeListRow2 = rowCount++;
             themeInfoRow = rowCount++;
 
-            bubbleRadiusHeaderRow = rowCount++;
-            bubbleRadiusRow = rowCount++;
-            bubbleRadiusInfoRow = rowCount++;
+//            bubbleRadiusHeaderRow = rowCount++;
+//            bubbleRadiusRow = rowCount++;
+//            bubbleRadiusInfoRow = rowCount++;
 
             chatListHeaderRow = rowCount++;
             chatListRow = rowCount++;

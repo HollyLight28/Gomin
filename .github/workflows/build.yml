@@ -35,6 +35,10 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build Gomin (Universal APK + Release)
+      env:
+        SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+        SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+        SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
       run: |
         ./gradlew :TMessagesProj_AppStandalone:assembleAfatStandalone \
           --no-daemon \
