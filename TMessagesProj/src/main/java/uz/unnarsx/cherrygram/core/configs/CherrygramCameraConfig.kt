@@ -32,7 +32,7 @@ object CherrygramCameraConfig {
     /** Camera type finish */
 
     /** Camera start */
-    var disableAttachCamera by sharedPreferences.boolean("CP_DisableAttachCam", false)
+    var disableAttachCamera by sharedPreferences.boolean("CP_DisableAttachCam", true)
     var useDualCamera by sharedPreferences.boolean("CP_UseDualCameraX", false)
 
     const val Camera16to9 = 0

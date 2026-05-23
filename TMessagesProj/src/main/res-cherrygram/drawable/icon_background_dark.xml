@@ -22,4 +22,10 @@
             </gradient>
         </aapt:attr>
     </path>
+    <!-- White Circle Ring like Telegram -->
+    <path
+        android:pathData="M 96, 96 m -74, 0 a 74,74 0 1,0 148,0 a 74,74 0 1,0 -148,0"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.5"
+        android:fillColor="#00000000" />
 </vector>

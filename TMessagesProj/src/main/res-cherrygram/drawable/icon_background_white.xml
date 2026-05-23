@@ -6,4 +6,10 @@
     <path
         android:fillColor="#FFFFFFFF"
         android:pathData="M0 0H192V192H0z"/>
+    <!-- Graphite Gray Circle Ring for White background -->
+    <path
+        android:pathData="M 96, 96 m -74, 0 a 74,74 0 1,0 148,0 a 74,74 0 1,0 -148,0"
+        android:strokeColor="#FFCCCCCC"
+        android:strokeWidth="3.5"
+        android:fillColor="#00000000" />
 </vector>

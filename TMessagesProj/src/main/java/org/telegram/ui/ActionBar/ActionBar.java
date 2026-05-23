@@ -484,6 +484,13 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         if (titleTextView[0] != null) {
             titleTextView[0].setVisibility(value != null && !isSearchFieldVisible ? VISIBLE : INVISIBLE);
             titleTextView[0].setText(lastTitle = value);
+            if (value != null && (value.toString().equalsIgnoreCase("Гомін") || value.toString().equalsIgnoreCase("Gomin"))) {
+                titleTextView[0].setTextSize(22); // Збільшуємо шрифт
+                titleTextView[0].setLetterSpacing(0.05f); // Додаємо легку відстань між букваks
+            } else {
+                titleTextView[0].setTextSize(20);
+                titleTextView[0].setLetterSpacing(0f);
+            }
             if (UserConfig.getInstance(UserConfig.selectedAccount).isPremium()) {
                 if (attached && lastRightDrawable instanceof AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) {
                     ((AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) lastRightDrawable).setParentView(null);

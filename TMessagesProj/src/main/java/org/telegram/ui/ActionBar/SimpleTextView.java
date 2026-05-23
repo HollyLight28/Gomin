@@ -138,6 +138,14 @@ public class SimpleTextView extends View implements Drawable.Callback {
 
     private Layout.Alignment mAlignment = Layout.Alignment.ALIGN_NORMAL;
 
+    public void setLetterSpacing(float letterSpacing) {
+        if (textPaint.getLetterSpacing() == letterSpacing) {
+            return;
+        }
+        textPaint.setLetterSpacing(letterSpacing);
+        recreateLayoutMaybe();
+    }
+
     public void setEmojiColor(int color) {
         emojiStackColorFilter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
     }

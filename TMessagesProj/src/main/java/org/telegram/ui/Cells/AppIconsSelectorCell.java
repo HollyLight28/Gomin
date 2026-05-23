@@ -348,7 +348,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
             canvas.restore();
 
             if (foreground != null) {
-                int inset = (int)(getWidth() * 0.22f);
+                int inset = (int)(getWidth() * 0.25f);
                 foreground.setBounds(inset - outerPadding, inset - outerPadding, getWidth() - inset + outerPadding, getHeight() - inset + outerPadding);
 
                 canvas.save();

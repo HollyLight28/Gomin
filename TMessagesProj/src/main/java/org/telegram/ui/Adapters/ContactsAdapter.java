@@ -385,25 +385,7 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
             view = new LetterSectionCell(mContext);
         }
         LetterSectionCell cell = (LetterSectionCell) view;
-        if (sortType == SORT_TYPE_BY_TIME || disableSections || isEmpty) {
-            cell.setLetter("");
-        } else {
-            if (onlyUsers != 0 && !isAdmin) {
-                if (section < sortedUsersSectionsArray.size()) {
-                    cell.setLetter(sortedUsersSectionsArray.get(section));
-                } else {
-                    cell.setLetter("");
-                }
-            } else {
-                if (section == 0) {
-                    cell.setLetter("");
-                } else if (section - 1 < sortedUsersSectionsArray.size()) {
-                    cell.setLetter(sortedUsersSectionsArray.get(section - 1));
-                } else {
-                    cell.setLetter("");
-                }
-            }
-        }
+        cell.setLetter("");
         return view;
     }
 
@@ -532,7 +514,7 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
             case USER_CELL:
                 UserCell userCell = (UserCell) holder.itemView;
                 userCell.storyParams.drawSegments = false;
-                userCell.setAvatarPadding(sortType == SORT_TYPE_BY_TIME || disableSections ? 7 : 58, 1);
+                userCell.setAvatarPadding(sortType == SORT_TYPE_BY_TIME || disableSections ? 7 : 7, 1);
                 ArrayList<TLRPC.TL_contact> arr;
                 if (sortType == SORT_TYPE_BY_TIME) {
                     arr = onlineContacts;

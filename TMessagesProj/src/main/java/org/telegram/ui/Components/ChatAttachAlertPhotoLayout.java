@@ -939,6 +939,10 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                 openCameraByClick();
                 return;
             }
+            if (position == 0 && needCamera && selectedAlbumEntry == galleryAlbumEntry) {
+                openCameraByClick();
+                return;
+            }
 
             if (position != 0 || !needCamera || selectedAlbumEntry != galleryAlbumEntry) {
                 if (adapter.hasCameraSpaceRow && position > itemsPerRow) {

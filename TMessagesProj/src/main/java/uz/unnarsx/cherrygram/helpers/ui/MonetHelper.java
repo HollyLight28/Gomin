@@ -139,8 +139,11 @@ public class MonetHelper {
             shade = Integer.parseInt(rawColor.substring(3));
             alpha = -1;
         }
-        if (amoled && group == 2 && palette == 1 && shade == 900) {
+        if (amoled && group == 2 && palette == 1 && (shade == 900 || shade == 800 || shade == 1000)) {
             shade = 1000;
+        }
+        if (!amoled && group == 2 && palette == 1 && (shade == 50 || shade == 0)) {
+            shade = 0; // Чистий білий для світлої теми
         }
         var key = group * 1_0_0000 + palette * 1_0000 + shade;
         var id = IDS.get(key);

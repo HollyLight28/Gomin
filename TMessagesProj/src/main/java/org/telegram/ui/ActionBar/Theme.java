@@ -8300,6 +8300,18 @@ public class Theme {
                                     }
                                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && (param.startsWith("a") || param.startsWith("n") || param.startsWith("monet"))) {
                                     value = MonetHelper.getColor(param, monetAmoled);
+                                    // Black Edition Contrast Boost
+                                    if ("actionBarDefaultTitle".equals(key) || "windowBackgroundWhiteBlackText".equals(key) || "actionBarDefaultSubmenuItem".equals(key)) {
+                                        value = monetAmoled ? 0xFFFFFFFF : 0xFF000000;
+                                    } else if ("actionBarDefaultSubmenuItemIcon".equals(key) || "windowBackgroundWhiteGrayIcon".equals(key)) {
+                                        value = monetAmoled ? 0xFFFFFFFF : 0xFF000000;
+                                    } else if ("chat_messagePanelSend".equals(key) || "featuredStickers_addButton".equals(key) || "chat_goDownButtonIcon".equals(key)) {
+                                        value = monetAmoled ? 0xFFFFFFFF : 0xFF000000;
+                                    } else if ("windowBackgroundWhite".equals(key)) {
+                                        value = monetAmoled ? 0xFF000000 : 0xFFFFFFFF;
+                                    } else if ("actionBarDefault".equals(key)) {
+                                        value = monetAmoled ? 0xFF000000 : 0xFFFFFFFF;
+                                    }
                                 } else {
                                     value = Utilities.parseInt(param);
                                 }
