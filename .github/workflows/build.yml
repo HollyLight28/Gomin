@@ -40,7 +40,7 @@ jobs:
         SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
         SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
       run: |
-        ./gradlew :TMessagesProj_AppStandalone:assembleAfatStandalone \
+        ./gradlew :TMessagesProj_AppStandalone:assembleStandalone \
           --no-daemon \
           --stacktrace \
           -Dorg.gradle.workers.max=4 \
