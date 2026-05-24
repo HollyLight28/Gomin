@@ -1,12 +1,8 @@
 # CURRENT MISSION
-1. Fix the inline camera preview freezing and click issues in Gomin's attachment sheet.
-2. Elevate launcher icon identity to look like Telegram (perfect circular white/gray outline close to the edge, solid premium backgrounds).
-3. Curate available launcher icons to a top-7 premium executive selection, removing low-quality and duplicate stubs.
-4. Implement a custom black-red patriotic "ОУН-УПА" gradient icon with a white outline and white bird.
-5. Create and integrate a premium black bird foreground vector for the clean white icon (`WHITE_CHERRY`) to solve the low-contrast invisible bird issue.
-6. Synchronize in-app icon changing menu scales with real launcher XML parameters for pixel-perfect parity.
-7. Secure local keystore signing configuration and GitHub Actions workflows, resolving security alerts and enabling smooth seamless updates.
-8. Compile and distribute a local standalone release build (copied directly to desktop).
+1. Fix the compilation failure in Gomin by restoring `compileSdk 36` and `targetSdkVersion 35` across all build files. [COMPLETED]
+2. Ensure that `ViewOutlineProvider` and `Outline` imports are preserved in `ActionBar.java` to prevent the original ActionBar compilation issues. [COMPLETED]
+3. Verify the local compilation runs clean before committing. [COMPLETED]
+4. Ensure GitHub Actions compiles perfectly and successfully runs the automated CI/CD pipeline. [IN PROGRESS]
 
 # COMPLETED ATOMIC STEPS
 1. Set `disableAttachCamera` to `true` by default in `CherrygramCameraConfig.kt` to hide the buggy inline preview in the photo grid and default to the clean bottom bar camera button.
@@ -23,6 +19,11 @@
 12. Updated `.github/workflows/build.yml` to inject signing variables (`SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`) into the Gradle build task using GitHub Secrets.
 13. Verified compilation successfully with `.\gradlew :TMessagesProj:compileDebugJavaWithJavac` (BUILD SUCCESSFUL in 3m 59s).
 14. Committed and pushed all changes cleanly to GitHub (branch `main`).
+15. Executed `git pull` on local workspace to synchronize changes made on GitHub.
+16. Traced compile error locally: `Unresolved reference 'VANILLA_ICE_CREAM'` in `CherrygramCoreConfig.kt` because SDK was downgraded from 36 to 34.
+17. Reverted SDK 34 downgrade and restored `compileSdk 36` and `targetSdkVersion 35` across all Gradle build files.
+18. Discovered and fixed a missing `android.os.Build` import in `ActionBar.java` to resolve the `package Build does not exist` Java compilation error.
+19. Recompiled the project locally and confirmed success: `BUILD SUCCESSFUL in 3m 5s` with zero compiler errors.
 
 # OPEN PROBLEMS
 None.
@@ -53,3 +54,7 @@ None.
 - `.gitignore`
 - `TMessagesProj_AppStandalone/build.gradle`
 - `.github/workflows/build.yml`
+- `TMessagesProj/build.gradle`
+- `TMessagesProj_App/build.gradle`
+- `TMessagesProj_AppHuawei/build.gradle`
+- `TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java`
