@@ -33,7 +33,7 @@ android {
         jvmTarget = '17'
     }
 
-    compileSdk 36
+    compileSdkVersion 34
     buildToolsVersion = '36.0.0'
 
     defaultConfig.applicationId = APP_PACKAGE
@@ -189,7 +189,7 @@ android {
 
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 35
+        targetSdkVersion 34
         versionName APP_VERSION_NAME
         ndkVersion "21.4.7075529"
 
