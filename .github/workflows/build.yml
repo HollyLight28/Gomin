@@ -52,7 +52,6 @@ jobs:
         # Знайти універсальний apk
         APK_PATH=$(find . -name "*universal.apk" | head -n 1)
         if [ -z "$APK_PATH" ]; then
-          # Якщо універсального немає, беремо будь-який релізний
           APK_PATH=$(find . -name "*.apk" | grep "standalone" | head -n 1)
         fi
         
@@ -86,15 +85,11 @@ jobs:
       run: |
         RESULT_URL="https://github.com/${{ github.repository }}/releases/tag/latest-release"
         COMMIT_MSG=$(git log -1 --pretty=%s)
-        ESCAPED_MSG=$(echo "$COMMIT_MSG" | sed 's/[_*-`>#+|{}.!\\-]/\\&/g')
-        ESCAPED_BRANCH=$(echo "${{ github.ref_name }}" | sed 's/[_*-`>#+|{}.!\\-]/\\&/g')
-        
-        MESSAGE="📦 *Gomin Build Notification* 🚀%0A%0AСтатус: ✅ *Успішно*%0AГілка: \`${ESCAPED_BRANCH}\`%0AКоміт: \`${ESCAPED_MSG}\`%0A%0A[📦 Завантажити APK з Релізу]($RESULT_URL)"
-        
+        MESSAGE="📦 <b>Gomin Build Notification</b> 🚀%0A%0AСтатус: ✅ <b>Успішно</b>%0AГілка: <code>${{ github.ref_name }}</code>%0AКоміт: <code>${COMMIT_MSG}</code>%0A%0A<a href='${RESULT_URL}'>📦 Завантажити APK з Релізу</a>"
         curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
           -d "chat_id=${CHAT_ID}" \
           -d "text=${MESSAGE}" \
-          -d "parse_mode=MarkdownV2"
+          -d "parse_mode=HTML"
 
     - name: Send Failure Notification
       if: failure()
@@ -104,12 +99,8 @@ jobs:
       run: |
         LOG_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         COMMIT_MSG=$(git log -1 --pretty=%s)
-        ESCAPED_MSG=$(echo "$COMMIT_MSG" | sed 's/[_*-`>#+|{}.!\\-]/\\&/g')
-        ESCAPED_BRANCH=$(echo "${{ github.ref_name }}" | sed 's/[_*-`>#+|{}.!\\-]/\\&/g')
-        
-        MESSAGE="⚠️ *Gomin Build Notification* ❌%0A%0AСтатус: ❌ *Помилка*%0AГілка: \`${ESCAPED_BRANCH}\`%0AКоміт: \`${ESCAPED_MSG}\`%0A%0A[🔍 Подивитись логи]($LOG_URL)"
-        
+        MESSAGE="⚠️ <b>Gomin Build Notification</b> ❌%0A%0AСтатус: ❌ <b>Помилка</b>%0AГілка: <code>${{ github.ref_name }}</code>%0AКоміт: <code>${COMMIT_MSG}</code>%0A%0A<a href='${LOG_URL}'>🔍 Подивитись логи</a>"
         curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
           -d "chat_id=${CHAT_ID}" \
           -d "text=${MESSAGE}" \
-          -d "parse_mode=MarkdownV2"
+          -d "parse_mode=HTML"
