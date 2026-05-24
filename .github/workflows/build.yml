@@ -43,8 +43,8 @@ jobs:
         ./gradlew :TMessagesProj_AppStandalone:assembleAfatStandalone \
           --no-daemon \
           --stacktrace \
-          -Dorg.gradle.workers.max=4 \
-          -Dorg.gradle.jvmargs="-Xmx6g -XX:+HeapDumpOnOutOfMemoryError"
+          -Dorg.gradle.workers.max=2 \
+          -Dorg.gradle.jvmargs="-Xmx10g -XX:+HeapDumpOnOutOfMemoryError -XX:MaxMetaspaceSize=1g"
 
     - name: Find and Prepare APK
       id: find_apk
