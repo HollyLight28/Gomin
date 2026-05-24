@@ -169,7 +169,7 @@ public class MonetHelper {
     @SuppressLint("NewApi")
     public static int getSettingsIconForegroundColor(int original) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Theme.getActiveTheme().isMonet()) {
-            return Theme.getColor(Theme.key_windowBackgroundWhite);
+            return 0xFFFFFFFF;
         } else {
             return original;
         }

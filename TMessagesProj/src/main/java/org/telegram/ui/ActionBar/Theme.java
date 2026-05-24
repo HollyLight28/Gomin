@@ -8305,8 +8305,8 @@ public class Theme {
                                         value = monetAmoled ? 0xFFFFFFFF : 0xFF000000;
                                     } else if ("actionBarDefaultSubmenuItemIcon".equals(key) || "windowBackgroundWhiteGrayIcon".equals(key)) {
                                         value = monetAmoled ? 0xFFFFFFFF : 0xFF000000;
-                                    } else if ("chat_messagePanelSend".equals(key) || "featuredStickers_addButton".equals(key) || "chat_goDownButtonIcon".equals(key)) {
-                                        value = monetAmoled ? 0xFFFFFFFF : 0xFF000000;
+                                    } else if ("chat_messagePanelSend".equals(key) || "featuredStickers_addButton".equals(key) || "chat_goDownButtonIcon".equals(key) || "chat_messagePanelVoice".equals(key) || "chat_messagePanelVideo".equals(key)) {
+                                        value = monetAmoled ? 0xFF121212 : 0xFFFFFFFF;
                                     } else if ("windowBackgroundWhite".equals(key)) {
                                         value = monetAmoled ? 0xFF000000 : 0xFFFFFFFF;
                                     } else if ("actionBarDefault".equals(key)) {
