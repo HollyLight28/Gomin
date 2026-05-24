@@ -137,8 +137,12 @@ android {
         variant.outputs.configureEach { output ->
             def abi = output.getFilter('ABI')
             if (abi == null) abi = 'universal'
-            outputFileName = "Gomin-${APP_VERSION_NAME_CHERRY}-TG-${defaultConfig.versionName}-${abi}.apk"
-            output.versionCodeOverride = defaultConfig.versionCode * 10
+            
+            def cherryVersion = project.hasProperty('APP_VERSION_NAME_CHERRY') ? project.property('APP_VERSION_NAME_CHERRY') : "1.0.0"
+            def tgVersion = (defaultConfig.versionName != null) ? defaultConfig.versionName : "7.x"
+            
+            outputFileName = "Gomin-${cherryVersion}-TG-${tgVersion}-${abi}.apk"
+            output.versionCodeOverride = (project.hasProperty('APP_VERSION_CODE') ? Integer.parseInt(project.property('APP_VERSION_CODE')) : 1) * 10
         }
     }
 
