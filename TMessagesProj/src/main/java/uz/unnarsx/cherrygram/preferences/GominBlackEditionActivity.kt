@@ -27,7 +27,7 @@ class GominBlackEditionActivity : UniversalFragment() {
         items.add(UItem.asHeader("Ексклюзивний преміум"))
         
         // Check if Monet theme is currently active
-        val isBlackEditionActive = Theme.getActiveTheme().isMonet
+        val isBlackEditionActive = Theme.getActiveTheme().isMonet()
         
         items.add(
             SettingsHelper.asSwitchCG(
@@ -52,7 +52,7 @@ class GominBlackEditionActivity : UniversalFragment() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (item.id == switchRow) {
-            val wasActive = Theme.getActiveTheme().isMonet
+            val wasActive = Theme.getActiveTheme().isMonet()
             val newActive = !wasActive
             
             val targetThemeName = if (newActive) {
@@ -69,7 +69,7 @@ class GominBlackEditionActivity : UniversalFragment() {
             SettingsHelper.updateCheckState(view, newActive)
             
             // Rebuild views to apply theme changes instantly
-            parentLayout.rebuildAllFragmentViews(false, false)
+            parentLayout?.rebuildAllFragmentViews(false, false)
         }
     }
 

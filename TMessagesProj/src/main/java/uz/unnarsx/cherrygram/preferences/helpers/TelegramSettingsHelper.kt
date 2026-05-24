@@ -52,6 +52,7 @@ import uz.unnarsx.cherrygram.donates.DonatesManager
 import uz.unnarsx.cherrygram.misc.CherrygramExtras
 import uz.unnarsx.cherrygram.misc.Constants
 import uz.unnarsx.cherrygram.preferences.CherrygramPreferencesNavigator
+import uz.unnarsx.cherrygram.preferences.GominBlackEditionActivity
 
 class TelegramSettingsHelper(
     private var fragment: BaseFragment
@@ -267,7 +268,7 @@ class TelegramSettingsHelper(
             1396,
             0xFF121212.toInt(),
             0xFF121212.toInt(),
-            R.drawable.menu_palette,
+            R.drawable.msg_palette,
             "Black Edition",
             "Монохромна елітарність та дофаміновий детокс"
         )
