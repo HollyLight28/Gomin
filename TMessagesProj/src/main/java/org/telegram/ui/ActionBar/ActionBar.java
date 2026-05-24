@@ -2138,6 +2138,43 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         if (additionalSubTitleOverlayContainer != null) {
             additionalSubTitleOverlayContainer.updateColors();
         }
+        applyGominBranding();
+    }
+
+    private void applyGominBranding() {
+        if (titleTextView[0] == null) return;
+
+        CharSequence value = lastTitle;
+        boolean isGomin = value != null && (value.toString().equalsIgnoreCase("Гомін") || value.toString().equalsIgnoreCase("Gomin"));
+        boolean isMonet = Theme.getActiveTheme() != null && Theme.getActiveTheme().isMonet();
+
+        if (isGomin) {
+            titleTextView[0].setTextSize(24);
+            titleTextView[0].setLetterSpacing(0.05f);
+        } else {
+            titleTextView[0].setTextSize(20);
+            titleTextView[0].setLetterSpacing(0f);
+        }
+
+        if (isMonet) {
+            // Gomin Black Edition: Absolute contrast (Pure White on Dark / Pure Black on Light)
+            int contrastColor = Theme.isCurrentThemeDark() ? 0xFFFFFFFF : 0xFF000000;
+            titleTextView[0].setTextColor(contrastColor);
+            titleTextView[0].setEmojiColor(contrastColor);
+            if (titleTextView[1] != null) {
+                titleTextView[1].setTextColor(contrastColor);
+                titleTextView[1].setEmojiColor(contrastColor);
+            }
+        } else {
+            // Standard behavior: use themed color
+            int finalColor = titleColorToSet != 0 ? titleColorToSet : getThemedColor(Theme.key_chats_actionBackground);
+            titleTextView[0].setTextColor(finalColor);
+            titleTextView[0].setEmojiColor(finalColor);
+            if (titleTextView[1] != null) {
+                titleTextView[1].setTextColor(finalColor);
+                titleTextView[1].setEmojiColor(finalColor);
+            }
+        }
     }
 
     private ActionBarAnimatedSubtitleOverlayContainer additionalSubTitleOverlayContainer;
