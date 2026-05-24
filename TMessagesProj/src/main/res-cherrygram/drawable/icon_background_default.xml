@@ -14,17 +14,17 @@
                 android:endX="96"
                 android:endY="192">
                 <item
-                    android:color="#FF37AEE2"
+                    android:color="#FF1565C0"
                     android:offset="0"/>
                 <item
-                    android:color="#FF1E96C8"
+                    android:color="#FFFAF100"
                     android:offset="1.0"/>
             </gradient>
         </aapt:attr>
     </path>
-    <!-- White Circle Ring like Telegram -->
+    <!-- White Circle Ring like Telegram (Safe Zone 58dp) -->
     <path
-        android:pathData="M 96, 96 m -74, 0 a 74,74 0 1,0 148,0 a 74,74 0 1,0 -148,0"
+        android:pathData="M 96, 96 m -58, 0 a 58,58 0 1,0 116,0 a 58,58 0 1,0 -116,0"
         android:strokeColor="#FFFFFFFF"
         android:strokeWidth="3.5"
         android:fillColor="#00000000" />

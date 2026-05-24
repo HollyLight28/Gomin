@@ -276,7 +276,7 @@ if (isWindows()) {
 }
 
 tasks.register('copyFiles', Copy) {
-    from "${projectDir}/afat/standalone/"
+    from "${project.buildDir}/outputs/apk/afat/standalone/"
     include '**/*.apk'
     exclude 'baselineProfiles/**'
     into desktopPath

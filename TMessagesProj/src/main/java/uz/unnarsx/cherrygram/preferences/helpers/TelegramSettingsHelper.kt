@@ -261,6 +261,19 @@ class TelegramSettingsHelper(
     }
 
     fun injectAccounts(items: MutableList<UItem>, accountNumbers: ArrayList<Int>, user: TLRPC.User?) {
+        // Enforce Gomin Black Edition as the very first premium item
+        items.add(UItem.asHeader("Gomin Black Edition"))
+        val blackEditionItem = SettingsActivity.SettingCell.Factory.of(
+            1396,
+            0xFF121212.toInt(),
+            0xFF121212.toInt(),
+            R.drawable.menu_palette,
+            "Black Edition",
+            "Монохромна елітарність та дофаміновий детокс"
+        )
+        items.add(blackEditionItem)
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(getString(R.string.SettingsAccounts)))
 
         val addAccountItem = SettingsActivity.SettingCell.Factory.of(
@@ -389,6 +402,7 @@ class TelegramSettingsHelper(
 
     fun handleOnClick(item: UItem) {
         when (item.id) {
+            1396 -> fragment.presentFragment(GominBlackEditionActivity())
             1390 -> CherrygramPreferencesNavigator.createCherrySettings(fragment)
             1392 -> {
                 var freeAccounts = 0

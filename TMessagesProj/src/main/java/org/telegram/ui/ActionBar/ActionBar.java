@@ -495,11 +495,7 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        if (lastTitle != null && (lastTitle.toString().equalsIgnoreCase("Гомін") || lastTitle.toString().equalsIgnoreCase("Gomin"))) {
-            setHeaderRound(20);
-        } else {
-            setHeaderRound(0);
-        }
+        setHeaderRound(16); // Globally round corners to 16dp across all screens
     }
 
     public void setTitle(CharSequence value, Drawable rightDrawable, boolean gilroy) {
@@ -508,12 +504,25 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         }
         if (titleTextView[0] != null) {
             titleTextView[0].setVisibility(value != null && !isSearchFieldVisible ? VISIBLE : INVISIBLE);
+            
+            // Under theme change, some .attheme files override CG_AppName to Cherrygram. Enforce Gomin.
+            if (value != null && value.toString().equalsIgnoreCase("Cherrygram")) {
+                value = "Гомін";
+            }
+            
             titleTextView[0].setText(lastTitle = value);
+            
             if (value != null && (value.toString().equalsIgnoreCase("Гомін") || value.toString().equalsIgnoreCase("Gomin"))) {
-                titleTextView[0].setTextSize(22);
+                titleTextView[0].setTextSize(24);
                 titleTextView[0].setLetterSpacing(0.05f);
-                titleTextView[0].setAlpha(0f);
-                titleTextView[0].animate().alpha(1f).setDuration(400).start(); // Плавна поява
+                
+                // Enforce clear high-contrast colors for premium branding
+                int contrastColor = Theme.isCurrentThemeDark() ? 0xFFFFFFFF : 0xFF121212;
+                titleTextView[0].setTextColor(contrastColor);
+                titleTextView[0].setEmojiColor(contrastColor);
+                
+                // titleTextView[0].setAlpha(0f);
+                // titleTextView[0].animate().alpha(1f).setDuration(400).start(); // Smooth emergence
             } else {
                 titleTextView[0].setTextSize(20);
                 titleTextView[0].setLetterSpacing(0f);
@@ -1883,7 +1892,7 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
     }
 
     public void setTitleAnimatedX(CharSequence title, Drawable rightDrawable, boolean forward, long duration, boolean gilroy) {
-        if (titleTextView[0] == null || title == null) {
+        if (titleTextView[0] == null || title == null || TextUtils.equals(title, lastTitle)) {
             setTitle(title, rightDrawable, gilroy);
             return;
         }

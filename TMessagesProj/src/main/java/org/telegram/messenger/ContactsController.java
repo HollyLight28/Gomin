@@ -1320,8 +1320,9 @@ public class ContactsController extends BaseController {
                         FileLog.d("new phone book contacts " + newPhonebookContacts + " serverContactsInPhonebook " + serverContactsInPhonebook + " totalContacts " + contactsByPhone.size());
                     }
                     if (checkType != 0) {
-                        AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.hasNewContactsToImport, checkType, contactHashMap, first, schedule));
-                        return;
+                        // Gomin: always sync contacts automatically without asking
+                        /*AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.hasNewContactsToImport, checkType, contactHashMap, first, schedule));
+                        return;*/
                     } else if (canceled) {
                         Utilities.stageQueue.postRunnable(() -> {
                             contactsBookSPhones = contactsBookShort;

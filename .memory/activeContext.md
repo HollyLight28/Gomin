@@ -1,8 +1,11 @@
 # CURRENT MISSION
-1. Fix the compilation failure in Gomin by restoring `compileSdk 36` and `targetSdkVersion 35` across all build files. [COMPLETED]
-2. Ensure that `ViewOutlineProvider` and `Outline` imports are preserved in `ActionBar.java` to prevent the original ActionBar compilation issues. [COMPLETED]
-3. Verify the local compilation runs clean before committing. [COMPLETED]
-4. Ensure GitHub Actions compiles perfectly and successfully runs the automated CI/CD pipeline. [IN PROGRESS]
+1. Implement "Gomin Black Edition" feature in settings: add a premium option leading to GominBlackEditionActivity with a full manifest/research text and Monet theme switch.
+2. Redesign launcher icons: reduce white/black circle outline radius to 60dp for safe-zone, add patrotic gradient for default, apply black contour to white icon, white to black icon, and white to others.
+3. Fix ActionBar: enforce 16dp rounded bottom corners globally across all screens (Dialogs, Chats, Settings, Contacts, Profile) and optimize app name title styling (22sp, letterSpacing, clear white/black contrast colors).
+4. Solve Monet Dark button color conflicts: modify theme assets so the send/voice record icons are deep charcoal black inside active accent-colored circles, eliminating white-on-white display issues.
+5. Verify local release compilation, commit all changes, and push.
+
+
 
 # COMPLETED ATOMIC STEPS
 1. Set `disableAttachCamera` to `true` by default in `CherrygramCameraConfig.kt` to hide the buggy inline preview in the photo grid and default to the clean bottom bar camera button.
@@ -24,9 +27,15 @@
 17. Reverted SDK 34 downgrade and restored `compileSdk 36` and `targetSdkVersion 35` across all Gradle build files.
 18. Discovered and fixed a missing `android.os.Build` import in `ActionBar.java` to resolve the `package Build does not exist` Java compilation error.
 19. Recompiled the project locally and confirmed success: `BUILD SUCCESSFUL in 3m 5s` with zero compiler errors.
+20. Fixed `copyFiles` task source directory path in `TMessagesProj_AppStandalone/build.gradle` to target `project.buildDir/outputs/apk/afat/standalone/`.
+21. Successfully compiled the local release standalone build: `BUILD SUCCESSFUL in 28m 15s`.
+22. Executed `copyFiles` task to successfully copy all built standalone release APKs directly to VovA's desktop (`C:/Users/VovA/Desktop/Cherry/Stable`).
+23. Analyzed local git sync status and verified it is fully up to date with main branch.
+24. Inspected `signingConfigs` and verified that local standalone build reads from `keystore.properties` or environment variables and signs using `Your_Key.jks` in the root folder.
 
 # OPEN PROBLEMS
 None.
+
 
 # MODIFIED FILES
 - `uz.unnarsx.cherrygram.core.configs.CherrygramCameraConfig.kt`
