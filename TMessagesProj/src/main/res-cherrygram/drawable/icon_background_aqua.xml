@@ -1,37 +1,9 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
-    android:width="192dp"
-    android:height="192dp"
-    android:viewportWidth="192"
-    android:viewportHeight="192">
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
     <path
-        android:pathData="M0 0H192V192H0z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:type="linear"
-                android:startX="161.28"
-                android:startY="25.54"
-                android:endX="31.87"
-                android:endY="167.62">
-                <item
-                    android:color="#FF2AEA7B"
-                    android:offset="0"/>
-                <item
-                    android:color="#FF00C4EE"
-                    android:offset="0.52"/>
-                <item
-                    android:color="#FF0B94FE"
-                    android:offset="1"/>
-            </gradient>
-        </aapt:attr>
-    </path>
-    <path
-        android:fillColor="#1A000000"
-        android:pathData="M0 0H192V192H0z"/>
-    <!-- White Circle Ring like Telegram -->
-    <path
-        android:pathData="M 96, 96 m -74, 0 a 74,74 0 1,0 148,0 a 74,74 0 1,0 -148,0"
-        android:strokeColor="#FFFFFFFF"
-        android:strokeWidth="3.5"
-        android:fillColor="#00000000" />
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M0 0H108V108H0z" />
 </vector>

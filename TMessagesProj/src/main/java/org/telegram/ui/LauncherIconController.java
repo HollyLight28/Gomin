@@ -45,12 +45,12 @@ public class LauncherIconController {
     }
 
     public enum LauncherIcon {
-        GOMIN("Gomin_Icon_Main", R.mipmap.icon_launcher_cherry, 0, R.string.Default),
-        DARK_CHERRY("CG_Icon_Dark", R.drawable.icon_background_dark, R.drawable.icon_foreground_gomin, R.string.AP_ChangeIcon_Dark),
-        WHITE_CHERRY("CG_Icon_White_Cherry", R.drawable.icon_background_white, R.drawable.icon_foreground_gomin_black, R.string.AP_ChangeIcon_White),
-        AQUA_CHERRY("CG_Icon_Aqua", R.drawable.icon_background_aqua, R.drawable.icon_foreground_gomin, R.string.AppIconAqua),
-        LAVANDA_CHERRY("CG_Icon_Lavanda", R.drawable.icon_background_lavanda, R.drawable.icon_foreground_gomin, R.string.AP_ChangeIcon_Lavanda),
-        VIOLET_SUNSET_CHERRY("CG_Icon_Violet_Sunset", R.drawable.icon_background_black_red, R.drawable.icon_foreground_gomin, R.string.AP_ChangeIcon_Violet_Sunset),
+        GOMIN("Gomin_Icon_Main", R.drawable.icon_background_default, R.drawable.icon_foreground_gomin_default, R.string.Default),
+        DARK_CHERRY("CG_Icon_Dark", R.drawable.icon_background_dark, R.drawable.icon_foreground_gomin_dark, R.string.AP_ChangeIcon_Dark),
+        WHITE_CHERRY("CG_Icon_White_Cherry", R.drawable.icon_background_white, R.drawable.icon_foreground_gomin_white, R.string.AP_ChangeIcon_White),
+        AQUA_CHERRY("CG_Icon_Aqua", R.drawable.icon_background_aqua, R.drawable.icon_foreground_gomin_aqua, R.string.AppIconAqua),
+        LAVANDA_CHERRY("CG_Icon_Lavanda", R.drawable.icon_background_lavanda, R.drawable.icon_foreground_gomin_lavanda, R.string.AP_ChangeIcon_Lavanda),
+        VIOLET_SUNSET_CHERRY("CG_Icon_Violet_Sunset", R.drawable.icon_background_black_red, R.drawable.icon_foreground_gomin_sunset, R.string.AP_ChangeIcon_Violet_Sunset),
         PREMIUM("PremiumIcon", R.drawable.icon_3_background_sa, R.mipmap.icon_3_foreground, R.string.AppIconPremium, true);
 
         public final String key;

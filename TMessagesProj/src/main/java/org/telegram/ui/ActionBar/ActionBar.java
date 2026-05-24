@@ -52,6 +52,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Outline;
 import android.view.ViewOutlineProvider;
+
 import android.os.Build;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -480,24 +481,6 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         setTitle(value, rightDrawable, false);
     }
 
-    public void setHeaderRound(float radius) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, -AndroidUtilities.dp(radius), view.getWidth(), view.getHeight(), AndroidUtilities.dp(radius));
-                }
-            });
-            setClipToOutline(true);
-        }
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        setHeaderRound(16); // Globally round corners to 16dp across all screens
-    }
-
     public void setTitle(CharSequence value, Drawable rightDrawable, boolean gilroy) {
         if (value != null && titleTextView[0] == null) {
             createTitleTextView(0, gilroy);
@@ -512,21 +495,29 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
             
             titleTextView[0].setText(lastTitle = value);
             
-            if (value != null && (value.toString().equalsIgnoreCase("Гомін") || value.toString().equalsIgnoreCase("Gomin"))) {
+            boolean isGomin = value != null && (value.toString().equalsIgnoreCase("Гомін") || value.toString().equalsIgnoreCase("Gomin"));
+            boolean isMonet = Theme.getActiveTheme() != null && Theme.getActiveTheme().isMonet();
+            
+            if (isGomin) {
                 titleTextView[0].setTextSize(24);
                 titleTextView[0].setLetterSpacing(0.05f);
-                
-                // Enforce clear high-contrast colors for premium branding
-                int contrastColor = Theme.isCurrentThemeDark() ? 0xFFFFFFFF : 0xFF121212;
-                titleTextView[0].setTextColor(contrastColor);
-                titleTextView[0].setEmojiColor(contrastColor);
-                
-                // titleTextView[0].setAlpha(0f);
-                // titleTextView[0].animate().alpha(1f).setDuration(400).start(); // Smooth emergence
             } else {
                 titleTextView[0].setTextSize(20);
                 titleTextView[0].setLetterSpacing(0f);
             }
+            
+            if (isMonet) {
+                // When Black Edition (Monet) is active, force pure premium contrast black/white for ALL headers (including Gomin and folders)
+                int contrastColor = Theme.isCurrentThemeDark() ? 0xFFFFFFFF : 0xFF121212;
+                titleTextView[0].setTextColor(contrastColor);
+                titleTextView[0].setEmojiColor(contrastColor);
+            } else {
+                // When Black Edition is disabled, let Gomin and folders use the current theme colors (e.g. accent blue, etc.)
+                int finalColor = titleColorToSet != 0 ? titleColorToSet : getThemedColor(Theme.key_chats_actionBackground);
+                titleTextView[0].setTextColor(finalColor);
+                titleTextView[0].setEmojiColor(finalColor);
+            }
+            
             if (UserConfig.getInstance(UserConfig.selectedAccount).isPremium()) {
                 if (attached && lastRightDrawable instanceof AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) {
                     ((AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) lastRightDrawable).setParentView(null);
@@ -558,6 +549,10 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
     public void setTitleColor(int color, boolean gilroy) {
         if (titleTextView[0] == null) {
             createTitleTextView(0, gilroy);
+        }
+        boolean isMonet = Theme.getActiveTheme() != null && Theme.getActiveTheme().isMonet();
+        if (isMonet) {
+            color = Theme.isCurrentThemeDark() ? 0xFFFFFFFF : 0xFF121212;
         }
         titleColorToSet = color;
         titleTextView[0].setTextColor(color);
@@ -1380,11 +1375,23 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
                 int availableWidth = isCenterTitle ? (width - dp(120)) : width - (menu != null ? menu.getMeasuredWidth() : 0) - dp(16) - textLeft - titleRightMargin;
 
                 if (((fromBottom && i == 0) || (!fromBottom && i == 1)) && overlayTitleAnimation && titleAnimationRunning) {
-                    titleTextView[i].setTextSize(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 18 : 20);
+                    CharSequence text = titleTextView[i] != null ? titleTextView[i].getText() : null;
+                    boolean isGomin = text != null && (text.toString().equalsIgnoreCase("Гомін") || text.toString().equalsIgnoreCase("Gomin"));
+                    if (isGomin) {
+                        titleTextView[i].setTextSize(24);
+                    } else {
+                        titleTextView[i].setTextSize(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 18 : 20);
+                    }
                 } else {
                     if (titleTextView[0] != null && titleTextView[0].getVisibility() != GONE && subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
                         if (titleTextView[i] != null) {
-                            titleTextView[i].setTextSize(AndroidUtilities.isTablet() ? 20 : 18);
+                            CharSequence text = titleTextView[i].getText();
+                            boolean isGomin = text != null && (text.toString().equalsIgnoreCase("Гомін") || text.toString().equalsIgnoreCase("Gomin"));
+                            if (isGomin) {
+                                titleTextView[i].setTextSize(24);
+                            } else {
+                                titleTextView[i].setTextSize(AndroidUtilities.isTablet() ? 20 : 18);
+                            }
                         }
                         subtitleTextView.setTextSize(AndroidUtilities.isTablet() ? 16 : 14);
                         if (additionalSubtitleTextView != null) {
@@ -1392,7 +1399,13 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
                         }
                     } else {
                         if (titleTextView[i] != null && titleTextView[i].getVisibility() != GONE) {
-                            titleTextView[i].setTextSize(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 18 : 20);
+                            CharSequence text = titleTextView[i].getText();
+                            boolean isGomin = text != null && (text.toString().equalsIgnoreCase("Гомін") || text.toString().equalsIgnoreCase("Gomin"));
+                            if (isGomin) {
+                                titleTextView[i].setTextSize(24);
+                            } else {
+                                titleTextView[i].setTextSize(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 18 : 20);
+                            }
                         }
                         if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
                             subtitleTextView.setTextSize(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 14 : 16);

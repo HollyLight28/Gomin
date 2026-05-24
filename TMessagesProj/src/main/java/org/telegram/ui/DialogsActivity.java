@@ -13395,19 +13395,29 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     nightThemeName = "Night";
                 }
                 Theme.ThemeInfo themeInfo = Theme.getActiveTheme();
-                if (dayThemeName.equals(nightThemeName)) {
-                    if (themeInfo.isDark() || dayThemeName.equals("Night") || dayThemeName.equals("Dark Blue")) {
-                        dayThemeName = "Blue";
-                    } else {
-                        nightThemeName = "Night";
-                    }
-                }
-
                 boolean toDark;
-                if (toDark = dayThemeName.equals(themeInfo.getKey())) {
-                    themeInfo = Theme.getTheme(nightThemeName);
+                if (themeInfo.isMonet()) {
+                    if (themeInfo.isDark()) {
+                        themeInfo = Theme.getTheme("Monet Light");
+                        toDark = false;
+                    } else {
+                        themeInfo = Theme.getTheme("Monet AMOLED");
+                        toDark = true;
+                    }
                 } else {
-                    themeInfo = Theme.getTheme(dayThemeName);
+                    if (dayThemeName.equals(nightThemeName)) {
+                        if (themeInfo.isDark() || dayThemeName.equals("Night") || dayThemeName.equals("Dark Blue")) {
+                            dayThemeName = "Blue";
+                        } else {
+                            nightThemeName = "Night";
+                        }
+                    }
+
+                    if (toDark = dayThemeName.equals(themeInfo.getKey())) {
+                        themeInfo = Theme.getTheme(nightThemeName);
+                    } else {
+                        themeInfo = Theme.getTheme(dayThemeName);
+                    }
                 }
                 switchTheme(themeInfo, toDark);
                 Theme.turnOffAutoNight(BulletinFactory.of(this), () -> {

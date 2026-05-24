@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@drawable/icon_background_default"/>
-    <foreground>
-        <inset android:drawable="@drawable/icon_foreground_gomin" android:inset="25%"/>
-    </foreground>
-    <monochrome android:drawable="@drawable/icon_foreground_gomin"/>
+    <background android:drawable="@drawable/icon_background_default" />
+    <foreground android:drawable="@drawable/icon_foreground_gomin_default" />
+    <monochrome android:drawable="@drawable/icon_foreground_gomin_default" />
 </adaptive-icon>

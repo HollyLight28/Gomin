@@ -3907,6 +3907,7 @@ public class Theme {
     public static final int key_chat_messagePanelCursor = colorsCount++;
     public static final int key_chat_messagePanelIcons = colorsCount++;
     public static final int key_chat_messagePanelSend = colorsCount++;
+    public static final int key_chat_messagePanelSendIcon = colorsCount++;
     public static final int key_chat_messagePanelVoiceLock = colorsCount++;
     public static final int key_chat_messagePanelVoiceLockBackground = colorsCount++;
     public static final int key_chat_messagePanelVoiceLockShadow = colorsCount++;
@@ -8305,12 +8306,18 @@ public class Theme {
                                         value = monetAmoled ? 0xFFFFFFFF : 0xFF000000;
                                     } else if ("actionBarDefaultSubmenuItemIcon".equals(key) || "windowBackgroundWhiteGrayIcon".equals(key)) {
                                         value = monetAmoled ? 0xFFFFFFFF : 0xFF000000;
-                                    } else if ("chat_messagePanelSend".equals(key) || "featuredStickers_addButton".equals(key) || "chat_goDownButtonIcon".equals(key) || "chat_messagePanelVoice".equals(key) || "chat_messagePanelVideo".equals(key)) {
+                                    } else if ("chat_messagePanelSend".equals(key) || "chat_messagePanelVoiceBackground".equals(key) || "chat_messagePanelVideo".equals(key) || "chat_goDownButtonIcon".equals(key) || "profile_actionBackground".equals(key) || "featuredStickers_addButton".equals(key)) {
+                                        // Gomin: White circle/background for dark mode
+                                        value = monetAmoled ? 0xFFFFFFFF : 0xFF121212;
+                                    } else if ("chat_messagePanelSendIcon".equals(key) || "chat_messagePanelVoiceLock".equals(key) || "profile_actionIcon".equals(key) || "featuredStickers_buttonText".equals(key)) {
+                                        // Gomin: Dark icon for dark mode (AMOLED) to contrast with white circle
                                         value = monetAmoled ? 0xFF121212 : 0xFFFFFFFF;
-                                    } else if ("windowBackgroundWhite".equals(key)) {
+                                    } else if ("windowBackgroundWhite".equals(key) || "windowBackgroundWhiteBlueHeader".equals(key) || "actionBarDefault".equals(key)) {
                                         value = monetAmoled ? 0xFF000000 : 0xFFFFFFFF;
-                                    } else if ("actionBarDefault".equals(key)) {
-                                        value = monetAmoled ? 0xFF000000 : 0xFFFFFFFF;
+                                    } else if ("chat_inBubble".equals(key)) {
+                                        value = monetAmoled ? 0xFF121212 : value;
+                                    } else if ("chat_outBubble".equals(key)) {
+                                        value = monetAmoled ? 0xFF222222 : value;
                                     }
                                 } else {
                                     value = Utilities.parseInt(param);

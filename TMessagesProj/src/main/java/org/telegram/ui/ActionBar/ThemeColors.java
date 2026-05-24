@@ -507,6 +507,7 @@ public class ThemeColors {
         defaultColors[key_chat_recordedVoiceProgressInner] = 0xffffffff;
         defaultColors[key_chat_recordVoiceCancel] = 0xff3A95D4;
         defaultColors[key_chat_messagePanelSend] = TELEGRAM_COLOR;
+        defaultColors[key_chat_messagePanelSendIcon] = 0xffffffff;
         defaultColors[key_chat_messagePanelVoiceLock] = 0xffa4a4a4;
         defaultColors[key_chat_messagePanelVoiceLockBackground] = 0xffffffff;
         defaultColors[key_chat_messagePanelVoiceLockShadow] = 0xff000000;
@@ -1300,6 +1301,7 @@ public class ThemeColors {
         colorKeysMap.put(key_chat_messagePanelCursor, "chat_messagePanelCursor");
         colorKeysMap.put(key_chat_messagePanelIcons, "chat_messagePanelIcons");
         colorKeysMap.put(key_chat_messagePanelSend, "chat_messagePanelSend");
+        colorKeysMap.put(key_chat_messagePanelSendIcon, "chat_messagePanelSendIcon");
         colorKeysMap.put(key_chat_messagePanelVoiceLock, "key_chat_messagePanelVoiceLock");
         colorKeysMap.put(key_chat_messagePanelVoiceLockBackground, "key_chat_messagePanelVoiceLockBackground");
         colorKeysMap.put(key_chat_messagePanelVoiceLockShadow, "key_chat_messagePanelVoiceLockShadow");
