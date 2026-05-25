@@ -18,11 +18,8 @@ Until now, Ukraine didn't have its own custom Telegram client with a distinct na
 
 ---
 
-## 💎 Our Core Killer Features (What Makes Gomin Unique)
+## 💎 Our Core Killer Feature: The Speed Engine (Gomin Speed Boost)
 
-We won't bore you with corporate talk about "cloud innovations". Gomin is built by a developer for real-world networks, real-world devices, and the actual needs of users in Ukraine. Here is our golden set of killer features:
-
-### ⚡ 1. The Speed Engine: Gomin Speed Boost
 This is the heart of our app. Standard Telegram is optimized for conservative global mobile network limits, but we have unleashed data transfer speeds to a whole new level.
 
 * **Gomin Boost Extreme (Active by Default)** 🚀:
@@ -32,24 +29,27 @@ This is the heart of our app. Standard Telegram is optimized for conservative gl
 * **Shelter Mode (Slow Network Defensive Mode)** 🛡️:
   Our harsh defense reality. When you are in a bomb shelter, subway, basement, or rural area with close to zero coverage where cell signal is barely alive — this mode saves the day. It forces the app to transmit media over a highly stable, single-threaded connection using micro-packets of **32 KB**, preventing connection drops and socket timeouts.
 
-### 🖤 2. Gomin Black Edition & Monet Design
-We spent dozens of hours refining the user interface to perfection to deliver an elite visual experience:
-* **True OLED Black**: No gray tones or washed-out backgrounds. A deep, pure OLED black UI that looks premium, relieves eye strain during night reading, and saves precious battery life on your device.
-* **Monet Color Harmony**: We resolved color jumps and flickering accent switches when navigating between folders and chats. Accent colors gracefully adapt to your system palette (Android 12+), creating a seamless, unified premium theme.
-* **Scaled ActionBar**: We conquered the standard Telegram font size limitations. Instead of a cramped 20sp header, the title **«Гомін»** proudly sits in a stable, large scale of **24sp**, projecting confidence and elite status.
+---
 
-### 👻 3. Quad-Layer Gomin Ghost Mode (Stealth Security)
+## ✨ Real Features & Premium Ergonomics (Only What's in the Code)
+
+Zero marketing fluff. Here is the exact set of features built into Gomin that are fully functional right now:
+
+### 🖤 Exclusive Gomin Black Edition Design
+We wanted to make the user interface as clean, high-contrast, and elegant as possible:
+* **Pure Black & White Contrast**: No gradients, transitions, or system palette adaptation. Only a deep, pure OLED black background and crystal-clear white accents. This is Black Edition — an uncompromising premium design that relieves eye strain during night reading and saves precious battery life on your device.
+
+### 👻 Quad-Layer Gomin Ghost Mode (Stealth Security)
 Your digital presence is your personal space. Stay in the shadows whenever you need to:
 * **Unread Messages Guard**: Read incoming chats in full secrecy. Messages remain marked as "unread" on the server until you reply or manually sync.
 * **Typing Indicator Mask**: Completely hides your "typing..." or "recording voice..." status. Take your time composing a reply without pressure.
 * **Invisible Stories Viewer**: Watch public and personal Stories without leaving a single trace in the viewers list.
 * **Offline Presence Lock**: Chat with others while your global status remains permanently "offline".
 
-### 🧠 4. Integrated AI Features (Gomin AI)
-Gomin supports seamless integration with cutting-edge artificial intelligence.
-* If you have a personal **Gemini API Key**, you can simply paste it in the Gomin settings. This will unlock the built-in intelligent AI capabilities: a smart Gemini chat assistant directly in your dialogue list and the ability to transcribe any voice message to text on the fly!
+### 🧠 Integrated AI Features (Gomin AI)
+* Gomin supports seamless integration with cutting-edge artificial intelligence. If you paste your personal **Gemini API Key** in Gomin settings, it unlocks built-in intelligent AI capabilities: a smart Gemini chat assistant directly in your dialogue list and the ability to transcribe any voice message to text on the fly!
 
-### 🎯 5. Unique Ergonomic & Usability Upgrades
+### 🎯 Usability Upgrades
 * **Toggle #16: "Delete for All" by Default** 🗑️:
   No more annoying popups asking if you want to check that box every time you delete a message. We turned this on by default. Just hit delete — and sleep peacefully knowing it's gone for everyone.
 * **Decluttered Lower Search Layout**:

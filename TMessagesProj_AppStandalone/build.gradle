@@ -226,6 +226,9 @@ def env = loadEnv("${project.rootDir}/secrets_for_ci.env")
 // Встановлюємо дефолтні значення для CI, якщо файлу немає
 if (!env.containsKey('APP_VERSION_CODE')) env['APP_VERSION_CODE'] = '1'
 if (!env.containsKey('APP_VERSION_NAME_CHERRY')) env['APP_VERSION_NAME_CHERRY'] = '1.0.0'
+if (!env.containsKey('SYSTEM_USERNAME')) env['SYSTEM_USERNAME'] = 'ci'
+if (!env.containsKey('TELEGRAM_CHAT_ID')) env['TELEGRAM_CHAT_ID'] = '0'
+if (!env.containsKey('TELEGRAM_BOT_TOKEN')) env['TELEGRAM_BOT_TOKEN'] = ''
 
 env.each { key, value ->
     ext."$key" = value
