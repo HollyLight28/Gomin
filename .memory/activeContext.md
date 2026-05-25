@@ -8,6 +8,7 @@
 7. Fix build.gradle configuration crash on GitHub Actions due to missing properties fallback. [COMPLETED]
 8. Commit all repository changes and push to GitHub. [COMPLETED]
 9. Fix Kotlin compiler unresolved reference `AndroidUtilities` in `GominBlackEditionActivity.kt` on CI. [COMPLETED]
+10. Fix local release copyFiles task path error when secrets_for_ci.env is missing. [COMPLETED]
 
 # COMPLETED ATOMIC STEPS
 - Cleaned up settings screens: completely removed "foldersAtBottomRow" option from `FoldersPreferencesEntry.java` since it was deprecated and broken in UX.
@@ -15,6 +16,7 @@
 - Fixed `build.gradle` in `TMessagesProj_AppStandalone`: added proper environment variable and property fallbacks for `SYSTEM_USERNAME`, `TELEGRAM_CHAT_ID`, and `TELEGRAM_BOT_TOKEN`. This solves the configuration-time crash (`MissingPropertyException`) on GitHub Actions / clean builds when `secrets_for_ci.env` is missing!
 - Rewrote `README.md` and `README.uk.md` from scratch to tell the real, deeply personal, non-corporate story of the project. Removed old Monet/Geist/ActionBar scale hype. Added strict technical details about pure OLED Black Edition, Manrope custom typography, 12-thread Speed Booster, Shelter Mode, quad-layer Ghost Mode, Gemini AI key integration, "delete for all" by default, and bottom search layout.
 - Fixed compilation crash in `GominBlackEditionActivity.kt` by adding the missing import for `org.telegram.messenger.AndroidUtilities`.
+- Fixed local copyFiles release task failure by resolving correct user path dynamically in `build.gradle`.
 - Formulated clear conventional commit message, executed full git commit and pushed changes to remote repository.
 
 # OPEN PROBLEMS

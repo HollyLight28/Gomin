@@ -269,11 +269,12 @@ static def getOSName() {
     return buildHost
 }
 
+def systemUsername = project.hasProperty('SYSTEM_USERNAME') && project.property('SYSTEM_USERNAME') != 'ci' ? project.property('SYSTEM_USERNAME') : System.getProperty("user.name")
 def desktopPath
 if (isWindows()) {
-    desktopPath = "C:/Users/${SYSTEM_USERNAME}/Desktop/Cherry/Stable"
+    desktopPath = "C:/Users/${systemUsername}/Desktop/Cherry/Stable"
 } else if (isMacOS()) {
-    desktopPath = "/Users/${SYSTEM_USERNAME}/Desktop/Cherry/Stable"
+    desktopPath = "/Users/${systemUsername}/Desktop/Cherry/Stable"
 } else {
     desktopPath = "${project.buildDir}/outputs/apk/stable"
 }
