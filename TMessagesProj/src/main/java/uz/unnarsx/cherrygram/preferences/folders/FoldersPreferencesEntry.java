@@ -45,7 +45,6 @@ public class FoldersPreferencesEntry extends UniversalFragment {
     private final int addStrokeRow = 4;
 
     private final int folderNameAppHeaderRow = 5;
-    private final int foldersAtBottomRow = 6;
 
     @Override
     public View createView(Context context) {
@@ -73,11 +72,6 @@ public class FoldersPreferencesEntry extends UniversalFragment {
                 .setChecked(CherrygramAppearanceConfig.INSTANCE.getTabsNoUnread())
         );
         items.add(UItem.asShadow(null));
-
-        items.add(SettingsHelper.asSwitchCG(foldersAtBottomRow, getString(R.string.AP_FoldersAtBottom))
-                .setChecked(CherrygramAppearanceConfig.INSTANCE.getFoldersAtBottom())
-        );
-        items.add(UItem.asShadow(null));
     }
 
     @Override
@@ -101,11 +95,6 @@ public class FoldersPreferencesEntry extends UniversalFragment {
             parentLayout.rebuildAllFragmentViews(false, false);
 
             getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
-        } else if (item.id == foldersAtBottomRow) {
-            CherrygramAppearanceConfig.INSTANCE.setFoldersAtBottom(!CherrygramAppearanceConfig.INSTANCE.getFoldersAtBottom());
-            SettingsHelper.updateCheckState(view, CherrygramAppearanceConfig.INSTANCE.getFoldersAtBottom());
-
-            CGBulletinCreator.INSTANCE.createRestartBulletin(this);
         }
     }
 

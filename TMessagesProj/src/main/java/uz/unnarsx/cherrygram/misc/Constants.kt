@@ -36,12 +36,12 @@ object Constants {
     var UPDATE_APP_URL = if (CherrygramCoreConfig.isPlayStoreBuild()) "https://play.google.com/store/apps/details?id=ua.gomin.messenger" else CG_CHANNEL_URL
 
     @JvmField
-    var CG_PRIVACY_URL = "https://arslan4k1390.github.io/cherrygram/privacy"
+    var CG_PRIVACY_URL = "https://github.com/HollyLight28/Gomin/blob/main/PRIVACY.md"
     @JvmField
-    var CG_DONATIONS_AND_TERMS_URL = "https://arslan4k1390.github.io/cherrygram/donation-terms"
+    var CG_DONATIONS_AND_TERMS_URL = "https://send.monobank.ua/jar/4ecLBi7WaZ"
 
     @JvmField
-    var CG_CROWDIN_URL = "https://crowdin.com/project/cherrygram"
+    var CG_CROWDIN_URL = "https://github.com/HollyLight28/Gomin"
     @JvmField
     var CG_GITHUB_URL = "https://github.com/HollyLight28/Gomin"
 

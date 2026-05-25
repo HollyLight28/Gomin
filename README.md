@@ -1,54 +1,94 @@
-# 🔊 Gomin — The Executive Telegram Suite for Ukraine
+# 🔊 Gomin — The Executive Telegram Suite with a Ukrainian Soul
 
-**Gomin** is a high-end, distraction-free Telegram client designed for those who value premium aesthetics, ultimate performance, and absolute privacy. Built on top of a highly optimized Telegram core, Gomin redesigns the messaging experience into a sleek, professional workspace with a deeply embedded Ukrainian soul.
+[![GitHub Stars](https://img.shields.io/github/stars/HollyLight28/Gomin?style=for-the-badge&color=2AABEE&logo=github)](https://github.com/HollyLight28/Gomin)
+[![Platform](https://img.shields.io/badge/Platform-Android-007ACC?style=for-the-badge&logo=android)](https://developer.android.com)
+[![License](https://img.shields.io/badge/License-GPL%20v2-orange?style=for-the-badge)](LICENSE)
 
----
+**Gomin** is not just another custom Telegram fork. It is a premium, high-performance executive communication tool engineered specifically for those who demand elite aesthetics, extreme speed, and absolute privacy. 
 
-## 🏛️ The Vision
- 
- Gomin is crafted to transition away from the chaotic hyper-customization of common forks toward an elegant, **WhatsApp-like minimalism**. We believe that a premium tool should work flawlessly out of the box. By hardcoding high-performance network settings, fluid spring animations, and strict privacy defaults, Gomin frees you from system clutter, letting you focus entirely on what matters: secure and elite communication.
- 
----
- 
- ## ✨ Signature Killer Features
- 
- ### ☁️ Gomin Drive (100% Native Personal Cloud)
- Telegram has always been an outstanding file storage platform, but its interface hides this potential. **Gomin Drive** unleashes it without clunky hacks or hashtags:
- * **One-Tap Access**: A dedicated Cloud icon inside your "Saved Messages" chat takes you instantly to your drive.
- * **Zero Overhead**: Fully leverages Telegram's native `MediaActivity` (Shared Media) framework.
- * **Automatic Categorization**: Your files, music, links, and voice notes are automatically sorted into clean tabs with native search, running on Telegram's high-speed database.
- * **Beautiful & Fast**: Fully respects your active theme, with ultra-smooth native transitions.
- 
- ### 🧠 Gomin AI Assistant (Seamless Gemini Integration)
- Skip low-quality third-party chat overlays. Gomin AI brings Gemini directly into Telegram's native, ultra-responsive `ChatActivity`:
- * **Native Interface**: Operates as a local virtual chat right in your dialog list, supporting Telegram's fluid bubble animations, markdown rendering, text selection, and rich media.
- * **Contextual Intelligence**: Tap the attachment clip 📎 or the top menu to "Connect Chat Context." Select any personal or group dialogue, and Gomin AI will analyze the last 150 messages to generate instant summaries, action items, or tone suggestions.
- * **100% Local database**: Conversations are saved securely in your local SQLite app database, never exposed to external tracking.
- 
- ### ⚡ Gomin Speed Boost (Extreme Multi-Connection Engine)
- Enjoy extreme media transfer speeds without configuration anxiety:
- * **Extreme Downloads**: Features a built-in multi-connection download engine (`BOOST_EXTREME` by default) that maximizes bandwidth utility for rapid media acquisition.
- * **Accelerated Uploads**: Optimizes socket buffer allocations and stream piping to upload documents and high-resolution videos in seconds.
- * **Battery-Optimized**: Hardcoded to work in harmony with your device's network chip to avoid thermal throttling.
- 
- ### ✍️ Executive Typography & Clean Slate UX
- * **Custom Typography**: Features pre-loaded, highly legible branded typography specifically optimized for long-form reading comfort on mobile screens.
- * **Decluttered Settings**: Replaces hundreds of confusing, unstable toggle switches with a clean, handpicked layout that ensures system stability and aesthetic harmony.
- 
----
- 
- ## 🛠️ Technical Architecture
- 
- * **Gomin Version**: 1.0.0
- * **Base Core**: Telegram for Android v12.5.0 (Custom Optimized Core)
- * **Understream Engine**: Cherrygram Framework
- * **Programming Languages**: Kotlin (54%), Java (42%), C++ (JNI for cryptography and high-speed core tasks)
- * **AI Architecture**: Google Gemini API Integration via secure local endpoints
- * **Security & Privacy**: Zero analytics/trackers, forced TLS verification, automated proxy promotion blocking.
+Built on top of a deeply optimized Telegram core, Gomin strips away the chaotic, visual clutter of generic forks and replaces it with an elegant, **minimalist layout, premium typography, and military-grade stealth features**. 
 
 ---
 
-## 🚀 Development & Build
+## 🏛️ The Origin & Philosophy: Why Gomin?
+
+> *"It all started with the name: **Gomin** (Гомін) — the distant, vibrant murmur of voices, the echo of free people. It carried a unique Ukrainian vibe, a code that simply couldn't be allowed to fade away."*
+
+In a landscape filled with hyper-customized forks that look like neon toys, Gomin stands apart as a monument of executive restraint. We believe that a high-end tool should work flawlessly out of the box. 
+
+Our mission is to build the **first premium Telegram client with true Ukrainian roots**—crafted for resilience, high performance, and visual excellence. Gomin bridges the gap between raw messaging and professional productivity, all while retaining a clean, distraction-free atmosphere.
+
+---
+
+## ⚡ The Speed Engine: Real High-Performance Stats
+
+Standard Telegram clients are built for baseline network conditions. Gomin is built to extract every single drop of bandwidth from your Gigabit Wi-Fi or 5G connection.
+
+| Network Metric | Standard Telegram | Gomin (Boost Extreme) | Gomin (Slow Network Mode) |
+| :--- | :--- | :--- | :--- |
+| **Download Threads** | 4 parallel streams | **12 parallel streams** 🔥 | 1 stable stream |
+| **Download Buffer** | 128 KB chunks | **1 MB chunks** 🚀 | 32 KB micro-packets |
+| **Upload Buffer** | 128 KB chunks | **512 KB chunks** ⚡ | 32 KB micro-packets |
+| **Target Network** | Basic Mobile Data | 5G / High-Speed Fiber | Bomb Shelters / Basements 🛡️ |
+
+### 🚀 BOOST_EXTREME
+By default, Gomin splits your media downloads into massive **1MB chunks** and processes them through **12 parallel TCP connections**. This yields up to a **2x–3x actual speed increase** when downloading high-resolution videos, large archives, or uncompressed media.
+
+### 🛡️ Shelter-Ready Defensive Mode (Slow Network)
+An engineering fallback designed for the reality of modern Ukraine—bomb shelters, basements, or rural areas with close to zero cell reception. When activated, it forces a ultra-stable, single-threaded connection using tiny **32KB packets**, preventing connection dropouts and socket timeouts when every kilobyte counts.
+
+---
+
+## ✨ Signature Features (What's Actually Inside)
+
+We don't sell vaporware. Here is the exact suite of premium features engineered into Gomin right now:
+
+### 👻 Gomin Ghost Mode (Military-Grade Stealth)
+Take absolute control over your digital presence with our quad-layer private stealth engine:
+* **Unread Messages Guard**: Read incoming chats in full secrecy. Messages remain marked as "unread" on the server until you reply or manually sync.
+* **Typing Indicator Mask**: Completely hides your "typing..." or "recording voice..." status.
+* **Invisible Stories Viewer**: Watch public and personal Stories without leaving a trace in the viewers list.
+* **Offline Presence Lock**: Appear offline or hidden while staying fully active.
+
+### 🧠 Gemini Voice-to-Text Bypass (Free Transcription)
+Telegram's native voice-to-text transcription is locked behind the paid Telegram Premium subscription. Gomin bypasses this restriction entirely. 
+* By entering your personal, free **Gemini API Key** in Gomin settings, you can transcribe any number of voice messages to text absolutely free, powered by Google's state-of-the-art AI.
+
+### 🎨 Executive Aesthetics & Monet Engine
+* **Material You (Monet)**: Fully adapts to your system palette (Android 12+), gracefully shifting colors to match your wallpaper.
+* **Branded Typography**: Pre-loaded with Vercel's **Geist** font for messages (ultimate legibility) and **Playfair Display** for headers (classic elegance).
+* **True Black Edition**: High-contrast, pure OLED black UI that looks premium and saves battery.
+* **Decluttered Settings**: We completely removed experimental bugs, ugly "snowflakes," and visual trash, consolidating everything into a clean, flat settings screen.
+
+### 🚫 Anti-Tracker & Ad-Block Core
+* Fully stripped of all analytical trackers, crash report telemetry (except local ones), and sponsored proxy ads. No commercial bloat.
+
+---
+
+## 🗺️ The Vision & Roadmap
+
+We are constantly pushing Gomin forward. Here is our direct development path:
+
+- [x] Flat, premium settings layout & Monobank integration.
+- [x] Custom executive typography and ActionBar scaling fixes.
+- [x] Extreme 12-thread network booster and Shelter-Mode.
+- [x] Quad-layer Gomin Ghost Mode.
+- [ ] **Gomin Drive**: A 100% native, ultra-clean personal cloud workspace inside "Saved Messages" using the `MediaActivity` layout.
+- [ ] **Gomin AI**: An interactive, localized Gemini virtual assistant chat that runs on your local SQLite database and analyzes custom chat contexts.
+
+---
+
+## ☕ Support the Artisan
+
+Gomin is built by a solo developer who puts his heart, soul, and endless sleepless nights into this code. There are no corporate investors or paid subscriptions. 
+
+If Gomin has made your communication faster, cleaner, and more elite, consider treating the author to a coffee or helping pay for the update servers:
+
+👉 **[Treat the Author to a Coffee (Monobank Jar) ☕](https://send.monobank.ua/jar/4ecLBi7WaZ)**
+
+---
+
+## 🛠️ Compilation & Local Build
 
 To compile Gomin locally on your machine:
 
@@ -57,18 +97,12 @@ To compile Gomin locally on your machine:
    git clone https://github.com/HollyLight28/Gomin.git
    ```
 2. **Open in Android Studio**:
-   Import the project root. Let the Gradle sync complete.
+   Import the project root and let Gradle sync.
 3. **Build the Standalone Version**:
-   Use the terminal to compile the standalone package:
+   Run the following command in the terminal to compile the standalone debug build:
    ```bash
    ./gradlew :TMessagesProj_AppStandalone:assembleAfatStandaloneDebug
    ```
-
----
-
-## 📜 License
-
-Gomin is free software distributed under the **GNU GPL v2** license. We express our utmost respect and gratitude to the original developers of Telegram and Cherrygram, upon whose robust foundations this project proudly stands.
 
 ---
 

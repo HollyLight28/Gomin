@@ -117,7 +117,7 @@
     <string name="CG_SortByDate">Сортировка по дате сообщения</string>
     <string name="CG_SortByUnread">Сортировка по непрочитанным</string>
 
-    <string name="CG_UnknownCherrySettingsOption">Такого параметра Cherry нет.</string>
+    <string name="CG_UnknownCherrySettingsOption">Такого параметра Gomin нет.</string>
     <string name="CG_Restart">Перезапустить приложение</string>
     <string name="CG_RestartToApply">Перезапустите приложение</string>
     <string name="CG_PushService">Сервис уведомлений Gomin.</string>

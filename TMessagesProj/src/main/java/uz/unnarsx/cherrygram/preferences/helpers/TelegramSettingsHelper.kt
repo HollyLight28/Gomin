@@ -269,8 +269,8 @@ class TelegramSettingsHelper(
             if (dark) 0xFFFFFFFF.toInt() else 0xFF121212.toInt(),
             if (dark) 0xFFFFFFFF.toInt() else 0xFF121212.toInt(),
             R.drawable.msg_palette,
-            "Gomin Black Edition",
-            "Монохромна елітарність та дофаміновий детокс"
+            "Гомін Black Edition",
+            "Інструмент когнітивної переваги"
         )
         items.add(blackEditionItem)
         items.add(UItem.asShadow(null))

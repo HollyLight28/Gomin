@@ -689,7 +689,14 @@ public class ThemesHorizontalListCell extends RecyclerListView implements Notifi
         super(context);
 
         customThemes = custom;
-        defaultThemes = def;
+        defaultThemes = new ArrayList<>();
+        for (int a = 0; a < def.size(); a++) {
+            Theme.ThemeInfo themeInfo = def.get(a);
+            if (themeInfo.isMonet()) {
+                continue;
+            }
+            defaultThemes.add(themeInfo);
+        }
         currentType = type;
         this.fragment = fragment;
 
