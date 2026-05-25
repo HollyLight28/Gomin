@@ -8,49 +8,56 @@
 
 ## 🏛️ The Origin Story: How "Gomin" Was Born
 
-This entire journey didn't start with corporate decks, marketing budgets, or technical specifications. It began with a single, beautiful word that was impossible not to fall in love with — **«Gomin» (Гомін)**. 
+This entire journey didn't start in quiet corporate offices, from marketing decks, or business plans. It began with a single, beautiful word that was impossible not to fall in love with — **«Gomin» (Гомін)**. 
 
-In Ukrainian, it stands for the distant, warm murmur of voices, the echo of free people gathering together. Once this name was born, it became clear: it was simply too good to let fade away or collect dust in some graveyard of abandoned side-projects. To save this name and breathe life into it, it was worth going through the absolute hell of Android development, fighting with millions of lines of complex legacy code, and building something real.
+In Ukrainian, it stands for the distant, warm murmur of voices, the lively echo of free people gathering together. Once this name was born, it became clear: it was simply too good to let fade away or collect dust in some graveyard of abandoned side-projects. To save this name and breathe life into it, it was worth going through the absolute hell of Android development, fighting with millions of lines of complex legacy C++ and Java code from the original Telegram core, enduring weeks of sleepless nights, and building something real.
 
-Until now, Ukraine didn't have its own custom Telegram client with a distinct national character. Most third-party clients out there are either commercial monsters bloated with sketchy ads, or childish apps covered in useless sparkles and laggy transitions.
+Until now, Ukraine didn't have its own custom Telegram client with a distinct national character and soul. Most third-party clients out there are either commercial monsters bloated with sketchy ads, or childish apps covered in useless sparkles and laggy transitions.
 
-**Gomin** is an honest attempt to make Telegram clean, incredibly fast, and truly ours. It's an app created not for commercial profit, but on raw enthusiasm and love for the craft. Crafted for people who value speed, privacy, and want to feel a genuine local vibe in every single swipe.
-
----
-
-## ⚡ The Speed Engine: When Performance Actually Matters
-
-We won't bore you with corporate talk about "cloud innovations". Let's be completely honest: under the hood, Gomin features a **hardware-accelerated network engine** designed for real-world scenarios.
-
-| Network Mode | What's Happening Under the Hood? | Primary Use Case |
-| :--- | :--- | :--- |
-| **Gomin Boost Extreme** 🚀 | Splits media downloads into massive **1 MB chunks** and downloads them simultaneously over **12 parallel threads** (compared to standard Telegram's 4 streams of 128 KB). | To extract every single drop of speed from your high-speed 5G or gigabit fiber connection. High-res videos and files download 2-3x faster. |
-| **Shelter Mode (Slow Network)** 🛡️ | Forces a highly stable, single-threaded connection using micro-packets of **32 KB**. | The harsh reality of modern Ukraine. When you are in a bomb shelter, subway, or basement where cell coverage is close to dead — this mode holds onto the connection with its teeth, preventing timeouts and packet drops. |
-
-On the upload side, we expanded the outgoing buffer to **512 KB** (up from 128 KB) to ensure your media and heavy documents fly into the chat without wasted seconds.
+**Gomin** is an honest attempt to make Telegram clean, incredibly fast, and truly ours. It's an app created not for commercial profit, but on raw enthusiasm, passion, and love for the craft. Crafted for people who value speed, privacy, and want to feel a genuine local vibe in every single swipe.
 
 ---
 
-## ✨ Signature Features (What's Actually Inside)
+## 💎 Our Core Killer Features (What Makes Gomin Unique)
 
-Zero marketing fluff. Here is the exact set of features built into Gomin that are fully functional right now:
+We won't bore you with corporate talk about "cloud innovations". Gomin is built by a developer for real-world networks, real-world devices, and the actual needs of users in Ukraine. Here is our golden set of killer features:
 
-### 👻 Gomin Ghost Mode (Stealth Security)
-Your digital presence is your personal space. We've built 4 straightforward, rock-solid stealth features:
+### ⚡ 1. The Speed Engine: Gomin Speed Boost
+This is the heart of our app. Standard Telegram is optimized for conservative global mobile network limits, but we have unleashed data transfer speeds to a whole new level.
+
+* **Gomin Boost Extreme (Active by Default)** 🚀:
+  When downloading high-res videos, large archives, or original photos, Gomin splits the file into massive **1 MB chunks** and processes them simultaneously over **12 parallel TCP connections** (compared to standard Telegram's conservative 4 streams of 128 KB). This delivers a **2x–3x actual speed increase** on high-speed Wi-Fi or 5G!
+* **Extreme Upload Booster** ⚡:
+  We expanded the outgoing transmission buffer to **512 KB** (up from 128 KB). Your media and heavy documents fly into the chat instantly, without wasted seconds waiting for socket headers.
+* **Shelter Mode (Slow Network Defensive Mode)** 🛡️:
+  Our harsh defense reality. When you are in a bomb shelter, subway, basement, or rural area with close to zero coverage where cell signal is barely alive — this mode saves the day. It forces the app to transmit media over a highly stable, single-threaded connection using micro-packets of **32 KB**, preventing connection drops and socket timeouts.
+
+### 🖤 2. Gomin Black Edition & Monet Design
+We spent dozens of hours refining the user interface to perfection to deliver an elite visual experience:
+* **True OLED Black**: No gray tones or washed-out backgrounds. A deep, pure OLED black UI that looks premium, relieves eye strain during night reading, and saves precious battery life on your device.
+* **Monet Color Harmony**: We resolved color jumps and flickering accent switches when navigating between folders and chats. Accent colors gracefully adapt to your system palette (Android 12+), creating a seamless, unified premium theme.
+* **Scaled ActionBar**: We conquered the standard Telegram font size limitations. Instead of a cramped 20sp header, the title **«Гомін»** proudly sits in a stable, large scale of **24sp**, projecting confidence and elite status.
+
+### 👻 3. Quad-Layer Gomin Ghost Mode (Stealth Security)
+Your digital presence is your personal space. Stay in the shadows whenever you need to:
 * **Unread Messages Guard**: Read incoming chats in full secrecy. Messages remain marked as "unread" on the server until you reply or manually sync.
 * **Typing Indicator Mask**: Completely hides your "typing..." or "recording voice..." status. Take your time composing a reply without pressure.
 * **Invisible Stories Viewer**: Watch public and personal Stories without leaving a single trace in the viewers list.
 * **Offline Presence Lock**: Chat with others while your global status remains permanently "offline".
 
-### 🧠 Gemini Voice-to-Text Bypass (Free Transcription)
-Standard Telegram demands a paid Telegram Premium subscription to transcribe voice notes to text. 
-* Gomin completely bypasses this artificial wall. By entering your personal, free **Gemini API Key** (which Google provides for free in just 1 minute) in Gomin settings, the app transcribes any voice message to text absolutely free, powered by Google's state-of-the-art AI.
+### 🧠 4. Integrated AI Features (Gomin AI)
+Gomin supports seamless integration with cutting-edge artificial intelligence.
+* If you have a personal **Gemini API Key**, you can simply paste it in the Gomin settings. This will unlock the built-in intelligent AI capabilities: a smart Gemini chat assistant directly in your dialogue list and the ability to transcribe any voice message to text on the fly!
 
-### 🎨 Clean Aesthetics Without Visual Junk
-* **True OLED Black**: A gorgeous, high-contrast black interface that looks incredibly premium and saves precious battery life on OLED screens.
-* **Zero Ads & Trackers**: We completely stripped sponsored proxy ads and visual trackers. Only clean code, maximum speed, and total data privacy.
-* **Zero Visual Clutter**: We removed broken layout options (such as the non-functional "folders at bottom" toggle), annoying snowflakes, and confusing experimental menus. Instead, you get a clean, single-screen flat settings layout.
-* **Crafted Typography**: Instead of generic system fonts, Gomin utilizes hand-picked typography (such as Manrope assets) to make reading long messages smooth and comfortable on your eyes.
+### 🎯 5. Unique Ergonomic & Usability Upgrades
+* **Toggle #16: "Delete for All" by Default** 🗑️:
+  No more annoying popups asking if you want to check that box every time you delete a message. We turned this on by default. Just hit delete — and sleep peacefully knowing it's gone for everyone.
+* **Decluttered Lower Search Layout**:
+  We moved the search bar from the top header down to the bottom navigation area and removed the extra visual input field, keeping the UI clean and minimalist. This is our signature upgrade for effortless one-handed control!
+* **Crafted Typography**:
+  Instead of default system fonts, Gomin utilizes hand-picked typography (such as **Manrope** assets) to make reading long messages smooth and comfortable on your eyes.
+* **Zero Commercial Bloat**:
+  We completely stripped sponsored proxy ads and visual trackers. Gomin operates faster and never collects your personal data.
 
 ---
 
@@ -61,6 +68,8 @@ Gomin is just getting started. Here is our honest development plan, which we wil
 - [x] Full removal of old legacy references, interface clean-up, and flat Gomin settings.
 - [x] Implementation of the 12-thread network booster and Shelter-Mode.
 - [x] Rock-solid 4-layer Ghost Mode.
+- [x] Automatic message deletion for all participants by default.
+- [x] Integration of adaptive launcher icons (Adaptive Icons) with a gorgeous white bird on a blue background (#2AABEE) and perfect outline borders.
 - [ ] **Gomin Drive**: A native, ultra-clean personal cloud workspace inside "Saved Messages" using the `MediaActivity` layout to manage files without hacks or hashtags.
 - [ ] **Gomin AI**: An interactive, localized Gemini assistant chat running on your local SQLite database to summarize conversations on the fly.
 
@@ -68,7 +77,7 @@ Gomin is just getting started. Here is our honest development plan, which we wil
 
 ## ☕ Support the Artisan
 
-Gomin is developed and maintained by a single developer who spends his evenings, nights, and weekends building this code — simply because he wanted to create a beautiful, high-quality Ukrainian product.
+Gomin is developed and maintained by a single developer who spends his evenings, nights, and weekends building this code — simply because he wanted to save a beautiful name and create a high-quality Ukrainian product for his people.
 
 If Gomin made your communication faster, cleaner, and more enjoyable, consider supporting the author with a coffee or helping pay for update servers:
 
