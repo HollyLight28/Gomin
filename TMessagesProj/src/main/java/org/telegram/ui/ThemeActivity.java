@@ -631,12 +631,10 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
             if (themeInfo.isMonet()) {
                 continue;
             }
-            if (themeInfo.isDark()) {
-                darkThemes.add(themeInfo);
-            } else {
-                defaultThemes.add(themeInfo);
-            }
-        }
+            if (currentType != THEME_TYPE_BASIC && currentType != THEME_TYPE_THEMES_BROWSER) {
+                if (themeInfo.isLight() || themeInfo.info != null && themeInfo.info.document == null) {
+                    continue;
+                }
             }
             if (themeInfo.pathToFile != null) {
                 darkThemes.add(themeInfo);

@@ -7,12 +7,14 @@
 6. Fix Cherry references in Russian strings (`cg_strings.xml`). [COMPLETED]
 7. Fix build.gradle configuration crash on GitHub Actions due to missing properties fallback. [COMPLETED]
 8. Commit all repository changes and push to GitHub. [COMPLETED]
+9. Fix Kotlin compiler unresolved reference `AndroidUtilities` in `GominBlackEditionActivity.kt` on CI. [COMPLETED]
 
 # COMPLETED ATOMIC STEPS
 - Cleaned up settings screens: completely removed "foldersAtBottomRow" option from `FoldersPreferencesEntry.java` since it was deprecated and broken in UX.
 - Modified `cg_strings.xml` to replace legacy Russian translation references of "Cherry" settings option with "Gomin".
 - Fixed `build.gradle` in `TMessagesProj_AppStandalone`: added proper environment variable and property fallbacks for `SYSTEM_USERNAME`, `TELEGRAM_CHAT_ID`, and `TELEGRAM_BOT_TOKEN`. This solves the configuration-time crash (`MissingPropertyException`) on GitHub Actions / clean builds when `secrets_for_ci.env` is missing!
 - Rewrote `README.md` and `README.uk.md` from scratch to tell the real, deeply personal, non-corporate story of the project. Removed old Monet/Geist/ActionBar scale hype. Added strict technical details about pure OLED Black Edition, Manrope custom typography, 12-thread Speed Booster, Shelter Mode, quad-layer Ghost Mode, Gemini AI key integration, "delete for all" by default, and bottom search layout.
+- Fixed compilation crash in `GominBlackEditionActivity.kt` by adding the missing import for `org.telegram.messenger.AndroidUtilities`.
 - Formulated clear conventional commit message, executed full git commit and pushed changes to remote repository.
 
 # OPEN PROBLEMS
@@ -24,3 +26,4 @@ None.
 - `TMessagesProj_AppStandalone/build.gradle` -> Fixed CI fallbacks for system properties to prevent gradle build failures.
 - `README.md` -> Fully rewritten with true raw emotional story, honest technical specs, pure Black Edition, Manrope, Gemini, Speed Booster, deleting for all by default, and bottom search.
 - `README.uk.md` -> Fully rewritten Ukrainian raw edition with true personal soul and complete roadmap.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/preferences/GominBlackEditionActivity.kt` -> Added missing import for `AndroidUtilities`.
