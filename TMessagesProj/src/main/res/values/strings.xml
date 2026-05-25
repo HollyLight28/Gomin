@@ -5600,9 +5600,9 @@
     <string name="BioLimitTitle">Bio</string>
     <string name="BioLimitSubtitle">Add more symbols and use links in your bio.</string>
     <string name="AppIcon">App Icon</string>
-    <string name="AppIconDefault">Default</string>
+    <string name="AppIconDefault">Classic</string>
     <string name="AppIconVintage">Vintage</string>
-    <string name="AppIconAqua">Aqua</string>
+    <string name="AppIconAqua">Ocean</string>
     <string name="AppIconPremium">Premium</string>
     <string name="AppIconTurbo">Turbo</string>
     <string name="AppIconNox">Nox</string>

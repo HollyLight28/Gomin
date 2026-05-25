@@ -51,6 +51,7 @@ public class LauncherIconController {
         AQUA_CHERRY("CG_Icon_Aqua", R.drawable.icon_background_aqua, R.drawable.icon_foreground_gomin_aqua, R.string.AppIconAqua),
         LAVANDA_CHERRY("CG_Icon_Lavanda", R.drawable.icon_background_lavanda, R.drawable.icon_foreground_gomin_lavanda, R.string.AP_ChangeIcon_Lavanda),
         VIOLET_SUNSET_CHERRY("CG_Icon_Violet_Sunset", R.drawable.icon_background_black_red, R.drawable.icon_foreground_gomin_sunset, R.string.AP_ChangeIcon_Violet_Sunset),
+        UKRAINE_CHERRY("CG_Icon_Ukraine", R.drawable.icon_background_ukraine, R.drawable.icon_foreground_gomin_yellow, R.string.AP_ChangeIcon_Ukraine),
         PREMIUM("PremiumIcon", R.drawable.icon_3_background_sa, R.mipmap.icon_3_foreground, R.string.AppIconPremium, true);
 
         public final String key;

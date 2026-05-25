@@ -181,12 +181,13 @@
     <string name="AP_Tablet_Mode">Режим планшета</string>
     <string name="AP_ChangeIcon_Cherry_NY">Новогодняя</string>
     <string name="AP_ChangeIcon_Dark">Тёмная</string>
-    <string name="AP_ChangeIcon_White">Белая</string>
+    <string name="AP_ChangeIcon_White">Светлая</string>
     <string name="AP_ChangeIcon_Laguna">Лагуна</string>
     <string name="AP_ChangeIcon_Green">Зеленая</string>
-    <string name="AP_ChangeIcon_Lavanda">Лаванда</string>
-    <string name="AP_ChangeIcon_Sunset">Закат</string>
-    <string name="AP_ChangeIcon_Sunrise">Восход</string>
+    <string name="AP_ChangeIcon_Lavanda">Аметист</string>
+    <string name="AP_ChangeIcon_Sunset">Сумерки</string>
+    <string name="AP_ChangeIcon_Sunrise">Рассвет</string>
+    <string name="AP_ChangeIcon_Ukraine">Патриотическая</string>
     <string name="AP_IconReplacement_Solar">Иконки Solar от @Design480</string>
     <string name="AP_OneUI_Switch_Style">Переключатели в стиле OneUI</string>
     <string name="AP_SystemEmoji">Системные эмодзи</string>

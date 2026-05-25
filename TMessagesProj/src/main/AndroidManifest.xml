@@ -371,6 +371,23 @@
             <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
         </activity-alias>
 
+        <activity-alias
+            android:name="ua.gomin.messenger.CG_Icon_Ukraine"
+            android:enabled="false"
+            android:icon="@mipmap/icon_launcher_cherry_ukraine"
+            android:roundIcon="@mipmap/ic_launcher"
+            android:targetActivity="org.telegram.ui.LaunchActivity"
+            android:exported="true">
+            <intent-filter android:icon="@mipmap/icon_launcher_cherry_ukraine" android:roundIcon="@mipmap/ic_launcher">
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
 <!--        Telegram launch icons start -->
         <activity-alias
             android:enabled="false"

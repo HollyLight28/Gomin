@@ -4,9 +4,7 @@
     android:viewportWidth="1024"
     android:viewportHeight="1024">
     <!-- White Circle Disc in Center -->
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M 512, 512 m -300, 0 a 300,300 0 1,0 600,0 a 300,300 0 1,0 -600,0" />
+
     <!-- Black Bird -->
     <group
         android:pivotX="512"
