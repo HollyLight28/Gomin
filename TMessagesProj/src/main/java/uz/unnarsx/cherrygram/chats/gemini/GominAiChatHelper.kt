@@ -26,6 +26,7 @@ import org.telegram.messenger.FileLog
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.UserConfig
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
@@ -173,40 +174,40 @@ object GominAiChatHelper {
         if (isShieldMode && shieldContext != null) {
             contents.add(Content.Builder().apply {
                 role = "user"
-                addText("Системна інструкція: $shieldSystemPrompt\n\nОсь повна історія чату з $shieldPartner для аналізу:\n$activeShieldHistory")
+                text("Системна інструкція: $shieldSystemPrompt\n\nОсь повна історія чату з $shieldPartner для аналізу:\n$activeShieldHistory")
             }.build())
 
             val firstTurn = mergedHistory.firstOrNull()
             if (firstTurn != null && firstTurn.role == "model") {
                 contents.add(Content.Builder().apply {
                     role = "model"
-                    addText("Зрозумів. Я детально проаналізував діалог з $shieldPartner. Ось мій аналіз:\n$shieldContext\n\n${firstTurn.text}")
+                    text("Зрозумів. Я детально проаналізував діалог з $shieldPartner. Ось мій аналіз:\n$shieldContext\n\n${firstTurn.text}")
                 }.build())
                 mergedHistory.removeAt(0)
             } else {
                 contents.add(Content.Builder().apply {
                     role = "model"
-                    addText("Зрозумів. Я детально проаналізував діалог з $shieldPartner. Ось мій аналіз:\n$shieldContext")
+                    text("Зрозумів. Я детально проаналізував діалог з $shieldPartner. Ось мій аналіз:\n$shieldContext")
                 }.build())
             }
         } else {
             val prompt = if (TextUtils.isEmpty(systemPrompt)) "Ти - корисний АІ помічник." else systemPrompt
             contents.add(Content.Builder().apply {
                 role = "user"
-                addText("Системна інструкція: $prompt")
+                text("Системна інструкція: $prompt")
             }.build())
 
             val firstTurn = mergedHistory.firstOrNull()
             if (firstTurn != null && firstTurn.role == "model") {
                 contents.add(Content.Builder().apply {
                     role = "model"
-                    addText("Зрозумів інструкцію. Чим я можу допомогти тобі сьогодні, бро?\n\n${firstTurn.text}")
+                    text("Зрозумів інструкцію. Чим я можу допомогти тобі сьогодні, бро?\n\n${firstTurn.text}")
                 }.build())
                 mergedHistory.removeAt(0)
             } else {
                 contents.add(Content.Builder().apply {
                     role = "model"
-                    addText("Зрозумів інструкцію. Чим я можу допомогти тобі сьогодні, бро?")
+                    text("Зрозумів інструкцію. Чим я можу допомогти тобі сьогодні, бро?")
                 }.build())
             }
         }
@@ -215,7 +216,7 @@ object GominAiChatHelper {
         for (msg in mergedHistory) {
             contents.add(Content.Builder().apply {
                 role = msg.role
-                addText(msg.text)
+                text(msg.text)
             }.build())
         }
 
@@ -223,8 +224,8 @@ object GominAiChatHelper {
     }
 
     fun queryAi(currentAccount: Int, newUserText: String) {
-        val apiKey = CherrygramMessagesConfig.INSTANCE.geminiApiKey
-        val modelName = CherrygramMessagesConfig.INSTANCE.geminiModelName
+        val apiKey = CherrygramMessagesConfig.geminiApiKey
+        val modelName = CherrygramMessagesConfig.geminiModelName
 
         if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(modelName)) {
             AndroidUtilities.runOnUIThread {
@@ -239,7 +240,7 @@ object GominAiChatHelper {
         }
 
         val configBuilder = GenerationConfig.Builder().apply {
-            temperature = CherrygramMessagesConfig.INSTANCE.geminiTemperatureValue.toFloat() / 10f
+            temperature = CherrygramMessagesConfig.geminiTemperatureValue.toFloat() / 10f
             topK = 10
             topP = 0.5f
             maxOutputTokens = 4096
@@ -268,7 +269,7 @@ object GominAiChatHelper {
         val isShieldMode = activeShieldContext != null && activeShieldHistory != null
 
         val contents = prepareTurns(
-            systemPrompt = CherrygramMessagesConfig.INSTANCE.geminiSystemPrompt ?: "",
+            systemPrompt = CherrygramMessagesConfig.geminiSystemPrompt ?: "",
             history = historyExcludingLast,
             newQuery = newUserText,
             isShieldMode = isShieldMode,
@@ -276,7 +277,7 @@ object GominAiChatHelper {
             shieldContext = activeShieldContext
         )
 
-        val responseFuture = modelFutures.generateContent(contents)
+        val responseFuture = modelFutures.generateContent(*contents.toTypedArray())
         val executor = ContextCompat.getMainExecutor(ApplicationLoader.applicationContext)
 
         Futures.addCallback(responseFuture, object : FutureCallback<com.google.ai.client.generativeai.type.GenerateContentResponse> {
@@ -310,8 +311,8 @@ object GominAiChatHelper {
         historyText: String,
         callback: (success: Boolean, resultText: String) -> Unit
     ) {
-        val apiKey = CherrygramMessagesConfig.INSTANCE.geminiApiKey
-        val modelName = CherrygramMessagesConfig.INSTANCE.geminiModelName
+        val apiKey = CherrygramMessagesConfig.geminiApiKey
+        val modelName = CherrygramMessagesConfig.geminiModelName
 
         if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(modelName)) {
             callback(false, "Бро, спочатку введи свій API-ключ та вибери модель в чаті ШІ! ⚙️")
@@ -341,7 +342,7 @@ object GominAiChatHelper {
 
         val promptContent = Content.Builder().apply {
             role = "user"
-            addText("Системна інструкція: $shieldSystemPrompt\n\nПроаналізуй наступну історію діалогу з $partnerName:\n$historyText")
+            text("Системна інструкція: $shieldSystemPrompt\n\nПроаналізуй наступну історію діалогу з $partnerName:\n$historyText")
         }.build()
 
         val responseFuture = modelFutures.generateContent(promptContent)
@@ -370,7 +371,7 @@ object GominAiChatHelper {
      */
     fun showModelSelector(activity: ChatActivity) {
         val models = arrayOf("gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-exp", "✏️ Ввести назву моделі вручну...")
-        val currentModel = CherrygramMessagesConfig.INSTANCE.geminiModelName
+        val currentModel = CherrygramMessagesConfig.geminiModelName
         
         var activeSelection = models.indexOf(currentModel)
         if (activeSelection == -1 && !TextUtils.isEmpty(currentModel)) {
@@ -380,13 +381,13 @@ object GominAiChatHelper {
         val builder = AlertDialog.Builder(activity.parentActivity, activity.resourceProvider)
         builder.setTitle("🤖 Вибрати модель Gemini")
         
-        builder.setSingleChoiceItems(models, activeSelection) { dialog, which ->
+        builder.setItems(models) { dialog: DialogInterface, which: Int ->
             if (which == 3) {
                 dialog.dismiss()
                 showCustomModelInput(activity)
             } else {
                 val selectedModel = models[which]
-                CherrygramMessagesConfig.INSTANCE.geminiModelName = selectedModel
+                CherrygramMessagesConfig.geminiModelName = selectedModel
                 dialog.dismiss()
                 setTypingStatus(false) // Оновити заголовок з новою назвою моделі
                 
@@ -409,7 +410,7 @@ object GominAiChatHelper {
         val editText = EditText(activity.parentActivity).apply {
             inputType = InputType.TYPE_CLASS_TEXT
             hint = "наприклад: gemini-2.5-flash"
-            setText(CherrygramMessagesConfig.INSTANCE.geminiModelName)
+            setText(CherrygramMessagesConfig.geminiModelName)
             setSelection(text.length)
         }
 
@@ -419,10 +420,10 @@ object GominAiChatHelper {
         }
         builder.setView(frameLayout)
 
-        builder.setPositiveButton("Зберегти") { dialog, _ ->
+        builder.setPositiveButton("Зберегти") { dialog: DialogInterface, _ ->
             val customName = editText.text.toString().trim()
             if (!TextUtils.isEmpty(customName)) {
-                CherrygramMessagesConfig.INSTANCE.geminiModelName = customName
+                CherrygramMessagesConfig.geminiModelName = customName
                 setTypingStatus(false)
                 
                 AndroidUtilities.runOnUIThread {
@@ -444,7 +445,7 @@ object GominAiChatHelper {
         val builder = AlertDialog.Builder(activity.parentActivity, activity.resourceProvider)
         builder.setTitle("🧹 Очистити історію чату")
         builder.setMessage("Бро, ти впевнений, що хочеш повністю очистити історію чату з Gomin AI? Цю дію неможливо скасувати.")
-        builder.setPositiveButton("Очистити") { dialog, _ ->
+        builder.setPositiveButton("Очистити") { dialog: DialogInterface, _ ->
             GominAiHistoryManager.clearHistory()
             activeShieldContext = null
             activeShieldHistory = null
@@ -483,13 +484,14 @@ object GominAiChatHelper {
             stack?.firstOrNull { it is ChatActivity && it.dialogId == Constants.GOMIN_AI_DIALOG_ID } as? ChatActivity
         } ?: return
 
-        val rawModelName = CherrygramMessagesConfig.INSTANCE.geminiModelName
-        val friendlyModelName = when (rawModelName) {
+        val rawModelName = CherrygramMessagesConfig.geminiModelName
+        val model = rawModelName
+        val friendlyModelName = when (model) {
             "gemini-1.5-flash" -> "Gemini 1.5 Flash"
             "gemini-1.5-pro" -> "Gemini 1.5 Pro"
             "gemini-2.0-flash-exp" -> "Gemini 2.0 Flash"
             null, "" -> "Gemini"
-            else -> rawModelName.replace("-", " ").capitalize()
+            else -> model.replace("-", " ").capitalize()
         }
 
         if (isTyping) {

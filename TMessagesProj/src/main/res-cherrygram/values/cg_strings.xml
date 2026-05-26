@@ -493,6 +493,11 @@
     <string name="CP_AutoQuote_Desc">Automatically creates a text quote when replying to a message.</string>
     <string name="CP_DeleteForAll_Desc_New">Automatically checks the \"Delete for all\" box when deleting messages.</string>
 
+    <string name="UP_BTRelease">Stable</string>
+    <string name="UP_BTBeta">Beta</string>
+    <string name="DP_Donate_Exclusive">Exclusive for supporters</string>
+    <string name="DP_Donate_ExclusiveDesc">Support the project to unlock all premium features.</string>
+
     <string name="CP_AirAlert_Header">Air Alert 🚨</string>
     <string name="CP_AirAlert_Enabled">Enable alerts</string>
     <string name="CP_AirAlert_APIKey">API Key (Ajax)</string>
