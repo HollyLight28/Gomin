@@ -801,12 +801,6 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         showActionMode(animated, null, null, null, null, null, 0);
     }
 
-        if (actionMode == null || actionModeVisible) {
-            return;
-        }
-        actionModeVisible = true;
-        updateAirAlertStatus();
-        if (animated) {
     public void showActionMode(boolean animated, View extraView, View showingView, View[] hidingViews, boolean[] hideView, View translationView, int translation) {
         if (actionMode == null || actionModeVisible) {
             return;
