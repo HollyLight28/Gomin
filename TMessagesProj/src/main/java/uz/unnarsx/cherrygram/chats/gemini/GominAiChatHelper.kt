@@ -370,19 +370,29 @@ object GominAiChatHelper {
      * Відкриває красивий нативний діалог вибору моделей прямо в чаті
      */
     fun showModelSelector(activity: ChatActivity) {
-        val models = arrayOf("gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-exp", "✏️ Ввести назву моделі вручну...")
+        val models = arrayOf(
+            "gemini-3.5-flash",
+            "gemini-3.1-pro",
+            "gemini-3.1-flash-lite",
+            "gemini-4.31",
+            "gemini-26b",
+            "gemini-1.5-flash",
+            "gemini-1.5-pro",
+            "gemini-2.0-flash-exp",
+            "✏️ Ввести назву моделі вручну..."
+        )
         val currentModel = CherrygramMessagesConfig.geminiModelName
         
         var activeSelection = models.indexOf(currentModel)
         if (activeSelection == -1 && !TextUtils.isEmpty(currentModel)) {
-            activeSelection = 3 // Інша модель
+            activeSelection = models.size - 1 // Інша модель
         }
 
         val builder = AlertDialog.Builder(activity.parentActivity, activity.resourceProvider)
         builder.setTitle("🤖 Вибрати модель Gemini")
         
         builder.setItems(models) { dialog: DialogInterface, which: Int ->
-            if (which == 3) {
+            if (which == models.size - 1) {
                 dialog.dismiss()
                 showCustomModelInput(activity)
             } else {
@@ -487,6 +497,11 @@ object GominAiChatHelper {
         val rawModelName = CherrygramMessagesConfig.geminiModelName
         val model = rawModelName
         val friendlyModelName = when (model) {
+            "gemini-3.5-flash" -> "Gemini 3.5 Flash"
+            "gemini-3.1-pro" -> "Gemini 3.1 Pro"
+            "gemini-3.1-flash-lite" -> "Gemini 3.1 Flash-Lite"
+            "gemini-4.31" -> "Gemini 4.31"
+            "gemini-26b" -> "Gemini 26B"
             "gemini-1.5-flash" -> "Gemini 1.5 Flash"
             "gemini-1.5-pro" -> "Gemini 1.5 Pro"
             "gemini-2.0-flash-exp" -> "Gemini 2.0 Flash"

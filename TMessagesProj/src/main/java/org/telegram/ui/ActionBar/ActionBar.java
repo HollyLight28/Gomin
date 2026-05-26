@@ -112,18 +112,7 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         }
     };
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        NotificationCenter.getGlobalInstance().addObserver(airAlertObserver, NotificationCenter.cgAirAlertStatusChanged);
-        updateAirAlertStatus();
-    }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        NotificationCenter.getGlobalInstance().removeObserver(airAlertObserver, NotificationCenter.cgAirAlertStatusChanged);
-    }
     private SimpleTextView subtitleTextView;
     private SimpleTextView additionalSubtitleTextView;
     private View actionModeTop;
@@ -1998,6 +1987,8 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         if (lastRightDrawable instanceof AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) {
             ((AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) lastRightDrawable).setParentView(titleTextView[0]);
         }
+        NotificationCenter.getGlobalInstance().addObserver(airAlertObserver, NotificationCenter.cgAirAlertStatusChanged);
+        updateAirAlertStatus();
     }
 
     @Override
@@ -2019,6 +2010,7 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         if (lastRightDrawable instanceof AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) {
             ((AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) lastRightDrawable).setParentView(null);
         }
+        NotificationCenter.getGlobalInstance().removeObserver(airAlertObserver, NotificationCenter.cgAirAlertStatusChanged);
     }
 
     private void updateAttachState() {

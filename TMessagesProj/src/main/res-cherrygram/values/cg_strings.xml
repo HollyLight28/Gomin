@@ -506,4 +506,78 @@
     <string name="CP_AirAlert_Instruction">1. Register at api.ukrainealarm.com\n2. Get your free API Key\n3. Paste it here and select your region.</string>
     <string name="CP_AirAlert_Active">AIR ALERT!</string>
 
+    <string name="DP_Donate_Bulletin">**%s** supported the development of **Gomin**!</string>
+
+    <!-- Intro page strings -->
+    <string name="CG_Page1Title">Gomin</string>
+    <string name="CG_Page1Message">Reliable and fast messenger\nbased on Telegram API.</string>
+    <string name="CG_Page2Message">Gomin delivers messages faster\nthan any other application.</string>
+    <string name="CG_Page3Message">Gomin provides free unlimited cloud storage for chats and media.</string>
+    <string name="CG_Page4Message">Gomin keeps your messages safe\nfrom hacker attacks.</string>
+    <string name="CG_Page5Message">Gomin has no limits on\nthe size of your media and chats.</string>
+    <string name="CG_Page6Message">Gomin allows to access your messages from multiple devices.</string>
+
+    <!-- About update strings -->
+    <string name="UP_Category_Updates">Updates</string>
+    <string name="UP_LastCheck">Last check</string>
+
+    <!-- Not set string -->
+    <string name="NotSet">Not set</string>
+
+    <!-- Donates Preferences -->
+    <string name="DP_SupportOptions">Support Options</string>
+    <string name="DP_EnjoyingUs">Enjoying Gomin?</string>
+    <string name="DP_RateUs">Leave a review on Google Play!</string>
+    <string name="DP_DonatesMoreInfo">Want to help Gomin grow? Check out the **Gomin Support** chat.</string>
+    <string name="DP_DonatesThanks">Thank you for your support! The cherry is happy because of you ❤️️</string>
+    <string name="DP_DonateBadge">Support the project and get bonuses</string>
+    <string name="DP_Donate_Desc">With a donation of $2 or more, you also get small bonuses:</string>
+    <string name="DP_Donate_Badge_desc">1. **Gomin Badge** next to your name.</string>
+    <string name="DP_Donate_MsgMenuCompactView_Desc">2. Compact **message menu** layout.</string>
+    <string name="DP_Donate_FoldersAtBottom_Desc">3. **Folders panel** at the bottom of the screen.</string>
+    <string name="DP_Donate_EpicBadge_desc">1. **Epic Gomin Badge** next to your name.</string>
+    <string name="DP_Donate_GiftMarket_Desc">2. **Gift Marketplace** button in the side menu.</string>
+    <string name="DP_Donate_MessageFilter_Desc">3. **Message Filter** feature</string>
+    <string name="DP_Donate_MessageMenu_Desc">4. **iOS-styled** message menu.</string>
+    <string name="DP_Donate_Cheque">Send a payment confirmation to **@arsLan** to get bonuses.</string>
+    <string name="DP_Donate_Terms">Before donating, please read the **Donation Terms**. All donations are voluntary and non-refundable.</string>
+    <string name="DP_Donate_Counter_one">**%1$d** person already supported the project and received bonuses</string>
+    <string name="DP_Donate_Counter_other">**%1$d** people already supported the project and received bonuses</string>
+    <string name="DP_Support">Like Gomin? Support it!</string>
+    <string name="DP_CameraCutoutHeader">Branded Screenshots</string>
+    <string name="DP_CameraCutout">Show Gomin logo</string>
+    <string name="DP_CameraCutoutDesc">The Gomin logo can be displayed under the camera — it will be visible on screenshots.</string>
+    <string name="DP_Donate_Method_Int">International payment systems</string>
+    <string name="DP_Donate_Method_Rus">For residents of Russia</string>
+    <string name="DP_Donate_Method_Uzb">For residents of Uzbekistan</string>
+    <string name="DP_Donate_Method_Surname">Please contact **@arsLan** if the payment system requires personal data of the recipient.</string>
+
+    <!-- Security Preferences - Delete Account -->
+    <string name="SP_DeleteAccount">Delete Account</string>
+
+    <!-- Experimental Preferences - additional keys -->
+    <string name="EP_Header_Network">Network</string>
+    <string name="EP_UploadSpeedBoost">Upload speed boost</string>
+    <string name="EP_Header_Interface">Interface</string>
+    <string name="CP_EdgeToEdge">Edge-to-Edge</string>
+    <string name="EP_SpeedBoost_Average">Average (Balance)</string>
+    <string name="EP_SpeedBoost_Extreme">Maximum (Gomin Boost)</string>
+
+    <!-- Updater strings -->
+    <string name="UP_Auto_OTA">Check on launch</string>
+    <string name="UP_BuildType">Build type</string>
+    <string name="UP_Changelog">Changelog:</string>
+    <string name="UP_ChangelogRead">Read</string>
+    <string name="UP_CheckForUpdates">Check for updates</string>
+    <string name="UP_ClearUpdatesCache">Clear updates cache</string>
+    <string name="UP_ClearedUpdatesCache">Cleared %1$s of cache.</string>
+    <string name="UP_CurrentVersion">Current version</string>
+    <string name="UP_Download">Download</string>
+    <string name="UP_InstallBetas">Install beta versions</string>
+    <string name="UP_Not_Found">You are using the latest version of Gomin.</string>
+    <string name="UP_NothingToClear">Nothing to clear.</string>
+    <string name="UP_TapToCheckUpdates">Tap here to check for updates</string>
+    <string name="UP_UpdateAvailable">Update available!</string>
+    <string name="UP_Version">Version</string>
+
 </resources>

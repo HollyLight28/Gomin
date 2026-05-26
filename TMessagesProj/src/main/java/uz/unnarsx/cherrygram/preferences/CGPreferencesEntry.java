@@ -45,6 +45,7 @@ import uz.unnarsx.cherrygram.core.configs.CherrygramCoreConfig;
 import uz.unnarsx.cherrygram.core.configs.CherrygramMessagesConfig;
 import uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig;
 import uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig;
+import uz.unnarsx.cherrygram.core.configs.CherrygramCameraConfig;
 import uz.unnarsx.cherrygram.core.crashlytics.FirebaseAnalyticsHelper;
 import uz.unnarsx.cherrygram.core.helpers.DeeplinkHelper;
 import uz.unnarsx.cherrygram.core.ui.CGBulletinCreator;
@@ -141,7 +142,8 @@ public class CGPreferencesEntry extends UniversalFragment {
                 .setChecked(CherrygramCoreConfig.INSTANCE.getAirAlertEnabled())
         );
         if (CherrygramCoreConfig.INSTANCE.getAirAlertEnabled()) {
-            items.add(UItem.asInput(airAlertApiKeyRow, getString(R.string.CP_AirAlert_APIKey), CherrygramCoreConfig.INSTANCE.getAirAlertApiKey()));
+            String apiKey = CherrygramCoreConfig.INSTANCE.getAirAlertApiKey();
+            items.add(SettingsHelper.asTextDetail(airAlertApiKeyRow, 0, getString(R.string.CP_AirAlert_APIKey), apiKey.isEmpty() ? getString(R.string.NotSet) : apiKey));
             String regionName = CherrygramCoreConfig.INSTANCE.getAirAlertRegionName();
             items.add(UItem.asButton(airAlertRegionRow, getString(R.string.CP_AirAlert_Region), regionName.isEmpty() ? getString(R.string.NotSet) : regionName));
             items.add(UItem.asButton(airAlertTestRow, getString(R.string.CP_AirAlert_Test), null));
@@ -261,11 +263,13 @@ public class CGPreferencesEntry extends UniversalFragment {
             } else {
                 AirAlertController.INSTANCE.stopMonitoring();
             }
+        } else if (item.id == airAlertApiKeyRow) {
+            showAirAlertApiKeyDialog();
         } else if (item.id == airAlertRegionRow) {
             String apiKey = CherrygramCoreConfig.INSTANCE.getAirAlertApiKey();
             if (apiKey.isEmpty()) return;
             AirAlertController.INSTANCE.fetchRegions(apiKey, regions -> {
-                if (regions.isEmpty()) return;
+                if (regions.isEmpty()) return kotlin.Unit.INSTANCE;
                 ArrayList<String> names = new ArrayList<>();
                 ArrayList<String> ids = new ArrayList<>();
                 for (Pair<String, String> p : regions) {
@@ -277,6 +281,7 @@ public class CGPreferencesEntry extends UniversalFragment {
                     CherrygramCoreConfig.INSTANCE.setAirAlertRegionName(names.get(i).replace("  — ", ""));
                     listView.adapter.update(true);
                 });
+                return kotlin.Unit.INSTANCE;
             });
         } else if (item.id == airAlertTestRow) {
             AirAlertController.INSTANCE.testAlert();
@@ -330,53 +335,32 @@ public class CGPreferencesEntry extends UniversalFragment {
         }
     }
 
-    @Override
+    private void showAirAlertApiKeyDialog() {
+        org.telegram.ui.ActionBar.AlertDialog.Builder builder = new org.telegram.ui.ActionBar.AlertDialog.Builder(getParentActivity(), getResourceProvider());
+        builder.setTitle(getString(R.string.CP_AirAlert_APIKey));
+
+        android.widget.EditText editText = new android.widget.EditText(getParentActivity());
+        editText.setText(CherrygramCoreConfig.INSTANCE.getAirAlertApiKey());
+        editText.setSelection(editText.length());
+
+        android.widget.FrameLayout frameLayout = new android.widget.FrameLayout(getParentActivity());
+        frameLayout.setPadding(AndroidUtilities.dp(24), AndroidUtilities.dp(10), AndroidUtilities.dp(24), AndroidUtilities.dp(10));
+        frameLayout.addView(editText);
+        builder.setView(frameLayout);
+
+        builder.setPositiveButton(getString("Save", R.string.Save), (dialog, which) -> {
+            String key = editText.getText().toString().trim();
+            CherrygramCoreConfig.INSTANCE.setAirAlertApiKey(key);
+            listView.adapter.update(true);
+        });
+        builder.setNegativeButton(getString("Cancel", R.string.Cancel), null);
+        builder.show();
+    }
+
     protected void onInputDone(int id, String text) {
         if (id == airAlertApiKeyRow) {
             CherrygramCoreConfig.INSTANCE.setAirAlertApiKey(text);
         }
-    }
-
-    private View createSupportCard() {
-        android.widget.LinearLayout card = new android.widget.LinearLayout(getContext());
-        card.setOrientation(android.widget.LinearLayout.VERTICAL);
-        int padding = org.telegram.messenger.AndroidUtilities.dp(20);
-        card.setPadding(padding, padding, padding, padding);
-
-        android.widget.LinearLayout topLayout = new android.widget.LinearLayout(getContext());
-        topLayout.setOrientation(android.widget.LinearLayout.HORIZONTAL);
-        topLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
-
-        android.widget.ImageView icon = new android.widget.ImageView(getContext());
-        icon.setImageResource(R.mipmap.ic_launcher); // Наша пташка
-        topLayout.addView(icon, org.telegram.ui.Components.LayoutHelper.createLinear(42, 42));
-
-        android.widget.TextView title = new android.widget.TextView(getContext());
-        title.setText("Підтримай Гомін ❤️");
-        title.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 20);
-        title.setTypeface(org.telegram.messenger.AndroidUtilities.bold());
-        title.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        topLayout.addView(title, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 14, 0, 0, 0));
-
-        card.addView(topLayout);
-
-        android.widget.TextView desc = new android.widget.TextView(getContext());
-        desc.setText("Твоя підтримка — це серце нашого проекту. Допоможи автору оплатити сервери та продовжувати робити Гомін кращим!");
-        desc.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 15);
-        desc.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-        card.addView(desc, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 0, 10, 0, 0));
-
-        return card;
-    }
-
-    private String getCameraXFpsRange() {
-        return switch (CherrygramCameraConfig.INSTANCE.getCameraXFpsRange()) {
-            case CherrygramCameraConfig.CameraXFpsRange25to30 -> "25-30";
-            case CherrygramCameraConfig.CameraXFpsRange30to30 -> "30-30";
-            case CherrygramCameraConfig.CameraXFpsRange30to60 -> "30-60";
-            case CherrygramCameraConfig.CameraXFpsRange60to60 -> "60-60";
-            default -> getString(R.string.Default);
-        };
     }
 
     @Override

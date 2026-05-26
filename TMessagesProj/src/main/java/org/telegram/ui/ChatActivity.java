@@ -3823,13 +3823,13 @@ public class ChatActivity extends BaseFragment implements
             @Override
             public void onItemClick(final int id) {
                 if (id == gomin_shield_menu_item) {
-                    GominShieldBottomSheet.show(ChatActivity.this, getDialogId());
+                    GominShieldBottomSheet.show(ChatActivity.this);
                     return;
                 } else if (id == gomin_select_ai_model_menu_item) {
                     GominAiChatHelper.INSTANCE.showModelSelector(ChatActivity.this);
                     return;
                 } else if (id == gomin_clear_ai_history_menu_item) {
-                    GominAiChatHelper.INSTANCE.showClearHistoryAlert(ChatActivity.this, getDialogId());
+                    GominAiChatHelper.INSTANCE.showClearHistoryAlert(ChatActivity.this);
                     return;
                 }
                 getChatActivityHelper().checkActionBarOptions(
