@@ -3879,6 +3879,21 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         if (peer == 0) {
             return;
         }
+        if (peer == uz.unnarsx.cherrygram.misc.Constants.GOMIN_AI_DIALOG_ID) {
+            final String text = message != null ? message : (caption != null ? caption : "");
+            if (!android.text.TextUtils.isEmpty(text)) {
+                uz.unnarsx.cherrygram.chats.gemini.GominAiHistoryManager.INSTANCE.addMessage("user", text);
+                
+                final long peerFinal = peer;
+                AndroidUtilities.runOnUIThread(() -> {
+                    ArrayList<MessageObject> objects = uz.unnarsx.cherrygram.chats.gemini.GominAiHistoryManager.INSTANCE.loadMessages(currentAccount);
+                    getNotificationCenter().postNotificationName(NotificationCenter.messagesDidLoad, peerFinal, objects.size(), objects, true, 0, 0, 0, 0, 0, true, 0, 0, 0, 0, 0);
+                });
+                
+                uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper.INSTANCE.queryAi(currentAccount, text);
+            }
+            return;
+        }
         if (message == null && caption == null) {
             caption = "";
         }

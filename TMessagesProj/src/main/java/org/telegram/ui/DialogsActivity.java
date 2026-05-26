@@ -516,6 +516,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private boolean storyHintShown;
     public FragmentFloatingButton floatingButton3;
     private FragmentFloatingButton floatingButtonStories;
+    public FragmentFloatingButton floatingButtonAi;
     private ChatAvatarContainer avatarContainer;
     private int undoViewIndex;
     private UndoView[] undoView = new UndoView[2];
@@ -4763,6 +4764,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         floatingButtonStories.setOnClickListener(v -> openStoriesRecorder());
         contentView.addView(floatingButtonStories, FragmentFloatingButton.createSubButtonLayoutParams());
 
+        floatingButtonAi = new FragmentFloatingButton(context, resourceProvider, true);
+        floatingButtonAi.setImageResource(R.drawable.lucide_sparkles);
+        floatingButtonAi.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            args.putLong("user_id", Constants.GOMIN_AI_DIALOG_ID);
+            presentFragment(new ChatActivity(args));
+        });
+        contentView.addView(floatingButtonAi, FragmentFloatingButton.createSubButtonLayoutParams());
+
         floatingButton3 = new FragmentFloatingButton(context, resourceProvider);
         contentView.addView(floatingButton3, FragmentFloatingButton.createDefaultLayoutParams());
         floatingButton3.setOnClickListener(v -> {
@@ -8808,6 +8818,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (floatingButtonStories != null) {
             floatingButtonStories.setButtonVisible(isVisible && storiesEnabled, animated);
         }
+
+        if (floatingButtonAi != null) {
+            floatingButtonAi.setButtonVisible(isVisible, animated);
+        }
     }
 
     private void updateFloatingButtonOffset() {
@@ -8828,6 +8842,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (storyHint != null) {
                 storyHint.setTranslationY(baseTranslationY - dp(52) - floatingButtonsOffset);
             }
+        }
+
+        if (floatingButtonAi != null) {
+            floatingButtonAi.setTranslationY(baseTranslationY - dp(104) - floatingButtonsOffset);
         }
     }
 
@@ -11822,6 +11840,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
             if (floatingButtonStories != null) {
                 floatingButtonStories.updateColors();
+            }
+            if (floatingButtonAi != null) {
+                floatingButtonAi.updateColors();
             }
 
             iBlur3SourceColor.setColor(getThemedColor(Theme.key_windowBackgroundWhite));

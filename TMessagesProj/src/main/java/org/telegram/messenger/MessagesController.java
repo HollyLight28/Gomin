@@ -6602,6 +6602,16 @@ public class MessagesController extends BaseController implements NotificationCe
         if (id == 0) {
             return UserConfig.getInstance(currentAccount).getCurrentUser();
         }
+        if (id == 99999999L) {
+            TLRPC.TL_user user = new TLRPC.TL_user();
+            user.id = 99999999L;
+            user.first_name = "Gomin AI";
+            user.last_name = "";
+            user.username = "gomin_ai_bot";
+            user.bot = true;
+            user.status = new TLRPC.TL_userStatusEmpty();
+            return user;
+        }
         return users.get(id);
     }
 
@@ -11116,6 +11126,13 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     private void loadMessagesInternal(long dialogId, long mergeDialogId, boolean loadInfo, int count, int max_id, int offset_date, boolean fromCache, int minDate, int classGuid, int load_type, int last_message_id, int mode, long threadMessageId, int loadIndex, int first_unread, int unread_count, int last_date, boolean queryFromServer, int mentionsCount, boolean loadDialog, boolean processMessages, boolean isTopic, Timer loaderLogger, long hash) {
+        if (dialogId == 99999999L) {
+            AndroidUtilities.runOnUIThread(() -> {
+                ArrayList<MessageObject> objects = uz.unnarsx.cherrygram.chats.gemini.GominAiHistoryManager.INSTANCE.loadMessages(currentAccount);
+                getNotificationCenter().postNotificationName(NotificationCenter.messagesDidLoad, dialogId, objects.size(), objects, true, 0, 0, 0, 0, 0, true, classGuid, loadIndex, 0, 0, mode);
+            });
+            return;
+        }
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d("load messages in chat " + dialogId + " topic_id " + threadMessageId + " count " + count + " max_id " + max_id + " cache " + fromCache + " mindate = " + minDate + " guid " + classGuid + " load_type " + load_type + " last_message_id " + last_message_id + " mode " + mode + " index " + loadIndex + " firstUnread " + first_unread + " unread_count " + unread_count + " last_date " + last_date + " queryFromServer " + queryFromServer + " isTopic " + isTopic);
         }

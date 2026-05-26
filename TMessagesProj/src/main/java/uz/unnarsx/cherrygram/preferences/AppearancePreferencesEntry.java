@@ -46,6 +46,9 @@ public class AppearancePreferencesEntry extends UniversalFragment {
     private final int bottomTabsRow = 8;
     private final int messagesAndProfilesRow = 9;
 
+    private final int systemEmojiRow = 10;
+    private final int systemFontsRow = 11;
+
     @Override
     protected CharSequence getTitle() {
         FirebaseAnalyticsHelper.INSTANCE.trackEventWithEmptyBundle("appearance_preferences_screen");

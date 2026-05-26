@@ -434,4 +434,49 @@
     <string name="CG_Page5Message">**Гомін** не має обмежень на\nрозмір ваших медіафайлів та чатів.</string>
     <string name="CG_Page6Message">**Гомін** дозволяє отримувати доступ до ваших повідомлень з кількох пристроїв.</string>
 
+    <string name="SP_GhostMode_Header">Gomin Ghost</string>
+    <string name="SP_GhostMode_ReadMessages">Невидиме читання</string>
+    <string name="SP_GhostMode_ReadMessages_Desc">Повідомлення залишатимуться непрочитаними для інших, але ви зможете їх читати як зазвичай.</string>
+    <string name="SP_GhostMode_HideTyping">Приховати статус друку</string>
+    <string name="SP_GhostMode_HideTyping_Desc">Ніхто не побачить, що ви друкуєте, записуєте голос або завантажуєте файли.</string>
+    <string name="SP_GhostMode_HideStoryViews">Анонімні історії</string>
+    <string name="SP_GhostMode_HideStoryViews_Desc">Переглядайте історії, не з\'являючись у списку глядачів.</string>
+    <string name="SP_GhostMode_HideOnline">Приховати статус онлайн</string>
+    <string name="SP_GhostMode_HideOnline_Desc">Ваш статус завжди відображатиметься як «нещодавно».</string>
+
+    <string name="CGP_SupportProject">Підтримка проєкту ☕</string>
+    <string name="CGP_CoffeeAuthor">Пригостити автора кавою</string>
+    <string name="CGP_SupportProjectDesc">Якщо вам подобається Гомін, ви можете підтримати автора гривнею на каву або оплату серверів оновлень!</string>
+    <string name="EP_UploadloadSpeedBoost_Desc">Оптимізує буфер передачі до 512 КБ для швидкої та стабільної відправки великих файлів.</string>
+    <string name="EP_SlowNetworkMode_Desc">Суперстабільний однопотоковий режим пакетами по 32 КБ для бомбосховищ чи укриттів.</string>
+    <string name="AP_HideSearchBar_Desc">Прибирає пошуковий рядок зі списку чатів для чистішого інтерфейсу.</string>
+    <string name="CP_MainTabs_ShowTabs_Desc">Вмикає зручні нижні вкладки, як у iOS або WhatsApp.</string>
+    <string name="CP_SpringAnimation">Пружні анімації</string>
+    <string name="CP_SpringAnimation_Desc">Вмикає фірмові пружинні переходи інтерфейсу Гомону.</string>
+    <string name="CP_GeminiAI_Settings">Налаштування Gomin AI (Gemini)</string>
+    <string name="EP_Boost_None">Вимкнено</string>
+    <string name="EP_Boost_Average">Середня (Баланс)</string>
+    <string name="EP_Boost_Extreme">Максимальна (Gomin Boost)</string>
+    <string name="EP_Boost_None_Telegram">Вимкнено (Telegram)</string>
+
+    <string name="EP_SpeedEngine">Speed Engine</string>
+    <string name="EP_DownloadSpeedBoost_Shadow">Технічний прискорювач: збільшує кількість потоків з 4 до 12 та розмір пакетів зі 128 КБ до 1 МБ для максимальної швидкості завантаження.</string>
+    <string name="CP_PremiumWallpapers">Фони преміум-користувачів</string>
+    <string name="CP_PremiumWallpapers_Desc">Дозволяє бачити кастомні шпалери, встановлені іншими користувачами в чатах.</string>
+    <string name="CP_SystemAI">Система та AI</string>
+    <string name="CP_SpringAnimation_Desc_New">Замінює стандартні анімації на фірмові м\'які переходи Гомону.</string>
+    <string name="CGP_SupportGominTitle">Підтримай Гомін ❤️</string>
+    <string name="CGP_SupportGominDesc">Твоя підтримка — це серце нашого проєкту. Допоможи автору оплатити сервери та продовжувати робити Гомін кращим!</string>
+    <string name="CP_ChatSettings">Налаштування чатів</string>
+    <string name="CP_AutoQuote_Desc">Автоматично створює текстову цитату при відповіді на повідомлення.</string>
+    <string name="CP_DeleteForAll_Desc_New">Автоматично встановлює галочку «Видалити для всіх» при видаленні повідомлень.</string>
+
+    <string name="CP_AirAlert_Header">Повітряна тривога 🚨</string>
+    <string name="CP_AirAlert_Enabled">Увімкнути сповіщення</string>
+    <string name="CP_AirAlert_APIKey">API ключ (Ajax)</string>
+    <string name="CP_AirAlert_Region">Ваш регіон</string>
+    <string name="CP_AirAlert_Test">Тест сигналу</string>
+    <string name="CP_AirAlert_Instruction">1. Зареєструйтесь на api.ukrainealarm.com\n2. Отримайте безкоштовний API ключ\n3. Вставте його сюди та оберіть свій регіон.</string>
+    <string name="CP_AirAlert_Active">ПОВІТРЯНА ТРИВОГА!</string>
+
 </resources>

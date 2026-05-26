@@ -75,6 +75,7 @@ import org.telegram.ui.Stars.StarsIntroActivity;
 
 import java.util.ArrayList;
 
+import uz.unnarsx.cherrygram.alerts.AirAlertController;
 import uz.unnarsx.cherrygram.core.configs.CherrygramAppearanceConfig;
 import uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig;
 
@@ -98,6 +99,31 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
     private BackupImageView avatarSearchImageView;
     private Drawable backButtonDrawable;
     private final SimpleTextView[] titleTextView = new SimpleTextView[2];
+
+    private void updateAirAlertStatus() {
+        if (titleTextView[0] != null) {
+            setTitle(lastTitle, lastRightDrawable);
+        }
+    }
+
+    private final NotificationCenter.NotificationCenterDelegate airAlertObserver = (id, account, args) -> {
+        if (id == NotificationCenter.cgAirAlertStatusChanged) {
+            updateAirAlertStatus();
+        }
+    };
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        NotificationCenter.getGlobalInstance().addObserver(airAlertObserver, NotificationCenter.cgAirAlertStatusChanged);
+        updateAirAlertStatus();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        NotificationCenter.getGlobalInstance().removeObserver(airAlertObserver, NotificationCenter.cgAirAlertStatusChanged);
+    }
     private SimpleTextView subtitleTextView;
     private SimpleTextView additionalSubtitleTextView;
     private View actionModeTop;
@@ -490,7 +516,7 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
             
             // Under theme change, some .attheme files override CG_AppName to Cherrygram. Enforce Gomin.
             if (value != null && value.toString().equalsIgnoreCase("Cherrygram")) {
-                value = "Гомін";
+                value = getString(R.string.CG_AppName);
             }
             
             titleTextView[0].setText(lastTitle = value);
@@ -516,6 +542,11 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
                 int finalColor = titleColorToSet != 0 ? titleColorToSet : getThemedColor(Theme.key_chats_actionBackground);
                 titleTextView[0].setTextColor(finalColor);
                 titleTextView[0].setEmojiColor(finalColor);
+            }
+
+            if (AirAlertController.INSTANCE.isAlertActive()) {
+                titleTextView[0].setTextColor(0xFFFF0000);
+                titleTextView[0].setEmojiColor(0xFFFF0000);
             }
             
             if (UserConfig.getInstance(UserConfig.selectedAccount).isPremium()) {
@@ -770,11 +801,18 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         showActionMode(animated, null, null, null, null, null, 0);
     }
 
+        if (actionMode == null || actionModeVisible) {
+            return;
+        }
+        actionModeVisible = true;
+        updateAirAlertStatus();
+        if (animated) {
     public void showActionMode(boolean animated, View extraView, View showingView, View[] hidingViews, boolean[] hideView, View translationView, int translation) {
         if (actionMode == null || actionModeVisible) {
             return;
         }
         actionModeVisible = true;
+        updateAirAlertStatus();
         if (animated) {
             ArrayList<Animator> animators = new ArrayList<>();
             animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f, 1.0f));
@@ -961,6 +999,7 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         }
         actionMode.hideAllPopupMenus();
         actionModeVisible = false;
+        updateAirAlertStatus();
         ArrayList<Animator> animators = new ArrayList<>();
         animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f));
         if (actionModeHidingViews != null) {
@@ -1509,9 +1548,9 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
         if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
             int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - dp(2);
             if (isCenterTitle) {
-                subtitleTextView.layout(getMeasuredWidth() / 2 - subtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop, getMeasuredWidth() / 2 + subtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop + subtitleTextView.getTextHeight());
+                titleTextView[0].layout(getMeasuredWidth() / 2 - titleTextView[0].getMeasuredWidth() / 2, additionalTop + textTop, getMeasuredWidth() / 2 + titleTextView[0].getMeasuredWidth() / 2, additionalTop + textTop + titleTextView[0].getTextHeight());
             } else {
-                subtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + subtitleTextView.getMeasuredWidth(), additionalTop + textTop + subtitleTextView.getTextHeight());
+                titleTextView[0].layout(textLeft, additionalTop + textTop, textLeft + titleTextView[0].getMeasuredWidth(), additionalTop + textTop + titleTextView[0].getTextHeight());
             }
         }
 

@@ -43,3 +43,19 @@ private void doOnDone() {
     }
 }
 ```
+
+### Virtual Local AI Dialogue Pattern (Intercept & Bypass)
+To construct custom local chat experiences (like the Gomin AI assistant) inside a native Telegram codebase without setting up a physical bot backend or triggering MTProto server errors, intercept dialog requests targeting a predefined virtual ID (`99999999L`):
+1. **Mock User**: Intercept `MessagesController.getUser(Long id)` to dynamically construct and return a mock `TLRPC.User` bot profile.
+2. **Local Load Intercept**: Intercept `MessagesController.loadMessagesInternal` for the virtual ID, loading them from local JSON (`gomin_ai_history.json`) and notifying the system using a custom `messagesDidLoad` notification instead of requesting server data.
+3. **Send Intercept**: Intercept `SendMessagesHelper.sendMessage` inside the sending pipeline. Save user inputs locally in JSON, refresh the native chat adapter instantly, and launch an asynchronous thread targeting the Gemini SDK while showing standard "typing..." status.
+
+### Pre-Seeded Context AI Redirection
+When bridging analysis tools (such as the Gomin Shield Manipulation Analyzer) and chat interfaces, utilize a global thread-safe state variable to carry over structured context (e.g., analyzed transcript and system instructions) directly into the first turns of a new local virtual conversation session:
+1. Extract transcript messages (up to 1000) from the target peer.
+2. Launch a background task utilizing the Gemini Generative SDK to run analysis.
+3. Upon analysis completion, user clicks "💬 Почати чат про це". Store the transcript history and the generated analysis in `activeShieldContext` / `activeShieldHistory`.
+4. Launch `ChatActivity` with `Constants.GOMIN_AI_DIALOG_ID`. On startup, if pre-seeded context is present, feed it as the initial invisible chat turns to the model, ensuring the AI assistant is fully briefed on the conversation before the user types a single word.
+
+### Premium Outline Icon Customization Pattern (Vector Graphics)
+When adding custom action items or floating buttons for custom feature sets (e.g. AI systems), always construct or reference premium, thin-bordered (typically `strokeWidth="1.8"` or `2.0`) outline icons (such as Lucide design guidelines) inside `res-solar/drawable` or `res-cherrygram/drawable`. This maintains visual consistency with premium custom typography and OLED contrast themes. Never use thick, saturated default images.

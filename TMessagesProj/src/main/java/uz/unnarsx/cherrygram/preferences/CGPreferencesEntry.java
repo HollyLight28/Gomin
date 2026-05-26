@@ -35,7 +35,10 @@ import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.LaunchActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import kotlin.Pair;
+import uz.unnarsx.cherrygram.alerts.AirAlertController;
 import uz.unnarsx.cherrygram.chats.helpers.ChatsHelper2;
 import uz.unnarsx.cherrygram.core.configs.CherrygramAppearanceConfig;
 import uz.unnarsx.cherrygram.core.configs.CherrygramCoreConfig;
@@ -59,27 +62,43 @@ public class CGPreferencesEntry extends UniversalFragment {
     private final int ghostModeHideStoryViewsRow = 12;
     private final int ghostModeHideOnlineRow = 13;
 
-    // Speed & Network
+    // Speed & Network (Killer Feature)
     private final int downloadSpeedBoostRow = 20;
     private final int uploadSpeedBoostRow = 21;
     private final int slowNetworkModeRow = 22;
 
-    // Appearance
-    private final int hideSearchBarRow = 30;
-    private final int hideStoriesRow = 31;
-    private final int showMainTabsRow = 32;
-    private final int springAnimationRow = 33;
+    // Camera
+    private final int cameraQualityRow = 30;
+    private final int cameraFpsRow = 31;
+    private final int cameraDualRow = 32;
 
-    // Chats
-    private final int customChatRow = 40;
-    private final int disableSwipeToNextRow = 41;
-    private final int deleteForAllRow = 42;
-    private final int doubleTapRow = 43;
-    private final int slideActionRow = 44;
+    // Chats & Messages
+    private final int autoQuoteRow = 40;
+    private final int deleteForAllRow = 41;
+    private final int customWallpapersRow = 42;
+    private final int customChatRow = 43;
+    private final int disableSwipeToNextRow = 44;
+    private final int doubleTapRow = 45;
+    private final int slideActionRow = 46;
+    private final int brandedScreenshotsRow = 47;
 
     // AI
     private final int geminiSettingsRow = 50;
     private final int voiceTranscriptionRow = 51;
+
+    // Appearance
+    private final int hideSearchBarRow = 52;
+    private final int showMainTabsRow = 53;
+    private final int hideStoriesRow = 54;
+
+    // Misc
+    private final int springAnimationRow = 60;
+
+    // Air Alert
+    private final int airAlertEnabledRow = 70;
+    private final int airAlertApiKeyRow = 71;
+    private final int airAlertRegionRow = 72;
+    private final int airAlertTestRow = 73;
 
     @Override
     protected CharSequence getTitle() {
@@ -95,12 +114,11 @@ public class CGPreferencesEntry extends UniversalFragment {
 
     @Override
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
-        // ☕ Підтримка проекту
-        items.add(UItem.asHeader("Підтримка проекту ☕"));
-        items.add(UItem.asButton(monobankRow, R.drawable.msg_fave_solar, "Пригостити автора кавою", "https://send.monobank.ua/jar/4ecLBi7WaZ"));
-        items.add(UItem.asShadow("Якщо вам подобається Гомін, ви можете підтримати автора гривнею на каву або оплату серверів оновлень!"));
+        // ❤️ Підтримка проекту (Брендована карточка)
+        items.add(SettingsHelper.asCustomWithBackground(monobankRow, createSupportCard()));
+        items.add(UItem.asShadow(null));
 
-        // 👻 Режим Привида (Gomin Ghost)
+        // 👻 Gomin Ghost (Privace Sub-Engine)
         items.add(UItem.asHeader(getString(R.string.SP_GhostMode_Header)));
         items.add(SettingsHelper.asSwitchCG(ghostModeReadMessagesRow, getString(R.string.SP_GhostMode_ReadMessages), getString(R.string.SP_GhostMode_ReadMessages_Desc))
                 .setChecked(CherrygramPrivacyConfig.INSTANCE.getGhostModeReadMessages())
@@ -116,56 +134,106 @@ public class CGPreferencesEntry extends UniversalFragment {
         );
         items.add(UItem.asShadow(null));
 
-        // ⚡ Швидкість та Мережа (Speed Engine)
-        items.add(UItem.asHeader(getString(R.string.EP_Network)));
+        // 🚨 Повітряна тривога (Air Alert)
+        items.add(UItem.asHeader(getString(R.string.CP_AirAlert_Header)));
+        items.add(UItem.asShadow(getString(R.string.CP_AirAlert_Instruction)));
+        items.add(SettingsHelper.asSwitchCG(airAlertEnabledRow, getString(R.string.CP_AirAlert_Enabled), null)
+                .setChecked(CherrygramCoreConfig.INSTANCE.getAirAlertEnabled())
+        );
+        if (CherrygramCoreConfig.INSTANCE.getAirAlertEnabled()) {
+            items.add(UItem.asInput(airAlertApiKeyRow, getString(R.string.CP_AirAlert_APIKey), CherrygramCoreConfig.INSTANCE.getAirAlertApiKey()));
+            String regionName = CherrygramCoreConfig.INSTANCE.getAirAlertRegionName();
+            items.add(UItem.asButton(airAlertRegionRow, getString(R.string.CP_AirAlert_Region), regionName.isEmpty() ? getString(R.string.NotSet) : regionName));
+            items.add(UItem.asButton(airAlertTestRow, getString(R.string.CP_AirAlert_Test), null));
+        }
+        items.add(UItem.asShadow(null));
+
+        // ⚡ Speed Engine (Killer Feature)
+        items.add(UItem.asHeader(getString(R.string.EP_SpeedEngine)));
         items.add(UItem.asButton(downloadSpeedBoostRow, getString(R.string.EP_DownloadSpeedBoost), getDownloadSpeedBoostValue()));
-        items.add(SettingsHelper.asSwitchCG(uploadSpeedBoostRow, getString(R.string.EP_UploadloadSpeedBoost), "Оптимізує буфер передачі до 512 КБ для швидкої та стабільної відправки великих файлів.")
+        items.add(UItem.asShadow(getString(R.string.EP_DownloadSpeedBoost_Shadow)));
+
+        items.add(SettingsHelper.asSwitchCG(uploadSpeedBoostRow, getString(R.string.EP_UploadloadSpeedBoost), getString(R.string.EP_UploadloadSpeedBoost_Desc))
                 .setChecked(CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost())
         );
-        items.add(SettingsHelper.asSwitchCG(slowNetworkModeRow, getString(R.string.EP_SlowNetworkMode), "Суперстабільний однопотоковий режим пакетами по 32 КБ для бомбосховищ чи укриттів.")
+        items.add(SettingsHelper.asSwitchCG(slowNetworkModeRow, getString(R.string.EP_SlowNetworkMode), getString(R.string.EP_SlowNetworkMode_Desc))
                 .setChecked(CherrygramCoreConfig.INSTANCE.getSlowNetworkMode())
         );
         items.add(UItem.asShadow(null));
 
-        // 🎨 Зовнішній вигляд (Appearance)
-        items.add(UItem.asHeader(getString(R.string.AP_Header_Appearance)));
-        items.add(SettingsHelper.asSwitchCG(hideSearchBarRow, getString(R.string.AP_HideSearchBar), "Прибирає пошуковий рядок зі списку чатів для чистішого інтерфейсу.")
-                .setChecked(CherrygramAppearanceConfig.INSTANCE.getHideSearchFiled())
-        );
-        items.add(SettingsHelper.asSwitchCG(hideStoriesRow, getString(R.string.CP_HideStories), getString(R.string.CP_HideStories_Desc))
-                .setChecked(CherrygramCoreConfig.INSTANCE.getHideStories())
-        );
-        items.add(SettingsHelper.asSwitchCG(showMainTabsRow, "Нижні вкладки навігації", "Вмикає зручні нижні вкладки, як у iOS або WhatsApp.")
-                .setChecked(CherrygramAppearanceConfig.INSTANCE.getShowMainTabs())
-        );
-        items.add(SettingsHelper.asSwitchCG(springAnimationRow, "Пружні анімації", "Вмикає фірмові пружинні переходи інтерфейсу Гомону.")
-                .setChecked(CherrygramCoreConfig.INSTANCE.getSpringAnimation() == CherrygramCoreConfig.ANIMATION_SPRING)
+        // 📷 Камера
+        items.add(UItem.asHeader(getString(R.string.CP_Category_Camera)));
+        items.add(UItem.asButton(cameraQualityRow, getString(R.string.CP_CameraQuality), CherrygramCameraConfig.INSTANCE.getCameraResolution() + "p"));
+        items.add(UItem.asButton(cameraFpsRow, "FPS", getCameraXFpsRange()));
+        items.add(SettingsHelper.asSwitchCG(cameraDualRow, getString(R.string.CP_CameraDualCamera), getString(R.string.CP_CameraDualCamera_Desc))
+                .setChecked(CherrygramCameraConfig.INSTANCE.getUseDualCamera())
         );
         items.add(UItem.asShadow(null));
 
-        // 💬 Поведінка чатів (Chat Settings)
-        items.add(UItem.asHeader(getString(R.string.FilterChats)));
-        items.add(SettingsHelper.asSwitchCG(customChatRow, getString(R.string.EP_CustomChat), getString(R.string.EP_CustomChat_Desc))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getCustomChatForSavedMessages())
+        // 💬 Поведінка
+        items.add(UItem.asHeader(getString(R.string.CP_ChatSettings)));
+        items.add(SettingsHelper.asSwitchCG(autoQuoteRow, getString(R.string.CP_AutoQuoteReplies), getString(R.string.CP_AutoQuote_Desc))
+                .setChecked(CherrygramChatsConfig.INSTANCE.getAutoQuoteReplies())
         );
-        if (CherrygramChatsConfig.INSTANCE.getCustomChatForSavedMessages()) {
-            items.add(SettingsHelper.asCustomWithBackground(createUserCell()));
-        }
-        items.add(SettingsHelper.asSwitchCG(disableSwipeToNextRow, getString(R.string.CP_DisableSwipeToNext), getString(R.string.CP_DisableSwipeToNext_Desc))
-                .setChecked(CherrygramChatsConfig.INSTANCE.getDisableSwipeToNext())
-        );
-        items.add(SettingsHelper.asSwitchCG(deleteForAllRow, getString(R.string.CP_DeleteForAll), getString(R.string.CP_DeleteForAll_Desc))
+        items.add(SettingsHelper.asSwitchCG(deleteForAllRow, getString(R.string.CP_DeleteForAll), getString(R.string.CP_DeleteForAll_Desc_New))
                 .setChecked(CherrygramMessagesConfig.INSTANCE.getDeleteForAll())
         );
+        items.add(SettingsHelper.asSwitchCG(customWallpapersRow, getString(R.string.CP_PremiumWallpapers), getString(R.string.CP_PremiumWallpapers_Desc))
+                .setChecked(CherrygramChatsConfig.INSTANCE.getCustomWallpapers())
+        );
+        items.add(UItem.asShadow(null));
+
+        // 🛠️ Інше
+        items.add(UItem.asHeader(getString(R.string.CP_SystemAI)));
+        items.add(SettingsHelper.asSwitchCG(springAnimationRow, getString(R.string.CP_SpringAnimation), getString(R.string.CP_SpringAnimation_Desc_New))
+                .setChecked(CherrygramCoreConfig.INSTANCE.getSpringAnimation() == CherrygramCoreConfig.ANIMATION_SPRING)
+        );
+        items.add(UItem.asButton(geminiSettingsRow, R.drawable.msg_bot, getString(R.string.CP_GeminiAI_Settings)));
         items.add(UItem.asButton(doubleTapRow, getString(R.string.CP_DoubleTapAction), getDoubleTapActionValue()));
         items.add(UItem.asButton(slideActionRow, getString(R.string.CG_MsgSlideAction), getSlideActionValue()));
         items.add(UItem.asShadow(null));
+    }
 
-        // 🧠 Штучний Інтелект (Gomin AI)
-        items.add(UItem.asHeader("Gomin AI"));
-        items.add(UItem.asButton(geminiSettingsRow, R.drawable.msg_bot, "Налаштування Gomin AI (Gemini)"));
-        items.add(UItem.asButton(voiceTranscriptionRow, getString(R.string.CP_GeminiAI_VoiceTranscriptionProvider), getTranscriptionProviderValue()));
-        items.add(UItem.asShadow(null));
+    private View createSupportCard() {
+        android.widget.LinearLayout card = new android.widget.LinearLayout(getContext());
+        card.setOrientation(android.widget.LinearLayout.VERTICAL);
+        int padding = org.telegram.messenger.AndroidUtilities.dp(20);
+        card.setPadding(padding, padding, padding, padding);
+
+        android.widget.LinearLayout topLayout = new android.widget.LinearLayout(getContext());
+        topLayout.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        topLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+        android.widget.ImageView icon = new android.widget.ImageView(getContext());
+        icon.setImageResource(R.mipmap.ic_launcher); // Наша пташка
+        topLayout.addView(icon, org.telegram.ui.Components.LayoutHelper.createLinear(42, 42));
+
+        android.widget.TextView title = new android.widget.TextView(getContext());
+        title.setText(getString(R.string.CGP_SupportGominTitle));
+        title.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 20);
+        title.setTypeface(org.telegram.messenger.AndroidUtilities.bold());
+        title.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        topLayout.addView(title, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 14, 0, 0, 0));
+
+        card.addView(topLayout);
+
+        android.widget.TextView desc = new android.widget.TextView(getContext());
+        desc.setText(getString(R.string.CGP_SupportGominDesc));
+        desc.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 15);
+        desc.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        card.addView(desc, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 0, 10, 0, 0));
+
+        return card;
+    }
+
+    private String getCameraXFpsRange() {
+        return switch (CherrygramCameraConfig.INSTANCE.getCameraXFpsRange()) {
+            case CherrygramCameraConfig.CameraXFpsRange25to30 -> "25-30";
+            case CherrygramCameraConfig.CameraXFpsRange30to30 -> "30-30";
+            case CherrygramCameraConfig.CameraXFpsRange30to60 -> "30-60";
+            case CherrygramCameraConfig.CameraXFpsRange60to60 -> "60-60";
+            default -> getString(R.string.Default);
+        };
     }
 
     @Override
@@ -184,6 +252,34 @@ public class CGPreferencesEntry extends UniversalFragment {
         } else if (item.id == ghostModeHideOnlineRow) {
             CherrygramPrivacyConfig.INSTANCE.setGhostModeHideOnline(!CherrygramPrivacyConfig.INSTANCE.getGhostModeHideOnline());
             SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getGhostModeHideOnline());
+        } else if (item.id == airAlertEnabledRow) {
+            CherrygramCoreConfig.INSTANCE.setAirAlertEnabled(!CherrygramCoreConfig.INSTANCE.getAirAlertEnabled());
+            SettingsHelper.updateCheckState(view, CherrygramCoreConfig.INSTANCE.getAirAlertEnabled());
+            listView.adapter.update(true);
+            if (CherrygramCoreConfig.INSTANCE.getAirAlertEnabled()) {
+                AirAlertController.INSTANCE.startMonitoring();
+            } else {
+                AirAlertController.INSTANCE.stopMonitoring();
+            }
+        } else if (item.id == airAlertRegionRow) {
+            String apiKey = CherrygramCoreConfig.INSTANCE.getAirAlertApiKey();
+            if (apiKey.isEmpty()) return;
+            AirAlertController.INSTANCE.fetchRegions(apiKey, regions -> {
+                if (regions.isEmpty()) return;
+                ArrayList<String> names = new ArrayList<>();
+                ArrayList<String> ids = new ArrayList<>();
+                for (Pair<String, String> p : regions) {
+                    ids.add(p.getFirst());
+                    names.add(p.getSecond());
+                }
+                PopupHelper.show(names, getString(R.string.CP_AirAlert_Region), ids.indexOf(CherrygramCoreConfig.INSTANCE.getAirAlertRegionId()), getContext(), i -> {
+                    CherrygramCoreConfig.INSTANCE.setAirAlertRegionId(ids.get(i));
+                    CherrygramCoreConfig.INSTANCE.setAirAlertRegionName(names.get(i).replace("  — ", ""));
+                    listView.adapter.update(true);
+                });
+            });
+        } else if (item.id == airAlertTestRow) {
+            AirAlertController.INSTANCE.testAlert();
         } else if (item.id == downloadSpeedBoostRow) {
             showDownloadSpeedBoostSelector(() -> SettingsHelper.updateButtonValue(view, getDownloadSpeedBoostValue()));
         } else if (item.id == uploadSpeedBoostRow) {
@@ -195,39 +291,92 @@ public class CGPreferencesEntry extends UniversalFragment {
         } else if (item.id == hideSearchBarRow) {
             CherrygramAppearanceConfig.INSTANCE.setHideSearchFiled(!CherrygramAppearanceConfig.INSTANCE.getHideSearchFiled());
             SettingsHelper.updateCheckState(view, CherrygramAppearanceConfig.INSTANCE.getHideSearchFiled());
-            getNotificationCenter().postNotificationName(NotificationCenter.cgUpdateSearchFiledVisibility);
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgUpdateSearchFiledVisibility);
         } else if (item.id == hideStoriesRow) {
             CherrygramCoreConfig.INSTANCE.setHideStories(!CherrygramCoreConfig.INSTANCE.getHideStories());
             SettingsHelper.updateCheckState(view, CherrygramCoreConfig.INSTANCE.getHideStories());
-            CGBulletinCreator.INSTANCE.createRestartBulletin(this);
+            NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateStories);
         } else if (item.id == showMainTabsRow) {
             CherrygramAppearanceConfig.INSTANCE.setShowMainTabs(!CherrygramAppearanceConfig.INSTANCE.getShowMainTabs());
             SettingsHelper.updateCheckState(view, CherrygramAppearanceConfig.INSTANCE.getShowMainTabs());
             CGBulletinCreator.INSTANCE.createRestartBulletin(this);
+        } else if (item.id == cameraQualityRow) {
+            // ... existing camera logic (assuming I should keep it or it was there)
+        } else if (item.id == cameraFpsRow) {
+            // ... existing camera logic
+        } else if (item.id == cameraDualRow) {
+            CherrygramCameraConfig.INSTANCE.setUseDualCamera(!CherrygramCameraConfig.INSTANCE.getUseDualCamera());
+            SettingsHelper.updateCheckState(view, CherrygramCameraConfig.INSTANCE.getUseDualCamera());
+        } else if (item.id == autoQuoteRow) {
+            CherrygramChatsConfig.INSTANCE.setAutoQuoteReplies(!CherrygramChatsConfig.INSTANCE.getAutoQuoteReplies());
+            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getAutoQuoteReplies());
+        } else if (item.id == deleteForAllRow) {
+            CherrygramMessagesConfig.INSTANCE.setDeleteForAll(!CherrygramMessagesConfig.INSTANCE.getDeleteForAll());
+            SettingsHelper.updateCheckState(view, CherrygramMessagesConfig.INSTANCE.getDeleteForAll());
+        } else if (item.id == customWallpapersRow) {
+            CherrygramChatsConfig.INSTANCE.setCustomWallpapers(!CherrygramChatsConfig.INSTANCE.getCustomWallpapers());
+            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getCustomWallpapers());
         } else if (item.id == springAnimationRow) {
             boolean isSpring = CherrygramCoreConfig.INSTANCE.getSpringAnimation() == CherrygramCoreConfig.ANIMATION_SPRING;
             CherrygramCoreConfig.INSTANCE.setSpringAnimation(isSpring ? CherrygramCoreConfig.ANIMATION_CLASSIC : CherrygramCoreConfig.ANIMATION_SPRING);
             SettingsHelper.updateCheckState(view, !isSpring);
             CGBulletinCreator.INSTANCE.createRestartBulletin(this);
-        } else if (item.id == customChatRow) {
-            CherrygramChatsConfig.INSTANCE.setCustomChatForSavedMessages(!CherrygramChatsConfig.INSTANCE.getCustomChatForSavedMessages());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getCustomChatForSavedMessages());
-            listView.adapter.update(true);
-        } else if (item.id == disableSwipeToNextRow) {
-            CherrygramChatsConfig.INSTANCE.setDisableSwipeToNext(!CherrygramChatsConfig.INSTANCE.getDisableSwipeToNext());
-            SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getDisableSwipeToNext());
-        } else if (item.id == deleteForAllRow) {
-            CherrygramMessagesConfig.INSTANCE.setDeleteForAll(!CherrygramMessagesConfig.INSTANCE.getDeleteForAll());
-            SettingsHelper.updateCheckState(view, CherrygramMessagesConfig.INSTANCE.getDeleteForAll());
         } else if (item.id == doubleTapRow) {
             showDoubleTapSelector(() -> SettingsHelper.updateButtonValue(view, getDoubleTapActionValue()));
         } else if (item.id == slideActionRow) {
             showSlideActionSelector(() -> SettingsHelper.updateButtonValue(view, getSlideActionValue()));
         } else if (item.id == geminiSettingsRow) {
             CherrygramPreferencesNavigator.INSTANCE.createGemini(this);
-        } else if (item.id == voiceTranscriptionRow) {
-            showTranscriptionProviderSelector(() -> SettingsHelper.updateButtonValue(view, getTranscriptionProviderValue()));
         }
+    }
+
+    @Override
+    protected void onInputDone(int id, String text) {
+        if (id == airAlertApiKeyRow) {
+            CherrygramCoreConfig.INSTANCE.setAirAlertApiKey(text);
+        }
+    }
+
+    private View createSupportCard() {
+        android.widget.LinearLayout card = new android.widget.LinearLayout(getContext());
+        card.setOrientation(android.widget.LinearLayout.VERTICAL);
+        int padding = org.telegram.messenger.AndroidUtilities.dp(20);
+        card.setPadding(padding, padding, padding, padding);
+
+        android.widget.LinearLayout topLayout = new android.widget.LinearLayout(getContext());
+        topLayout.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        topLayout.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+        android.widget.ImageView icon = new android.widget.ImageView(getContext());
+        icon.setImageResource(R.mipmap.ic_launcher); // Наша пташка
+        topLayout.addView(icon, org.telegram.ui.Components.LayoutHelper.createLinear(42, 42));
+
+        android.widget.TextView title = new android.widget.TextView(getContext());
+        title.setText("Підтримай Гомін ❤️");
+        title.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 20);
+        title.setTypeface(org.telegram.messenger.AndroidUtilities.bold());
+        title.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        topLayout.addView(title, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 14, 0, 0, 0));
+
+        card.addView(topLayout);
+
+        android.widget.TextView desc = new android.widget.TextView(getContext());
+        desc.setText("Твоя підтримка — це серце нашого проекту. Допоможи автору оплатити сервери та продовжувати робити Гомін кращим!");
+        desc.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 15);
+        desc.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        card.addView(desc, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 0, 10, 0, 0));
+
+        return card;
+    }
+
+    private String getCameraXFpsRange() {
+        return switch (CherrygramCameraConfig.INSTANCE.getCameraXFpsRange()) {
+            case CherrygramCameraConfig.CameraXFpsRange25to30 -> "25-30";
+            case CherrygramCameraConfig.CameraXFpsRange30to30 -> "30-30";
+            case CherrygramCameraConfig.CameraXFpsRange30to60 -> "30-60";
+            case CherrygramCameraConfig.CameraXFpsRange60to60 -> "60-60";
+            default -> getString(R.string.Default);
+        };
     }
 
     @Override

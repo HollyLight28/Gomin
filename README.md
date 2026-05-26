@@ -46,8 +46,24 @@ Your digital presence is your personal space. Stay in the shadows whenever you n
 * **Invisible Stories Viewer**: Watch public and personal Stories without leaving a single trace in the viewers list.
 * **Offline Presence Lock**: Chat with others while your global status remains permanently "offline".
 
-### 🧠 Integrated AI Features (Gomin AI)
-* Gomin supports seamless integration with cutting-edge artificial intelligence. If you paste your personal **Gemini API Key** in Gomin settings, it unlocks built-in intelligent AI capabilities: a smart Gemini chat assistant directly in your dialogue list and the ability to transcribe any voice message to text on the fly!
+### 🚨 Gomin Air Alert (Integrated Civil Defense Siren)
+Gomin is built with deep care for the safety of our users. We have integrated the official civil defense alert system directly into the core engine:
+* **Ajax Systems API Engine**: Connects directly to the official `api.ukrainealarm.com` endpoint using a free developer API key.
+* **Granular Location Selector**: Allows you to pick your exact region, city, or local territorial community in settings using interactive dynamic lists fetched in real time.
+* **Intelligent Siren Engine**: Operates a lightweight background checking daemon. The moment an air alert is declared in your selected region, Gomin triggers a loud looping alarm siren for 15 seconds to warn you instantly. It plays a gentle notification chime once the threat is cleared.
+* **Seamless Local Testing**: Features an instant "Test Alert" button to check sound volumes and verification states locally.
+
+### 🧠 Integrated AI Features (Gomin AI & Gomin Shield)
+We have integrated advanced Google Gemini LLM capabilities directly into the core application using native interfaces without exposing any data to third-party proxy servers:
+* **🤖 Gomin AI Chat Assistant** 🌟:
+  An elite virtual AI assistant chat (`dialog_id = 99999999L`) accessible directly from your main chat screen via a custom **Lucide Sparkles** Floating Action Button (FAB) or in settings.
+  - **Dynamic Intercept Engine**: Emulates a 100% native Telegram chat using high-speed local JSON storage with a strict **1000-message buffer**. No network payload is sent to MTProto servers, preventing any account desync.
+  - **Premium Polish**: Renders standard native conversation bubbles, displays "Gomin AI is typing..." real-time ActionBar subtitle states, supports clear history commands, and features a model selector (Flash/Pro) inside the three-dot header dropdown.
+* **🛡️ Gomin Shield (Manipulation & Gaslighting Analyzer)** 🚨:
+  A highly sophisticated native behavioral profiler integrated directly into private chats.
+  - **One-Touch Scan**: Tap the thin custom Lucide outline Shield icon in any private dialogue header to pull the last **1000 text messages** and analyze them against professional psycholinguistic frameworks.
+  - **Deep-Dive Diagnostic**: Instantly constructs a native bottom sheet containing a gorgeous custom markdown-rendered report outlining **Red Flags (🚩)**, **Hidden Intentions (🧩)**, **Defense Strategies (🛡️)**, and an **Overall Toxicity Meter (📊)**.
+  - **Bridge to Assistant**: Tap the **"💬 Discuss in Gomin AI"** button at the bottom of the analysis sheet. It closes the sheet, opens your Gomin AI chat, and **pre-seeds** the entire conversation context dynamically! The AI assistant starts fully aware of the dialogue, ready to draft tactically solid replies or guide you on communication boundaries.
 
 ### 🎯 Usability Upgrades
 * **Toggle #16: "Delete for All" by Default** 🗑️:
@@ -70,8 +86,40 @@ Gomin is just getting started. Here is our honest development plan, which we wil
 - [x] Rock-solid 4-layer Ghost Mode.
 - [x] Automatic message deletion for all participants by default.
 - [x] Integration of adaptive launcher icons (Adaptive Icons) with a gorgeous white bird on a blue background (#2AABEE) and perfect outline borders.
+- [x] **Gomin AI & Gomin Shield**: Interactive virtual Gemini assistant chat, model settings selector, clear history actions, and premium gaslighting profiler with pre-seeded context bridging.
 - [ ] **Gomin Drive**: A native, ultra-clean personal cloud workspace inside "Saved Messages" using the `MediaActivity` layout to manage files without hacks or hashtags.
-- [ ] **Gomin AI**: An interactive, localized Gemini assistant chat running on your local SQLite database to summarize conversations on the fly.
+
+---
+
+## 🧪 How to Verify and Test Gomin AI, Shield & Air Alert
+
+Follow these straightforward steps to experience the complete Gomin feature set on your local build:
+
+1. **Set Up Gomin AI & Shield**:
+   - Navigate to Gomin **Settings** -> **Gomin AI Settings**.
+   - Enter your personal Google Gemini API Key.
+   - Enter your preferred model (e.g., `gemini-1.5-flash` or `gemini-1.5-pro`).
+2. **Launch Gomin AI Chat Assistant**:
+   - Go to your main **Chats List** (`DialogsActivity`).
+   - You will notice a gorgeous new thin **Lucide Sparkles FAB button** floating elegantly above the write/stories buttons on the right side.
+   - Tap it to instantly launch the native Gomin AI private chat! Send some queries, test the response speeds, watch the "typing..." header state, and try selecting a model or clearing history via the top right corner three-dot menu.
+3. **Run Gomin Shield (Behavioral Profiling)**:
+   - Open any private dialogue with another user.
+   - Tap the three-dot menu in the upper-right corner.
+   - You will see a dedicated Lucide-style thin outline **Shield icon** (🛡️).
+   - Tap it to initiate an automatic analysis. The app will extract the chat history, query the Gemini API, and present a breathtaking, structured bottom sheet with complete behavioral metrics, flags, and tactical defense recommendations.
+4. **Test Context Pre-Seeding**:
+   - In the resulting Gomin Shield report sheet, tap the **"💬 Discuss in Gomin AI"** button.
+   - The sheet will dismiss and open the Gomin AI chat.
+   - Type *"Give me a specific advice on how to respond to their last message"* or *"What is their primary gaslighting method here?"*.
+   - Watch the assistant respond with absolute awareness of the chat context!
+5. **Verify and Test Gomin Air Alert**:
+   - Navigate to Gomin **Settings** -> **Gomin Settings**.
+   - Scroll down to the **Air Alert 🚨** section.
+   - Enable alerts via the main switch.
+   - Enter your free developer API key from `api.ukrainealarm.com` (Ajax systems).
+   - Tap **Your Region** to dynamically load oblasts/municipalities and select your exact region.
+   - Tap **Test Alert** to instantly trigger a 15-second simulation check (it will play the loud air alert alarm sound and dismiss safely).
 
 ---
 

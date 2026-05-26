@@ -466,81 +466,39 @@
     <string name="SP_GhostMode_HideOnline">Hide online status</string>
     <string name="SP_GhostMode_HideOnline_Desc">Your status will always be shown as "recently".</string>
 
-    <string name="SP_DeleteAccount">Delete Telegram account</string>
-    <!--Security Preferences-->
+    <string name="CGP_SupportProject">Project Support ☕</string>
+    <string name="CGP_CoffeeAuthor">Buy the author a coffee</string>
+    <string name="CGP_SupportProjectDesc">If you like Gomin, you can support the author with a coffee or to pay for update servers!</string>
+    <string name="EP_UploadloadSpeedBoost_Desc">Optimizes the transfer buffer to 512 KB for fast and stable sending of large files.</string>
+    <string name="EP_SlowNetworkMode_Desc">Super-stable single-threaded mode with 32 KB packets for bomb shelters or cover.</string>
+    <string name="AP_HideSearchBar_Desc">Removes the search bar from the chat list for a cleaner interface.</string>
+    <string name="CP_MainTabs_ShowTabs_Desc">Enables convenient bottom tabs, like in iOS or WhatsApp.</string>
+    <string name="CP_SpringAnimation">Spring Animations</string>
+    <string name="CP_SpringAnimation_Desc">Enables Gomin\'s signature spring interface transitions.</string>
+    <string name="CP_GeminiAI_Settings">Gomin AI (Gemini) Settings</string>
+    <string name="EP_Boost_None">Disabled</string>
+    <string name="EP_Boost_Average">Average (Balance)</string>
+    <string name="EP_Boost_Extreme">Maximum (Gomin Boost)</string>
+    <string name="EP_Boost_None_Telegram">Disabled (Telegram)</string>
 
-    <!--Updates Preferences-->
-    <string name="UP_Category_Updates">Updates</string>
-    <string name="UP_TapToCheckUpdates">Tap here to get info about updates</string>
-    <string name="UP_LastCheck">Last check</string>
-    <string name="UP_CurrentVersion">Current version</string>
-    <string name="UP_BuildType">Build type</string>
-    <string name="UP_BTRelease">Stable</string>
-    <string name="UP_BTBeta">Beta</string>
-    <string name="UP_InstallBetas">Install Beta Versions</string>
-    <string name="UP_Auto_OTA">Check on launch</string>
-    <string name="UP_ClearUpdatesCache">Clear updates cache</string>
-    <string name="UP_ClearedUpdatesCache">Cleared %1$s of cache.</string>
-    <string name="UP_NothingToClear">Nothing to clear.</string>
-    <string name="UP_CheckForUpdates">Check for updates</string>
-    <string name="UP_Not_Found">Gomin is up to date.</string>
-    <string name="UP_UpdateAvailable">Update available!</string>
-    <string name="UP_Version">Version</string>
-    <string name="UP_Changelog">Changelog:</string>
-    <string name="UP_ChangelogRead">Tap to read</string>
-    <string name="UP_Download">Download</string>
-    <!--Updates Preferences-->
+    <string name="EP_SpeedEngine">Speed Engine</string>
+    <string name="EP_DownloadSpeedBoost_Shadow">Technical accelerator: increases the number of threads from 4 to 12 and packet size from 128 KB to 1 MB for maximum download speed.</string>
+    <string name="CP_PremiumWallpapers">Premium User Backgrounds</string>
+    <string name="CP_PremiumWallpapers_Desc">Allows you to see custom wallpapers set by other users in chats.</string>
+    <string name="CP_SystemAI">System &amp; AI</string>
+    <string name="CP_SpringAnimation_Desc_New">Replaces standard animations with Gomin\'s signature soft transitions.</string>
+    <string name="CGP_SupportGominTitle">Support Gomin ❤️</string>
+    <string name="CGP_SupportGominDesc">Your support is the heart of our project. Help the author pay for servers and keep making Gomin better!</string>
+    <string name="CP_ChatSettings">Chat Settings</string>
+    <string name="CP_AutoQuote_Desc">Automatically creates a text quote when replying to a message.</string>
+    <string name="CP_DeleteForAll_Desc_New">Automatically checks the \"Delete for all\" box when deleting messages.</string>
 
-    <!--Donations-->
-    <string name="DP_EnjoyingUs">Enjoying Gomin?</string>
-    <string name="DP_RateUs">Rate us on Google Play!</string>
-
-    <string name="DP_DonatesMoreInfo">Want to help Gomin grow? Check out **Gomin Support** chat.</string>
-    <string name="DP_DonatesThanks">Thanks for your support! You made Gomin happy ❤️</string>
-
-    <string name="DP_DonateBadge">Donate and unlock bonuses</string>
-    <string name="DP_Donate_Desc">When you donate $2 or more, you\'ll also get some bonus gifts:</string>
-
-    <string name="DP_Donate_Badge_desc">1. **Gomin badge** next to your name.</string>
-    <string name="DP_Donate_MsgMenuCompactView_Desc">2. Compact view of **message menu** items.</string>
-    <string name="DP_Donate_FoldersAtBottom_Desc">3. **Folders panel** at the bottom of the screen.</string>
-    <string name="DP_Donate_EpicBadge_desc">1. An **epic Gomin badge** next to your name.</string>
-    <string name="DP_Donate_GiftMarket_Desc">2. \"**Gift Market**\" button in the side menu.</string>
-    <string name="DP_Donate_MessageFilter_Desc">3. \"**Message filter**\" feature.</string>
-    <string name="DP_Donate_MessageMenu_Desc">4. \"**iOS-styled**\" message menu.</string>
-    <string name="DP_Donate_Cheque">Send a payment confirmation to **@arsLan** to get bonuses.</string>
-    <string name="DP_Donate_Terms">Before making a donation, please read the **Donation Terms**. All donations are voluntary and non-refundable.</string>
-
-    <string name="DP_Donate_Counter_one">**%1$d** person has already supported the project and received bonuses</string>
-    <string name="DP_Donate_Counter_few">**%1$d** people have already supported the project and received bonuses</string>
-    <string name="DP_Donate_Counter_many">**%1$d** people have already supported the project and received bonuses</string>
-    <string name="DP_Donate_Counter_other">**%1$d** people have already supported the project and received bonuses</string>
-
-    <string name="DP_Donate_Bulletin">**%s** supported **Gomin\'s** development!</string>
-
-    <string name="DP_Support">Like Gomin? Support it!</string>
-    <string name="DP_SupportOptions">Support options</string>
-
-    <string name="DP_CameraCutoutHeader">Branded screenshots</string>
-    <string name="DP_CameraCutout">Show Gomin logo</string>
-    <string name="DP_CameraCutoutDesc">You can show the Gomin logo under your camera — it will appear in screenshots.
-    \nIf the logo **displays correctly and stays within your camera area**, please keep this option enabled.
-    \nIt helps promote the app and support the project — I would really appreciate it! ❤️</string>
-
-    <string name="DP_Donate_Method_Int">International payment systems</string>
-    <string name="DP_Donate_Method_Rus">For residents of the Russian Federation</string>
-    <string name="DP_Donate_Method_Uzb">For residents of Uzbekistan</string>
-    <string name="DP_Donate_Method_Surname">Please contact **@arsLan** if the payment system requires the recipient\'s personal information.</string>
-    <string name="DP_Donate_Exclusive">Exclusive for supporters</string>
-    <string name="DP_Donate_ExclusiveDesc">Support the project and unlock all features.</string>
-
-    <!-- Intro Page Customizations -->
-    <string name="CG_Page1Title">Gomin</string>
-    <string name="CG_Page1Message">A fast and secure messenger\npowered by **Telegram API**.</string>
-    <string name="CG_Page2Message">**Gomin** delivers messages faster than\nany other application.</string>
-    <string name="CG_Page3Message">**Gomin** provides free unlimited cloud storage for chats and media.</string>
-    <string name="CG_Page4Message">**Gomin** keeps your messages safe\nfrom hacker attacks.</string>
-    <string name="CG_Page5Message">**Gomin** has no limits on\nthe size of your media and chats.</string>
-    <string name="CG_Page6Message">**Gomin** lets you access your messages\nfrom multiple devices.</string>
+    <string name="CP_AirAlert_Header">Air Alert 🚨</string>
+    <string name="CP_AirAlert_Enabled">Enable alerts</string>
+    <string name="CP_AirAlert_APIKey">API Key (Ajax)</string>
+    <string name="CP_AirAlert_Region">Your Region</string>
+    <string name="CP_AirAlert_Test">Test Alert</string>
+    <string name="CP_AirAlert_Instruction">1. Register at api.ukrainealarm.com\n2. Get your free API Key\n3. Paste it here and select your region.</string>
+    <string name="CP_AirAlert_Active">AIR ALERT!</string>
 
 </resources>

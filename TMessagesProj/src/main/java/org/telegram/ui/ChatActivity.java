@@ -348,6 +348,8 @@ import uz.unnarsx.cherrygram.helpers.network.StickersManager;
 import uz.unnarsx.cherrygram.misc.Constants;
 import uz.unnarsx.cherrygram.core.PermissionsUtils;
 import uz.unnarsx.cherrygram.preferences.CherrygramPreferencesNavigator;
+import uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper;
+import uz.unnarsx.cherrygram.chats.gemini.GominShieldBottomSheet;
 
 import me.vkryl.android.animator.BoolAnimator;
 import me.vkryl.android.animator.FactorAnimator;
@@ -1561,6 +1563,9 @@ public class ChatActivity extends BaseFragment implements
     private final static int chat_menu_search = -1;
     private final static int chat_menu_options = -2;
     private final static int chat_menu_edit_text_options = -3;
+    private final static int gomin_shield_menu_item = 991199;
+    private final static int gomin_select_ai_model_menu_item = 991200;
+    private final static int gomin_clear_ai_history_menu_item = 991201;
     private final static int clear_history = 15;
     private final static int delete_chat = 16;
     private final static int share_contact = 17;
@@ -3817,6 +3822,16 @@ public class ChatActivity extends BaseFragment implements
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
             public void onItemClick(final int id) {
+                if (id == gomin_shield_menu_item) {
+                    GominShieldBottomSheet.show(ChatActivity.this, getDialogId());
+                    return;
+                } else if (id == gomin_select_ai_model_menu_item) {
+                    GominAiChatHelper.INSTANCE.showModelSelector(ChatActivity.this);
+                    return;
+                } else if (id == gomin_clear_ai_history_menu_item) {
+                    GominAiChatHelper.INSTANCE.showClearHistoryAlert(ChatActivity.this, getDialogId());
+                    return;
+                }
                 getChatActivityHelper().checkActionBarOptions(
                         id,
                         ChatActivity.this, headerItem,
@@ -4403,6 +4418,10 @@ public class ChatActivity extends BaseFragment implements
 
         ActionBarMenu menu = actionBar.createMenu();
 
+        if (currentUser != null && !currentUser.bot && !currentUser.self && chatMode == 0 && !isReport()) {
+            menu.addItem(gomin_shield_menu_item, R.drawable.shield_solar);
+        }
+
         if (chatMode == MODE_QUICK_REPLIES && !QuickRepliesController.isSpecial(quickReplyShortcut)) {
             menu.addItem(edit_quick_reply, R.drawable.group_edit).setContentDescription(LocaleController.getString(R.string.Edit));
         }
@@ -4647,6 +4666,11 @@ public class ChatActivity extends BaseFragment implements
             }
 
             CGChatMenuInjector.INSTANCE.injectCherrygramShortcuts(ChatActivity.this, headerItem, currentChat, currentUser, currentEncryptedChat != null);
+
+            if (dialog_id == Constants.GOMIN_AI_DIALOG_ID) {
+                headerItem.lazilyAddSubItem(gomin_select_ai_model_menu_item, R.drawable.magic_stick_solar, "🤖 Вибрати модель ШІ");
+                headerItem.lazilyAddSubItem(gomin_clear_ai_history_menu_item, R.drawable.msg_delete, "🧹 Очистити історію ШІ");
+            }
 
             if (currentChat != null && (ChatObject.isChannel(currentChat) || currentChat.gigagroup || currentChat.megagroup) && (currentChat.creator || currentChat.admin_rights != null)) {
                 CGChatMenuInjector.INSTANCE.injectAdminShortcuts(headerItem, currentChat);

@@ -996,6 +996,7 @@ public class NotificationCenter {
     public static final int cgTabsUpdated = totalEvents++;
     public static final int cgDestroyCameraX = totalEvents++;
     public static final int cgUpdateSearchFiledVisibility = totalEvents++;
+    public static final int cgAirAlertStatusChanged = totalEvents++;
     /** Cherrygram finish */
 
 }

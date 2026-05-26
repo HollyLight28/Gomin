@@ -60,6 +60,7 @@ object Constants {
     const val Cherrygram_APKs = 1557718915L // Cherrygram APKs
     const val Cherrygram_Beta = 1544768810L // Cherrygram Beta APKs
     const val Cherrygram_Archive = 1719103382L // Cherrygram Archive
+    const val GOMIN_AI_DIALOG_ID = 99999999L // Gomin AI Virtual Bot ID
     /** CG Chats IDs finish**/
 
     /** OWNer's friends start */

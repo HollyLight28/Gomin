@@ -23,6 +23,7 @@ import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
+import uz.unnarsx.cherrygram.alerts.AirAlertController
 import uz.unnarsx.cherrygram.core.helpers.FirebaseRemoteConfigHelper
 import uz.unnarsx.cherrygram.donates.DonatesManager
 import uz.unnarsx.cherrygram.misc.Constants
@@ -91,6 +92,13 @@ object CherrygramCoreConfig: CoroutineScope by CoroutineScope(
     const val TABLET_MODE_AUTO = 2
     var tabletMode by sharedPreferences.int("AP_Tablet_Mode", TABLET_MODE_AUTO)
     /** Miscellaneous finish */
+
+    /** Air Alert start */
+    var airAlertEnabled by sharedPreferences.boolean("CP_AirAlert_Enabled", false)
+    var airAlertApiKey by sharedPreferences.string("CP_AirAlert_ApiKey", "")
+    var airAlertRegionId by sharedPreferences.string("CP_AirAlert_RegionId", "")
+    var airAlertRegionName by sharedPreferences.string("CP_AirAlert_RegionName", "")
+    /** Air Alert finish */
 
     /** Network start */
     const val BOOST_NONE = 0
@@ -187,6 +195,7 @@ object CherrygramCoreConfig: CoroutineScope by CoroutineScope(
             }
 
             migratePreferences()
+            AirAlertController.init()
 
             if (allowSafeStars) {
                 if (!RestrictedDomainsList.getInstance().isRestricted("safestars.pro")) {

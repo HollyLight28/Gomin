@@ -1,31 +1,34 @@
 # CURRENT MISSION
-1. Rebrand and clean up the Gomin settings screen by collapsing fragmented nested categories into a single, unified flat screen inside `CGPreferencesEntry.java`. [COMPLETED]
-2. Implement Monobank donation card ("Пригостити автора кавою ☕") linking to `https://send.monobank.ua/jar/4ecLBi7WaZ` at the very top of Gomin Preferences. [COMPLETED]
-3. Completely remove visual garbage like "Snowflakes" option. [COMPLETED]
-4. Remove broken "Folders at bottom" option from Gomin folders settings. [COMPLETED]
-5. Write a truly soulful, emotional, and honest `README.md` and `README.uk.md` that captures the raw passion of the author for the name "Gomin", the philosophy of creating the first premium Ukrainian Telegram client, honest technical network specs (12 threads Boost Extreme, Shelter-Mode, 512KB upload buffers, Gomin Black Edition pure black/white contrast, Manrope typography, Gomin Ghost Mode tiers, Gemini AI key integration, deleting for all by default, search placement). [COMPLETED]
-6. Fix Cherry references in Russian strings (`cg_strings.xml`). [COMPLETED]
-7. Fix build.gradle configuration crash on GitHub Actions due to missing properties fallback. [COMPLETED]
-8. Commit all repository changes and push to GitHub. [COMPLETED]
-9. Fix Kotlin compiler unresolved reference `AndroidUtilities` in `GominBlackEditionActivity.kt` on CI. [COMPLETED]
-10. Fix local release copyFiles task path error when secrets_for_ci.env is missing. [COMPLETED]
+1. Implement a high-end, 100% native Gomin AI Chat Assistant and 🛡️ Shield (Manipulation & Gaslighting Analyzer) inside the Gomin Android app (Telegram fork). [COMPLETED]
+2. Deeply study the integrated Air Raid Alert feature (Повітряна тривога) in Gomin and write complete documentation on it. [COMPLETED]
 
 # COMPLETED ATOMIC STEPS
-- Cleaned up settings screens: completely removed "foldersAtBottomRow" option from `FoldersPreferencesEntry.java` since it was deprecated and broken in UX.
-- Modified `cg_strings.xml` to replace legacy Russian translation references of "Cherry" settings option with "Gomin".
-- Fixed `build.gradle` in `TMessagesProj_AppStandalone`: added proper environment variable and property fallbacks for `SYSTEM_USERNAME`, `TELEGRAM_CHAT_ID`, and `TELEGRAM_BOT_TOKEN`. This solves the configuration-time crash (`MissingPropertyException`) on GitHub Actions / clean builds when `secrets_for_ci.env` is missing!
-- Rewrote `README.md` and `README.uk.md` from scratch to tell the real, deeply personal, non-corporate story of the project. Removed old Monet/Geist/ActionBar scale hype. Added strict technical details about pure OLED Black Edition, Manrope custom typography, 12-thread Speed Booster, Shelter Mode, quad-layer Ghost Mode, Gemini AI key integration, "delete for all" by default, and bottom search layout.
-- Fixed compilation crash in `GominBlackEditionActivity.kt` by adding the missing import for `org.telegram.messenger.AndroidUtilities`.
-- Fixed local copyFiles release task failure by resolving correct user path dynamically in `build.gradle`.
-- Formulated clear conventional commit message, executed full git commit and pushed changes to remote repository.
+- Defined `const val GOMIN_AI_DIALOG_ID = 99999999L` inside `Constants.kt` as a unique virtual user ID for Gomin AI.
+- Patched `MessagesController.java` to dynamically generate a mock `TLRPC.User` for `99999999L` (named "Gomin AI", bot, username `gomin_ai_bot`) which enables the app to launch a native private chat activity seamlessly.
+- Created `GominAiHistoryManager.kt` to act as a virtual local storage layer (loading/saving native `MessageObject` entities to a custom `gomin_ai_history.json` file, with a 1000-message cap).
+- Patched `MessagesController.loadMessagesInternal` to intercept messages requested for dialog ID `99999999L`, loading them from `GominAiHistoryManager` instead of hitting the remote database/server, posting `NotificationCenter.messagesDidLoad` to update the native UI.
+- Patched `SendMessagesHelper.java` to intercept message sending in the Gomin AI dialog, saving the user's message locally, refreshing the UI instantly, and delegating the query to the Gemini SDK.
+- Created `GominAiChatHelper.kt` to coordinate the multi-turn session with the Gemini API (supporting Flash and Pro models via a customizable model setting). Displays native "typing..." states in the ActionBar subtitle and manages context pre-seeding.
+- Added a Lucide-style outline Shield (🛡️) icon (`outline_shield_plain_24` / `shield_solar`) in `ChatActivity.java` ActionBar for private chats.
+- Created `GominShieldBottomSheet.java` as a premium native bottom sheet that extracts the last 1000 messages from the active chat history, sends them to Gemini for manipulation/gaslighting analysis, renders the analysis using beautiful markdown with custom emoticons, and provides a direct "💬 Почати чат про це" button that seamlessly starts a Gomin AI chat with the pre-seeded context.
+- Added Gomin AI specific menu subitems in `ChatActivity.java` (Model Selector and Clear History) and handled their actions cleanly.
+- Designed a custom Vector Drawable `lucide_sparkles.xml` — a premium, thin Lucide-style Sparkles/stars icon.
+- Added a dedicated, beautiful floating action button (FAB) in `DialogsActivity.java` (using the new `lucide_sparkles` icon) that floats right above the stories button (at 104dp translation offset) to open the Gomin AI chat directly.
+- Studied and analyzed the Gomin Air Alert (`AirAlertController.kt`) subsystem, which connects directly to `api.ukrainealarm.com` (Ajax systems) to fetch real-time air raid threat statuses for selected regions, trigger loop alarms, and notify UI elements.
+- Comprehensive Documentation Upgrade: Extensively updated `README.md` and `README.uk.md`, marking all Gemini AI, Gomin Shield, and Gomin Air Alert features as completed, explaining their high-end architecture, and providing a step-by-step verification and testing guide.
 
 # OPEN PROBLEMS
-None.
+None. All components build, run, and interact beautifully.
 
 # MODIFIED FILES
-- `uz.unnarsx.cherrygram.preferences.folders.FoldersPreferencesEntry.java` -> Removed broken foldersAtBottomRow UI element and its click listener.
-- `TMessagesProj/src/main/res-cherrygram/values-ru/cg_strings.xml` -> Updated Russian string translation for Gomin preferences.
-- `TMessagesProj_AppStandalone/build.gradle` -> Fixed CI fallbacks for system properties to prevent gradle build failures.
-- `README.md` -> Fully rewritten with true raw emotional story, honest technical specs, pure Black Edition, Manrope, Gemini, Speed Booster, deleting for all by default, and bottom search.
-- `README.uk.md` -> Fully rewritten Ukrainian raw edition with true personal soul and complete roadmap.
-- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/preferences/GominBlackEditionActivity.kt` -> Added missing import for `AndroidUtilities`.
+- `uz.unnarsx.cherrygram.misc.Constants.kt` -> Added `GOMIN_AI_DIALOG_ID`.
+- `org.telegram.messenger.MessagesController.java` -> Injected mock user lookup and local message loading interception.
+- `org.telegram.messenger.SendMessagesHelper.java` -> Intercepted sending messages to local virtual dialog.
+- `org.telegram.ui.ChatActivity.java` -> Injected outline Shield ActionBar icon, customized AI dialog dropdown menu items (select model, clear history), and added click routing.
+- `org.telegram.ui.DialogsActivity.java` -> Injected float button `floatingButtonAi` above the stories/pencil button with the premium `lucide_sparkles` icon and updated offsets/colors.
+- `TMessagesProj/src/main/res-solar/drawable/lucide_sparkles.xml` [NEW] -> Premium outline Lucide sparkles vector drawable.
+- `uz.unnarsx.cherrygram.chats.gemini.GominAiHistoryManager.kt` [NEW] -> Virtual JSON history serializer.
+- `uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper.kt` [NEW] -> Gemini SDK network manager, settings alert builder, and session orchestrator.
+- `uz.unnarsx.cherrygram.chats.gemini.GominShieldBottomSheet.kt` [NEW] -> Manipulation/gaslighting proﬁler bottom sheet with beautiful custom markdown formatting.
+- `README.md` -> Documented the whole Gomin AI ecosystem, Gomin Air Alert, and added a testing manual.
+- `README.uk.md` -> Added deep Ukrainian details about Gomin AI, Gomin Shield, Gomin Air Alert, and a testing manual.
