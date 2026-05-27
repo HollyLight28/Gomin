@@ -478,6 +478,6 @@
     <string name="CP_AirAlert_Test">Тест сигналу</string>
     <string name="CP_AirAlert_Instruction">1. Зареєструйтесь на api.ukrainealarm.com\n2. Отримайте безкоштовний API ключ\n3. Вставте його сюди та оберіть свій регіон.</string>
     <string name="CP_AirAlert_Active">ПОВІТРЯНА ТРИВОГА!</string>
-    <string name="CG_GominShield">🛡️ Ментальний щит</string>
+    <string name="CG_GominShield">Ментальний щит</string>
 
 </resources>

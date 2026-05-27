@@ -228,7 +228,8 @@ class GominShieldBottomSheet(
                 if (messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.message != null) {
                     val text = messageObject.messageOwner.message.trim()
                     if (!TextUtils.isEmpty(text)) {
-                        val senderUser = MessagesController.getInstance(currentAccount).getUser(messageObject.messageOwner.from_id.user_id)
+                        val fromId = messageObject.messageOwner.from_id?.user_id ?: messageObject.messageOwner.peer_id?.user_id ?: 0L
+                        val senderUser = if (fromId != 0L) MessagesController.getInstance(currentAccount).getUser(fromId) else null
                         val sender = if (senderUser != null) UserObject.getUserName(senderUser) else "Невідомий"
                         val formattedTime = sdf.format(java.util.Date(messageObject.messageOwner.date * 1000L))
                         historyList.add("[$formattedTime] $sender: $text")
