@@ -48,3 +48,4 @@ None. All components build, run, and interact beautifully.
 - `TMessagesProj/src/main/res-cherrygram/values/cg_strings.xml` -> Added `CG_GominShield` translation ("🛡️ Mental Shield").
 - `uz.unnarsx.cherrygram.helpers.ProfileActivityHelper.java` -> Disabled the debug options menu info item `injectCherryInfo` in profile activity options.
 - `uz.unnarsx.cherrygram.chats.gemini.network.ApiClient.java` -> Implemented case-insensitive model filtering by checking if names contain `gemini` or `gemma`.
+

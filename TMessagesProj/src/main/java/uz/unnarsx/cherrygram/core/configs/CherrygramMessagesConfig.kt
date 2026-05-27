@@ -74,11 +74,11 @@ object CherrygramMessagesConfig {
 
     /** Direct share start */
     var shareDrawStoryButton by sharedPreferences.boolean("CP_ShareDrawStoryButton", true)
-    var usersDrawShareButton by sharedPreferences.boolean("CP_UsersDrawShareButton", true)
-    var supergroupsDrawShareButton by sharedPreferences.boolean("CP_SupergroupsDrawShareButton", true)
-    var channelsDrawShareButton by sharedPreferences.boolean("CP_ChannelsDrawShareButton", true)
-    var botsDrawShareButton by sharedPreferences.boolean("CP_BotsDrawShareButton", true)
-    var stickersDrawShareButton by sharedPreferences.boolean("CP_StickersDrawShareButton", true)
+    var usersDrawShareButton by sharedPreferences.boolean("CP_UsersDrawShareButton_v2", false)
+    var supergroupsDrawShareButton by sharedPreferences.boolean("CP_SupergroupsDrawShareButton_v2", false)
+    var channelsDrawShareButton by sharedPreferences.boolean("CP_ChannelsDrawShareButton", true) // Default true for channels (like official Telegram)
+    var botsDrawShareButton by sharedPreferences.boolean("CP_BotsDrawShareButton_v2", false)
+    var stickersDrawShareButton by sharedPreferences.boolean("CP_StickersDrawShareButton_v2", false)
     /** Direct share finish */
 
     var hideStickerTime by sharedPreferences.boolean("CP_TimeOnStick", false)

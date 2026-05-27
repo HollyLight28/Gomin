@@ -268,7 +268,7 @@ class TelegramSettingsHelper(
             1396,
             if (dark) 0xFFFFFFFF.toInt() else 0xFF121212.toInt(),
             if (dark) 0xFFFFFFFF.toInt() else 0xFF121212.toInt(),
-            R.drawable.msg_theme_solar,
+            R.drawable.filled_rating_crown,
             "Гомін Black Edition",
             "Інструмент когнітивної переваги"
         )
@@ -279,7 +279,7 @@ class TelegramSettingsHelper(
                 1390,
                 0xFF00B4DB.toInt(),
                 0xFF00B4DB.toInt(),
-                R.drawable.gomin_settings_gear,
+                R.drawable.filled_profile_settings,
                 getString(R.string.CGP_AdvancedSettings)
             )
         )

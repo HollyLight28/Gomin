@@ -67,13 +67,14 @@ class GominBlackEditionActivity : UniversalFragment() {
             val targetTheme = Theme.getTheme(targetThemeName)
             if (targetTheme != null) {
                 Theme.applyTheme(targetTheme, Theme.isCurrentThemeNight())
+                org.telegram.messenger.NotificationCenter.getGlobalInstance().postNotificationName(org.telegram.messenger.NotificationCenter.needSetDayNightTheme)
             }
             
             SettingsHelper.updateCheckState(view, newActive)
             
             // Apply changes and rebuild UI
             AndroidUtilities.runOnUIThread({
-                parentLayout?.rebuildAllFragmentViews(false, false)
+                parentLayout?.rebuildAllFragmentViews(true, true)
             }, 100)
         }
     }

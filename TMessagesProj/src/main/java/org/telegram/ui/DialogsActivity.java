@@ -13408,11 +13408,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 switchingTheme = true;
                 SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE);
                 String dayThemeName = preferences.getString("lastDayTheme", "Blue");
-                if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark()) {
+                if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark() || Theme.getTheme(dayThemeName).isMonet()) {
                     dayThemeName = "Blue";
                 }
                 String nightThemeName = preferences.getString("lastDarkTheme", "Night");
-                if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark()) {
+                if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark() || Theme.getTheme(nightThemeName).isMonet()) {
                     nightThemeName = "Night";
                 }
                 Theme.ThemeInfo themeInfo = Theme.getActiveTheme();
