@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -174,7 +175,17 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
                 invalidate();
 
                 int rad = dp(18);
-                setBackground(Theme.createInsetRoundRectDrawable(bgColor, rad, dp(6)));
+                int pressedColor = Theme.getColor(Theme.key_listSelector, resourcesProvider);
+
+                // Use a filled background so it's not transparent before being pressed
+                Drawable bgDrawable = Theme.createSimpleSelectorRoundRectDrawable(rad, bgColor, pressedColor);
+                if (bgDrawable != null) {
+                    // Inset it identically to createInsetRoundRectDrawable for visual consistency
+                    setBackground(new android.graphics.drawable.InsetDrawable(bgDrawable, dp(6)));
+                } else {
+                    setBackground(Theme.createSimpleSelectorRoundRectDrawable(rad, bgColor, pressedColor));
+                }
+
                 // Override drawing of blur background to instead draw solid block
                 iBlur3Background.setAlpha(0); // Hide blur
             } else {
