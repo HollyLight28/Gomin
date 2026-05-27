@@ -4418,10 +4418,6 @@ public class ChatActivity extends BaseFragment implements
 
         ActionBarMenu menu = actionBar.createMenu();
 
-        if (currentUser != null && !currentUser.bot && !currentUser.self && chatMode == 0 && !isReport()) {
-            menu.addItem(gomin_shield_menu_item, R.drawable.shield_solar);
-        }
-
         if (chatMode == MODE_QUICK_REPLIES && !QuickRepliesController.isSpecial(quickReplyShortcut)) {
             menu.addItem(edit_quick_reply, R.drawable.group_edit).setContentDescription(LocaleController.getString(R.string.Edit));
         }
@@ -4666,6 +4662,10 @@ public class ChatActivity extends BaseFragment implements
             }
 
             CGChatMenuInjector.INSTANCE.injectCherrygramShortcuts(ChatActivity.this, headerItem, currentChat, currentUser, currentEncryptedChat != null);
+
+            if (currentUser != null && !currentUser.bot && !currentUser.self && chatMode == 0) {
+                headerItem.lazilyAddSubItem(gomin_shield_menu_item, R.drawable.shield_solar, LocaleController.getString(R.string.CG_GominShield));
+            }
 
             if (dialog_id == Constants.GOMIN_AI_DIALOG_ID) {
                 headerItem.lazilyAddSubItem(gomin_select_ai_model_menu_item, R.drawable.magic_stick_solar, "🤖 Вибрати модель ШІ");

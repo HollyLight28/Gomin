@@ -71,9 +71,12 @@ public class ApiClient {
                     for (JsonElement element : modelsArray) {
                         JsonObject obj = element.getAsJsonObject();
                         String name = obj.get("name").getAsString();
-                        String displayName = obj.get("displayName").getAsString();
-                        String description = obj.has("description") ? obj.get("description").getAsString() : null;
-                        modelList.add(new ModelInfo(name, displayName, description));
+                        String nameLower = name.toLowerCase();
+                        if (nameLower.contains("gemini") || nameLower.contains("gemma")) {
+                            String displayName = obj.get("displayName").getAsString();
+                            String description = obj.has("description") ? obj.get("description").getAsString() : null;
+                            modelList.add(new ModelInfo(name, displayName, description));
+                        }
                     }
                 } else {
                     FileLog.e("Ошибка API_ERROR: " + responseCode);

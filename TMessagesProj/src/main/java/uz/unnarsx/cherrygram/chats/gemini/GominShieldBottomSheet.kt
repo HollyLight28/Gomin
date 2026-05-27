@@ -76,7 +76,7 @@ class GominShieldBottomSheet(
         }
 
         val headerTitle = TextView(context).apply {
-            text = "🛡️ Gomin Shield"
+            text = LocaleController.getString(R.string.CG_GominShield)
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20f)
             setTextColor(getThemedColor(Theme.key_dialogTextBlack))
             typeface = AndroidUtilities.bold()
@@ -130,7 +130,7 @@ class GominShieldBottomSheet(
         loadingLayout.addView(progressView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
 
         loadingText = TextView(context).apply {
-            text = "Gomin Shield аналізує переписку на предмет маніпуляцій, газлайтингу та токсичності. Зачекай секунду, бро... 🤖☕"
+            text = "Ментальний щит аналізує переписку на предмет маніпуляцій, газлайтингу та токсичності. Зачекай секунду, бро... 🤖☕"
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
             setTextColor(getThemedColor(Theme.key_dialogTextGray2))
             gravity = Gravity.CENTER
@@ -218,8 +218,9 @@ class GominShieldBottomSheet(
             val partnerUser = MessagesController.getInstance(currentAccount).getUser(chatActivity.dialogId)
             val partnerName = if (partnerUser != null) UserObject.getUserName(partnerUser) else "Співрозмовник"
 
-            // Екстракція останніх 1000 повідомлень чату в хронологічному порядку
-            val historyBuilder = StringBuilder()
+            // Екстракція останніх 1000 повідомлень чату в хронологічному порядку (Оптімізовано O(N) з таймстампами)
+            val historyList = ArrayList<String>()
+            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
             var count = 0
             
             for (i in 0 until messages.size) {
@@ -229,19 +230,21 @@ class GominShieldBottomSheet(
                     if (!TextUtils.isEmpty(text)) {
                         val senderUser = MessagesController.getInstance(currentAccount).getUser(messageObject.messageOwner.from_id.user_id)
                         val sender = if (senderUser != null) UserObject.getUserName(senderUser) else "Невідомий"
-                        // Insert at start (index 0) to reverse order into chronological format: old on top, new on bottom
-                        historyBuilder.insert(0, "$sender: $text\n")
+                        val formattedTime = sdf.format(java.util.Date(messageObject.messageOwner.date * 1000L))
+                        historyList.add("[$formattedTime] $sender: $text")
                         count++
                         if (count >= 1000) break
                     }
                 }
             }
 
-            val historyText = historyBuilder.toString().trim()
+            historyList.reverse()
+            val historyText = historyList.joinToString("\n").trim()
+
             if (TextUtils.isEmpty(historyText)) {
                 AndroidUtilities.runOnUIThread {
                     val builder = AlertDialog.Builder(chatActivity.parentActivity, chatActivity.resourceProvider)
-                    builder.setTitle("🛡️ Gomin Shield")
+                    builder.setTitle(LocaleController.getString(R.string.CG_GominShield))
                     builder.setMessage("Бро, у цьому чаті немає текстових повідомлень для аналізу!")
                     builder.setPositiveButton("Зрозуміло", null)
                     builder.show()

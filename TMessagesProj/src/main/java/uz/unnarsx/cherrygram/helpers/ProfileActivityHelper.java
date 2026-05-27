@@ -114,11 +114,7 @@ public class ProfileActivityHelper extends BaseController {
             ) {
                 otherItem.addSubItem(ProfileActivityHelper.OPTION_APPLY_PROFILE_BACKGROUND, R.drawable.msg_emoji_stickers, getString(R.string.CG_ProfileBackground));
             }
-        }
-
-        if (user == null || user.id != Constants.GOMIN_AI_DIALOG_ID) {
-            injectCherryInfo(otherItem);
-        }
+        // removed injectCherryInfo
     }
 
     public void injectCherryInfo(ActionBarMenuItem otherItem) {
