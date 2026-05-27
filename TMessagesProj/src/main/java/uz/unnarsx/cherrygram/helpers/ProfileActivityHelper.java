@@ -114,13 +114,11 @@ public class ProfileActivityHelper extends BaseController {
             ) {
                 otherItem.addSubItem(ProfileActivityHelper.OPTION_APPLY_PROFILE_BACKGROUND, R.drawable.msg_emoji_stickers, getString(R.string.CG_ProfileBackground));
             }
-        // removed injectCherryInfo
+        }
     }
 
     public void injectCherryInfo(ActionBarMenuItem otherItem) {
-        otherItem.addColoredGap();
-
-        otherItem.addSubItem(ProfileActivityHelper.OPTION_USER_INFO, R.drawable.icon_json_solar, getString(R.string.Info));
+        // Disables the diagnostics profile menu item to keep profile menu clean
     }
 
     public void injectPhoneNumber(

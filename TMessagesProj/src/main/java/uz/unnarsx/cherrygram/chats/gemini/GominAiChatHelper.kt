@@ -34,6 +34,9 @@ import org.telegram.ui.LaunchActivity
 import uz.unnarsx.cherrygram.core.configs.CherrygramMessagesConfig
 import uz.unnarsx.cherrygram.misc.Constants
 import java.util.ArrayList
+import uz.unnarsx.cherrygram.chats.gemini.network.ApiClient
+import uz.unnarsx.cherrygram.chats.gemini.network.ApiCallback
+import uz.unnarsx.cherrygram.chats.gemini.network.ModelInfo
 
 object GominAiChatHelper {
 
