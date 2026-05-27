@@ -27,6 +27,7 @@
 - Fully restored the clinical Mental Shield system prompt (`shieldSystemPrompt`) in its unabridged 200-line version in `GominAiChatHelper.kt` to allow maximum analytical fidelity.
 - Created `defaultSystemPrompt` for Gomin AI chat — a highly detailed, professional, empathetic, and gender-neutral assistant prompt with solid guardrails against instructions leak.
 - Updated `setTypingStatus` in `GominAiChatHelper.kt` to purge legacy 1.5/2.0 entries and seamlessly map modern Gemini 3.5, 3.1, and 3.0 models.
+- Resolved compile errors in `ChatsHelper2.kt` by fixing an accidentally deleted closing brace in `ProfileActivityHelper.java` and adding missing imports in `GominAiChatHelper.kt`.
 
 # OPEN PROBLEMS
 None. All components build, run, and interact beautifully.
