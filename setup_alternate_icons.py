@@ -4,16 +4,13 @@ import shutil
 
 # The aliases and their respective backgrounds from LauncherIconController
 icons = {
-    "CG_Icon_Dark": "icon_background_dark",
-    "CG_Icon_Dark_Bra": "icon_background_dark",
     "CG_Icon_White_Cherry": "icon_background_white",
     "CG_Icon_White_Cherry_Bra": "icon_background_white",
     "CG_Icon_Laguna": "icon_background_laguna",
     "CG_Icon_Aqua": "icon_background_aqua",
     "CG_Icon_Green": "icon_background_green",
     "CG_Icon_Lavanda": "icon_background_lavanda",
-    "CG_Icon_Violet_Sunset": "icon_background_violet_sunset",
-    "CG_Icon_Violet_Sunset_Bra": "icon_background_violet_sunset",
+    "CG_Icon_Classic": "icon_background_classic",
     "CG_Icon_Sunset": "icon_background_sunset",
     "CG_Icon_Sunrise": "icon_background_sunrise",
     "CG_Icon_Turbo": "icon_5_background_sa",

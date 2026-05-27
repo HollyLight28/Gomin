@@ -8312,6 +8312,12 @@ public class Theme {
                                     } else if ("chat_messagePanelSendIcon".equals(key) || "chat_messagePanelVoiceLock".equals(key) || "profile_actionIcon".equals(key) || "featuredStickers_buttonText".equals(key)) {
                                         // Gomin: Dark icon for dark mode (AMOLED) to contrast with white circle
                                         value = monetAmoled ? 0xFF121212 : 0xFFFFFFFF;
+                                    } else if ("chat_botButtonText".equals(key) || "chat_botKeyboardButtonText".equals(key)) {
+                                        // Gomin: Bot menu button has white background, so text/icon must be black
+                                        value = monetAmoled ? 0xFF000000 : 0xFF000000;
+                                    } else if ("chat_messagePanelIcons".equals(key) || "chat_emojiPanelIcon".equals(key) || "chat_emojiPanelIconSelected".equals(key) || "chat_emojiBottomPanelIcon".equals(key)) {
+                                        // Gomin: White icons on black background for contrast in AMOLED
+                                        value = monetAmoled ? 0xFFFFFFFF : 0xFF000000;
                                     } else if ("windowBackgroundWhite".equals(key) || "windowBackgroundWhiteBlueHeader".equals(key) || "actionBarDefault".equals(key)) {
                                         value = monetAmoled ? 0xFF000000 : 0xFFFFFFFF;
                                     } else if ("chat_inBubble".equals(key)) {
