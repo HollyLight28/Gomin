@@ -82,7 +82,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
 
                 holderView.bind(icon);
                 holderView.iconView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(ICONS_ROUND_RADIUS), Color.TRANSPARENT, Theme.getColor(Theme.key_listSelector), Color.BLACK));
-                holderView.iconView.setForeground(icon.foreground);
+                holderView.iconView.setForegroundRes(icon.foreground);
             }
 
             @Override
@@ -229,7 +229,6 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
 
             setWillNotDraw(false);
             iconView = new AdaptiveIconImageView(context);
-            iconView.setPadding(AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8));
             addView(iconView, LayoutHelper.createLinear(65, 65, Gravity.CENTER_HORIZONTAL));
 
             titleView = new TextView(context);
@@ -312,7 +311,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
             super(context);
         }
 
-        public void setForeground(int res) {
+        public void setForegroundRes(int res) {
             if (res == 0) {
                 foreground = null;
             } else {
@@ -341,21 +340,28 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
 
         @Override
         public void draw(Canvas canvas) {
+            // Draw the selector background (ripple) outside the clipped area
+            if (getBackground() != null) {
+                getBackground().setBounds(0, 0, getWidth(), getHeight());
+                getBackground().draw(canvas);
+            }
+
             canvas.save();
             canvas.clipPath(path);
-            canvas.scale(1f + backgroundOuterPadding / (float) getWidth(), 1f + backgroundOuterPadding / (float) getHeight(), getWidth() / 2f, getHeight() / 2f);
-            super.draw(canvas);
+
+            // Scale the background resource (setImageResource) slightly to avoid edges
+            float scale = 1f + backgroundOuterPadding / (float) getWidth();
+            canvas.save();
+            canvas.scale(scale, scale, getWidth() / 2f, getHeight() / 2f);
+            super.onDraw(canvas);
             canvas.restore();
 
+            // Draw the bird (foreground) at its original size (0.52 scale in XML)
             if (foreground != null) {
-                int inset = (int)(getWidth() * 0.25f);
-                foreground.setBounds(inset - outerPadding, inset - outerPadding, getWidth() - inset + outerPadding, getHeight() - inset + outerPadding);
-
-                canvas.save();
-                canvas.clipPath(path);
+                foreground.setBounds(0, 0, getWidth(), getHeight());
                 foreground.draw(canvas);
-                canvas.restore();
             }
+            canvas.restore();
         }
 
         private void updatePath() {
