@@ -528,7 +528,7 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
                 titleTextView[0].setEmojiColor(contrastColor);
             } else {
                 // When Black Edition is disabled, let Gomin and folders use the current theme colors (e.g. accent blue, etc.)
-                int finalColor = titleColorToSet != 0 ? titleColorToSet : getThemedColor(Theme.key_chats_actionBackground);
+                int finalColor = titleColorToSet != 0 ? titleColorToSet : getThemedColor(Theme.key_windowBackgroundWhiteBlueHeader);
                 titleTextView[0].setTextColor(finalColor);
                 titleTextView[0].setEmojiColor(finalColor);
             }
@@ -2183,7 +2183,7 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
 
         if (isMonet) {
             // Gomin Black Edition: Absolute contrast (Pure White on Dark / Pure Black on Light)
-            int contrastColor = Theme.isCurrentThemeDark() ? 0xFFFFFFFF : 0xFF000000;
+            int contrastColor = Theme.isCurrentThemeDark() ? 0xFFFFFFFF : 0xFF121212;
             titleTextView[0].setTextColor(contrastColor);
             titleTextView[0].setEmojiColor(contrastColor);
             if (titleTextView[1] != null) {
@@ -2192,7 +2192,7 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
             }
         } else {
             // Standard behavior: use themed color
-            int finalColor = titleColorToSet != 0 ? titleColorToSet : getThemedColor(Theme.key_chats_actionBackground);
+            int finalColor = titleColorToSet != 0 ? titleColorToSet : getThemedColor(Theme.key_windowBackgroundWhiteBlueHeader);
             titleTextView[0].setTextColor(finalColor);
             titleTextView[0].setEmojiColor(finalColor);
             if (titleTextView[1] != null) {

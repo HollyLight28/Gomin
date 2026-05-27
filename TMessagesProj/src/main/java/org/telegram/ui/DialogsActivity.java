@@ -13982,7 +13982,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         optionsItem.getLocationInWindow(pos);
         pos[0] += optionsItem.getIconView().getMeasuredWidth() / 2;
         pos[1] += optionsItem.getIconView().getMeasuredHeight() / 2;
-        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, themeInfo, false, pos, -1, toDark, null, null, null, true);
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, themeInfo, toDark, pos, -1, toDark, null, null, null, true);
     }
 
     public float getTopPanelAnimatedHeight() {

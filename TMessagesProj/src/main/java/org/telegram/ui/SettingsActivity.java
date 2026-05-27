@@ -575,7 +575,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
 
     public void updateColors() {
-        actionBar.setTitleColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText));
+        actionBar.setTitleColor(getThemedColor(Theme.key_windowBackgroundWhiteBlueHeader));
         actionBar.setItemsColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText), false);
         contentView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
         titleView.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText));

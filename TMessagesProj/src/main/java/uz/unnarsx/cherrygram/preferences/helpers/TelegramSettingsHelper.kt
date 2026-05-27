@@ -268,11 +268,21 @@ class TelegramSettingsHelper(
             1396,
             if (dark) 0xFFFFFFFF.toInt() else 0xFF121212.toInt(),
             if (dark) 0xFFFFFFFF.toInt() else 0xFF121212.toInt(),
-            R.drawable.msg_palette,
+            R.drawable.msg_theme_solar,
             "Гомін Black Edition",
             "Інструмент когнітивної переваги"
         )
         items.add(blackEditionItem)
+
+        items.add(
+            SettingsActivity.SettingCell.Factory.of(
+                1390,
+                0xFF00B4DB.toInt(),
+                0xFF00B4DB.toInt(),
+                R.drawable.gomin_settings_gear,
+                getString(R.string.CGP_AdvancedSettings)
+            )
+        )
         items.add(UItem.asShadow(null))
 
         // items.add(UItem.asHeader(getString(R.string.SettingsAccounts)))
@@ -371,18 +381,6 @@ class TelegramSettingsHelper(
                 0xFF3568E8.toInt(),
                 R.drawable.cg_settings_saved_solar,
                 getString(R.string.SavedMessages)
-            )
-        )
-
-        items.add(UItem.asShadow(null))
-
-        items.add(
-            SettingsActivity.SettingCell.Factory.of(
-                1390,
-                0xFF00B4DB.toInt(),
-                0xFF00B4DB.toInt(),
-                R.drawable.gomin_settings_gear,
-                getString(R.string.CGP_AdvancedSettings)
             )
         )
 
