@@ -93,6 +93,8 @@ object GominAiHistoryManager {
             val messageObject = MessageObject(currentAccount, message, true, true)
             objects.add(messageObject)
         }
+
+        objects.reverse()
         return objects
     }
 }

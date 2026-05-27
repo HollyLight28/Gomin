@@ -4764,7 +4764,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         floatingButtonStories.setOnClickListener(v -> openStoriesRecorder());
         contentView.addView(floatingButtonStories, FragmentFloatingButton.createSubButtonLayoutParams());
 
-        floatingButtonAi = new FragmentFloatingButton(context, resourceProvider, true);
+        floatingButtonAi = new FragmentFloatingButton(context, resourceProvider, true, true);
         floatingButtonAi.setImageResource(R.drawable.lucide_sparkles);
         floatingButtonAi.setOnClickListener(v -> {
             Bundle args = new Bundle();

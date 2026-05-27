@@ -12266,7 +12266,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 otherItem.addSubItem(leave_group, R.drawable.msg_leave, LocaleController.getString(R.string.DeleteAndExit));
                 leaveAction = true;
             }
-            getProfileActivityHelper().injectCherryInfo(otherItem);
+            if (dialogId != Constants.GOMIN_AI_DIALOG_ID) {
+                getProfileActivityHelper().injectCherryInfo(otherItem);
+            }
         }
 
         if (imageUpdater != null) {
