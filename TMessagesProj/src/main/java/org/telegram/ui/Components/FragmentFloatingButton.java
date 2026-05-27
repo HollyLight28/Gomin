@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -57,11 +58,18 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
         this(context, resourcesProvider, false);
     }
 
+    private boolean isInverse;
+
     public FragmentFloatingButton(@NonNull Context context, Theme.ResourcesProvider resourcesProvider, boolean isSubButton) {
+        this(context, resourcesProvider, isSubButton, false);
+    }
+
+    public FragmentFloatingButton(@NonNull Context context, Theme.ResourcesProvider resourcesProvider, boolean isSubButton, boolean isInverse) {
         super(context);
 
         this.resourcesProvider = resourcesProvider;
         this.isSubButton = isSubButton;
+        this.isInverse = isInverse;
 
         imageView = new RLottieImageView(context);
         imageView.setScaleType(ImageView.ScaleType.CENTER);
@@ -154,17 +162,46 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
 
     public void updateColors() {
         if (isSubButton) {
-            imageView.setColorFilter(Theme.getColor(Theme.key_actionBarDefaultIcon, resourcesProvider), PorterDuff.Mode.SRC_IN);
-            progressView.setProgressColor(Theme.getColor(Theme.key_actionBarDefaultIcon, resourcesProvider));
+            if (isInverse) {
+                int iconColor = Theme.isCurrentThemeDark() ? 0xFF000000 : 0xFFFFFFFF;
+                int bgColor = Theme.isCurrentThemeDark() ? 0xFFFFFFFF : 0xFF000000;
 
-            iBlur3SourceColor.setColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-            iBlur3ColorProviderTabs.updateColors();
-            iBlur3Background.updateColors();
-            invalidate();
+                imageView.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
+                progressView.setProgressColor(iconColor);
 
-            int rad = dp(18);
-            int pressedColor = Theme.getColor(Theme.key_listSelector, resourcesProvider);
-            setBackground(Theme.createInsetRoundRectDrawable(pressedColor, rad, dp(6)));
+                iBlur3SourceColor.setColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                iBlur3ColorProviderTabs.updateColors();
+                iBlur3Background.updateColors();
+                invalidate();
+
+                int rad = dp(18);
+                int pressedColor = Theme.getColor(Theme.key_listSelector, resourcesProvider);
+
+                // Use a filled background so it's not transparent before being pressed
+                Drawable bgDrawable = Theme.createSimpleSelectorRoundRectDrawable(rad, bgColor, pressedColor);
+                if (bgDrawable != null) {
+                    // Inset it identically to createInsetRoundRectDrawable for visual consistency
+                    setBackground(new android.graphics.drawable.InsetDrawable(bgDrawable, dp(6)));
+                } else {
+                    setBackground(Theme.createSimpleSelectorRoundRectDrawable(rad, bgColor, pressedColor));
+                }
+
+                // Override drawing of blur background to instead draw solid block
+                iBlur3Background.setAlpha(0); // Hide blur
+            } else {
+                imageView.setColorFilter(Theme.getColor(Theme.key_actionBarDefaultIcon, resourcesProvider), PorterDuff.Mode.SRC_IN);
+                progressView.setProgressColor(Theme.getColor(Theme.key_actionBarDefaultIcon, resourcesProvider));
+
+                iBlur3SourceColor.setColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                iBlur3ColorProviderTabs.updateColors();
+                iBlur3Background.updateColors();
+                invalidate();
+
+                int rad = dp(18);
+                int pressedColor = Theme.getColor(Theme.key_listSelector, resourcesProvider);
+                setBackground(Theme.createInsetRoundRectDrawable(pressedColor, rad, dp(6)));
+                iBlur3Background.setAlpha(255);
+            }
         } else {
             imageView.setColorFilter(Theme.getColor(Theme.key_chats_actionIcon, resourcesProvider), PorterDuff.Mode.SRC_IN);
             progressView.setProgressColor(Theme.getColor(Theme.key_chats_actionIcon, resourcesProvider));

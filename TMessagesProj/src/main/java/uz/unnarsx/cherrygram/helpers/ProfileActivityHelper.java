@@ -116,7 +116,9 @@ public class ProfileActivityHelper extends BaseController {
             }
         }
 
-        injectCherryInfo(otherItem);
+        if (user == null || user.id != Constants.GOMIN_AI_DIALOG_ID) {
+            injectCherryInfo(otherItem);
+        }
     }
 
     public void injectCherryInfo(ActionBarMenuItem otherItem) {
