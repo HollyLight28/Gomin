@@ -119,6 +119,11 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(SettingsHelper.asCustomWithBackground(monobankRow, createSupportCard()));
         items.add(UItem.asShadow(null));
 
+        // 🤖 GOMIN.ai (Gemini.ai)
+        items.add(UItem.asHeader(getString(R.string.CP_SystemAI)));
+        items.add(UItem.asButton(geminiSettingsRow, R.drawable.msg_bot, getString(R.string.CP_GeminiAI_Settings)));
+        items.add(UItem.asShadow(null));
+
         // 👻 Gomin Ghost (Privace Sub-Engine)
         items.add(UItem.asHeader(getString(R.string.SP_GhostMode_Header)));
         items.add(SettingsHelper.asSwitchCG(ghostModeReadMessagesRow, getString(R.string.SP_GhostMode_ReadMessages), getString(R.string.SP_GhostMode_ReadMessages_Desc))
@@ -135,9 +140,8 @@ public class CGPreferencesEntry extends UniversalFragment {
         );
         items.add(UItem.asShadow(null));
 
-        // 🚨 Повітряна тривога (Air Alert)
+        // 🚨 Повітряна тривога (Air Alert) - ТЕПЕР ОДНА КАРТКА!
         items.add(UItem.asHeader(getString(R.string.CP_AirAlert_Header)));
-        items.add(UItem.asShadow(getString(R.string.CP_AirAlert_Instruction)));
         items.add(SettingsHelper.asSwitchCG(airAlertEnabledRow, getString(R.string.CP_AirAlert_Enabled), null)
                 .setChecked(CherrygramCoreConfig.INSTANCE.getAirAlertEnabled())
         );
@@ -148,20 +152,18 @@ public class CGPreferencesEntry extends UniversalFragment {
             items.add(UItem.asButton(airAlertRegionRow, getString(R.string.CP_AirAlert_Region), regionName.isEmpty() ? getString(R.string.NotSet) : regionName));
             items.add(UItem.asButton(airAlertTestRow, getString(R.string.CP_AirAlert_Test), null));
         }
-        items.add(UItem.asShadow(null));
+        items.add(UItem.asShadow(getString(R.string.CP_AirAlert_Instruction)));
 
-        // ⚡ Speed Engine (Killer Feature)
+        // ⚡ Speed Engine (Killer Feature) - ТЕПЕР ОДНА КАРТКА!
         items.add(UItem.asHeader(getString(R.string.EP_SpeedEngine)));
         items.add(UItem.asButton(downloadSpeedBoostRow, getString(R.string.EP_DownloadSpeedBoost), getDownloadSpeedBoostValue()));
-        items.add(UItem.asShadow(getString(R.string.EP_DownloadSpeedBoost_Shadow)));
-
         items.add(SettingsHelper.asSwitchCG(uploadSpeedBoostRow, getString(R.string.EP_UploadloadSpeedBoost), getString(R.string.EP_UploadloadSpeedBoost_Desc))
                 .setChecked(CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost())
         );
         items.add(SettingsHelper.asSwitchCG(slowNetworkModeRow, getString(R.string.EP_SlowNetworkMode), getString(R.string.EP_SlowNetworkMode_Desc))
                 .setChecked(CherrygramCoreConfig.INSTANCE.getSlowNetworkMode())
         );
-        items.add(UItem.asShadow(null));
+        items.add(UItem.asShadow(getString(R.string.EP_DownloadSpeedBoost_Shadow)));
 
         // 📷 Камера
         items.add(UItem.asHeader(getString(R.string.CP_Category_Camera)));
@@ -193,11 +195,10 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(UItem.asShadow(null));
 
         // 🛠️ Інше
-        items.add(UItem.asHeader(getString(R.string.CP_SystemAI)));
+        items.add(UItem.asHeader(getString(R.string.ThemeSettings)));
         items.add(SettingsHelper.asSwitchCG(springAnimationRow, getString(R.string.CP_SpringAnimation), getString(R.string.CP_SpringAnimation_Desc_New))
                 .setChecked(CherrygramCoreConfig.INSTANCE.getSpringAnimation() == CherrygramCoreConfig.ANIMATION_SPRING)
         );
-        items.add(UItem.asButton(geminiSettingsRow, R.drawable.msg_bot, getString(R.string.CP_GeminiAI_Settings)));
         items.add(UItem.asButton(doubleTapRow, getString(R.string.CP_DoubleTapAction), getDoubleTapActionValue()));
         items.add(UItem.asButton(slideActionRow, getString(R.string.CG_MsgSlideAction), getSlideActionValue()));
         items.add(UItem.asShadow(null));
