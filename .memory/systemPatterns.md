@@ -14,6 +14,39 @@ public static boolean isEnabled(LauncherIcon icon) {
 }
 ```
 
+### Graceful Launcher Icon Component Change Restart
+When changing launcher icons via `setComponentEnabledSetting`, Android OS forces a termination of the application process. To avoid this looking like an abrupt crash (perceived crash), always trigger a clean, controlled restart utilizing `AppRestartHelper.restartApp` with a safe delay (e.g., 500ms) to allow the OS and launcher threads to finish transitions:
+```java
+public static void setIcon(LauncherIcon icon) {
+    Context ctx = ApplicationLoader.applicationContext;
+    PackageManager pm = ctx.getPackageManager();
+    for (LauncherIcon i : LauncherIcon.values()) {
+        try {
+            pm.setComponentEnabledSetting(i.getComponentName(ctx), i == icon ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        } catch (Throwable e) {
+            // Ignore missing/unregistered components
+        }
+    }
+    AndroidUtilities.runOnUIThread(() -> {
+        try {
+            uz.unnarsx.cherrygram.core.helpers.AppRestartHelper.restartApp(ctx);
+        } catch (Throwable e) {
+            System.exit(0);
+        }
+    }, 500);
+}
+```
+
+### Elegant Monet Foreground Settings Icons
+For dynamic theme systems like Monet (Black Edition) where icons are rendered natively as monochrome paths without colored circular plates, settings icons should never be colored using background-themed colors (`windowBackgroundWhiteBlueHeader` etc.) as it results in invisible elements blending with the background. Always color settings icon foreground using a specialized foreground resolver that guarantees pure white on dark themes and pure black on light themes:
+```java
+iconView.setColorFilter(new PorterDuffColorFilter(
+    uz.unnarsx.cherrygram.helpers.ui.MonetHelper.getSettingsIconForegroundColor(iconColorTop), 
+    PorterDuff.Mode.SRC_IN
+));
+```
+
 ### Font Mapping Strategy
 For Gomin, the following font mapping is enforced in `FontHelper.java`:
 - **Bold/Medium (Headers)** -> `fonts/playfair.ttf`

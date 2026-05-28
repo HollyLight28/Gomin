@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.R;
 
@@ -42,6 +43,14 @@ public class LauncherIconController {
                 // Ignore missing/unregistered components in Standalone build
             }
         }
+        // Clean restart after 500ms to apply icon change smoothly and avoid abrupt system crash
+        AndroidUtilities.runOnUIThread(() -> {
+            try {
+                uz.unnarsx.cherrygram.core.helpers.AppRestartHelper.restartApp(ctx);
+            } catch (Throwable e) {
+                System.exit(0);
+            }
+        }, 500);
     }
 
     public enum LauncherIcon {

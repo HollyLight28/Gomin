@@ -1287,7 +1287,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
             iconBackground.setColor(iconColorTop, iconColorBottom);
             iconView.setImageResource(icon);
-            iconView.setColorFilter(new PorterDuffColorFilter(iconColorTop, PorterDuff.Mode.SRC_IN));
+            iconView.setColorFilter(new PorterDuffColorFilter(uz.unnarsx.cherrygram.helpers.ui.MonetHelper.getSettingsIconForegroundColor(iconColorTop), PorterDuff.Mode.SRC_IN));
             titleView.setText(title);
             subtitleView.setVisibility((twoLines = !TextUtils.isEmpty(subtitle)) ? View.VISIBLE : View.GONE);
             subtitleView.setText(subtitle);
