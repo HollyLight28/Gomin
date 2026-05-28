@@ -723,38 +723,62 @@ If є аб’юз — не пом’якшуй.
     fun showClearHistoryAlert(activity: ChatActivity) {
         val builder = AlertDialog.Builder(activity.parentActivity, activity.resourceProvider)
         builder.setTitle("🧹 Очистити історію чату")
-        builder.setMessage("Бро, ти впевнений, що хочеш повністю очистити історію чату з Gomin AI? Цю дію неможливо скасувати.")
+        builder.setMessage("Бро, ти впевнений, що хочеш повністю очистити історію чату з Gomin AI? Цю дію неможливо скасувати і всі повідомлення будуть видалені з екрану.")
         builder.setPositiveButton("Очистити") { dialog: DialogInterface, _ ->
             GominAiHistoryManager.clearHistory()
             activeShieldContext = null
             activeShieldHistory = null
-            notifyChatUpdated(UserConfig.selectedAccount)
+            NotificationCenter.getInstance(UserConfig.selectedAccount).postNotificationName(
+                NotificationCenter.messagesDidLoad,
+                Constants.GOMIN_AI_DIALOG_ID,
+                0,
+                ArrayList<org.telegram.messenger.MessageObject>(),
+                true,
+                0,
+                0,
+                0,
+                0,
+                0,
+                true,
+                0,
+                0,
+                0,
+                0,
+                0
+            )
             dialog.dismiss()
         }
         builder.setNegativeButton("Скасувати", null)
         builder.show()
     }
 
+    /**
+     * Перезапускає чат: очищує контекст для ШІ, залишаючи візуальну історію
+     */
+    fun restartChat(activity: ChatActivity) {
+        GominAiHistoryManager.clearHistory()
+        activeShieldContext = null
+        activeShieldHistory = null
+
+        AndroidUtilities.runOnUIThread {
+            GominAiHistoryManager.addMessage("model", "✨ Контекст чату очищено. Починаємо з чистого аркуша!")
+            notifyChatUpdated(UserConfig.selectedAccount)
+        }
+    }
+
     private fun notifyChatUpdated(currentAccount: Int) {
         val objects = GominAiHistoryManager.loadMessages(currentAccount)
-        NotificationCenter.getInstance(currentAccount).postNotificationName(
-            NotificationCenter.messagesDidLoad,
-            Constants.GOMIN_AI_DIALOG_ID,
-            objects.size,
-            objects,
-            true,
-            0,
-            0,
-            0,
-            0,
-            0,
-            true,
-            0,
-            0,
-            0,
-            0,
-            0
-        )
+        if (objects.isNotEmpty()) {
+            val arr = ArrayList<org.telegram.messenger.MessageObject>()
+            arr.add(objects.last())
+            NotificationCenter.getInstance(currentAccount).postNotificationName(
+                NotificationCenter.didReceiveNewMessages,
+                Constants.GOMIN_AI_DIALOG_ID,
+                arr,
+                false,
+                0
+            )
+        }
     }
 
     fun setTypingStatus(isTyping: Boolean) {

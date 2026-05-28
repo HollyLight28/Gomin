@@ -94,7 +94,6 @@ object GominAiHistoryManager {
             objects.add(messageObject)
         }
 
-        objects.reverse()
         return objects
     }
 }
