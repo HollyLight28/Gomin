@@ -2224,10 +2224,10 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
         boolean isMonet = Theme.getActiveTheme() != null && Theme.getActiveTheme().isMonet();
 
         if (isGomin) {
-            titleView.setTextSize(dp(24));
+            titleView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, dp(24));
             titleView.setLetterSpacing(0.05f);
         } else {
-            titleView.setTextSize(dp(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 18 : 20));
+            titleView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, dp(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 18 : 20));
             titleView.setLetterSpacing(0f);
         }
 

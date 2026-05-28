@@ -12,6 +12,11 @@
 - Re-architected `icon_background_default.xml`, `icon_background_dark.xml`, `icon_background_white.xml`, and `icon_background_ukraine.xml` using native vector `android:fillColor` declarations, completely restoring their intended vibrant colors in the UI.
 - Upgraded Ruby launcher icon gradient in `icon_background_black_red.xml` with significantly brighter, premium red ruby tones to avoid the muddy, overly dark look.
 - Injected dynamic 1.5x scaling to foreground bird draw loop in `AppIconsSelectorCell.java` to match system launcher icon sizes and eliminate the "tiny bird" aesthetic issue.
+- Successfully merged pull request branch `fix/gomin-appname-and-stories-default-5080344432425610307` which cleans up "Cherrygram" title naming leak inside `DialogStoriesCell.java` when stories are enabled.
+- Integrated Gomin custom title typography branding (`applyGominBranding`) for Dialogs and ActionBars inside the merged branch, ensuring high-end 24sp layout style and Monet-contrast coloring.
+- Addressed stories toggle missing from settings by injecting the `hideStoriesRow` switch within a newly created Interface settings section (`EP_Header_Interface`) in `CGPreferencesEntry.java`, paired with dynamic restart bulletin triggering.
+- Fixed the stories title text rendering bug (tiny/huge fonts) by specifying `android.util.TypedValue.COMPLEX_UNIT_PX` inside `DialogStoriesCell.java` so `dp(24)` is treated correctly as pixels instead of SP.
+- Committed and pushed all changes to `origin/main` on GitHub.
 
 # OPEN PROBLEMS
 None.
@@ -27,3 +32,8 @@ None.
 - `TMessagesProj/src/main/res-cherrygram/drawable/icon_background_ukraine.xml` -> Cleaned XML syntax to native `fillColor` to fix black background bug.
 - `TMessagesProj/src/main/res-cherrygram/drawable/icon_background_black_red.xml` -> Integrated high-end vibrant Ruby gradient colors.
 - `TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java` -> `AdaptiveIconImageView.draw` -> Implemented 1.5x foreground bird scaling for visual alignment with launcher sizes.
+- `TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java` -> Cleaned "Cherrygram" name leaks in stories and fixed the title SP-to-PX text size calculation bug.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/preferences/CGPreferencesEntry.java` -> Injected stories toggle UI switch in Interface section with a clean restart bulletin triggers.
+- `TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java` -> Integrated `applyGominBranding` typography and Monet contrast styles.
+- `TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedTextView.java` -> Injected animation improvements merged from the PR.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/core/configs/CherrygramCoreConfig.kt` -> Set stories default value to hidden (hideStories = true).

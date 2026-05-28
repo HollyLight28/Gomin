@@ -185,6 +185,13 @@ public class CGPreferencesEntry extends UniversalFragment {
         );
         items.add(UItem.asShadow(null));
 
+        // 🎨 Інтерфейс
+        items.add(UItem.asHeader(getString(R.string.EP_Header_Interface)));
+        items.add(SettingsHelper.asSwitchCG(hideStoriesRow, getString(R.string.CP_HideStories), getString(R.string.CP_HideStories_Desc))
+                .setChecked(CherrygramCoreConfig.INSTANCE.getHideStories())
+        );
+        items.add(UItem.asShadow(null));
+
         // 🛠️ Інше
         items.add(UItem.asHeader(getString(R.string.CP_SystemAI)));
         items.add(SettingsHelper.asSwitchCG(springAnimationRow, getString(R.string.CP_SpringAnimation), getString(R.string.CP_SpringAnimation_Desc_New))
@@ -301,6 +308,7 @@ public class CGPreferencesEntry extends UniversalFragment {
             CherrygramCoreConfig.INSTANCE.setHideStories(!CherrygramCoreConfig.INSTANCE.getHideStories());
             SettingsHelper.updateCheckState(view, CherrygramCoreConfig.INSTANCE.getHideStories());
             NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateStories);
+            CGBulletinCreator.INSTANCE.createRestartBulletin(this);
         } else if (item.id == showMainTabsRow) {
             CherrygramAppearanceConfig.INSTANCE.setShowMainTabs(!CherrygramAppearanceConfig.INSTANCE.getShowMainTabs());
             SettingsHelper.updateCheckState(view, CherrygramAppearanceConfig.INSTANCE.getShowMainTabs());
