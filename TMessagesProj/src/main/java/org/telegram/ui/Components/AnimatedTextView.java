@@ -917,6 +917,23 @@ public class AnimatedTextView extends View {
             }
         }
 
+        public void setLetterSpacing(float letterSpacing) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                textPaint.setLetterSpacing(letterSpacing);
+                if (currentParts != null) {
+                    final int width = overrideFullWidth > 0 ? overrideFullWidth : bounds.width();
+                    currentWidth = 0;
+                    currentHeight = 0;
+                    for (int i = 0; i < currentParts.length; ++i) {
+                        StaticLayout layout = makeLayout(currentParts[i].layout.getText(), width - (int) Math.ceil(Math.min(currentWidth, oldWidth)));
+                        currentParts[i] = new Part(layout, currentParts[i].offset, currentParts[i].toOppositeIndex);
+                        currentWidth += currentParts[i].width;
+                        currentHeight = Math.max(currentHeight, currentParts[i].layout.getHeight());
+                    }
+                }
+            }
+        }
+
         public void setTextSize(float textSizePx) {
             final float lastTextPaint = textPaint.getTextSize();
             textPaint.setTextSize(textSizePx);
@@ -1274,6 +1291,10 @@ public class AnimatedTextView extends View {
 
     public int getTextHeight() {
         return getPaint().getFontMetricsInt().descent - getPaint().getFontMetricsInt().ascent;
+    }
+
+    public void setLetterSpacing(float letterSpacing) {
+        drawable.setLetterSpacing(letterSpacing);
     }
 
     public void setTextSize(float textSizePx) {

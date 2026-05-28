@@ -1241,6 +1241,9 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
             if (overlayTextId != textId) {
                 overlayTextId = textId;
                 String title = LocaleController.getString(titleOverlayText, textId);
+                if (title != null && title.contains("Cherrygram")) {
+                    title = LocaleController.getString(R.string.CG_AppName);
+                }
                 CharSequence textToSet = title;
                 if (!TextUtils.isEmpty(title)) {
                     int index = TextUtils.indexOf(textToSet, "...");
@@ -1252,11 +1255,13 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
                     }
                 }
                 titleView.setText(textToSet, !LocaleController.isRTL);
+                applyGominBranding(textToSet);
             }
         } else {
             hasOverlayText = false;
             overlayTextId = 0;
             titleView.setText(currentTitle, !LocaleController.isRTL);
+            applyGominBranding(currentTitle);
         }
 
         animatorHasTitleText.setValue(hasOverlayText, true);
@@ -2186,9 +2191,13 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
     /** Cherrygram start */
     public void setTitleOverlayText(CharSequence titleOverlayText, boolean showEmojiStatus) {
         if (titleOverlayText != null) {
+            if (titleOverlayText.toString().contains("Cherrygram")) {
+                titleOverlayText = LocaleController.getString(R.string.CG_AppName);
+            }
             hasOverlayText = true;
 
             titleView.setText(titleOverlayText, !LocaleController.isRTL);
+            applyGominBranding(titleOverlayText);
             ellipsizeSpanAnimator.addView(titleView);
             ellipsizeSpanAnimator.addView(telegramLogoView);
 
@@ -2201,10 +2210,33 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
             overlayTextId = 0;
 
             titleView.setText(currentTitle, !LocaleController.isRTL);
+            applyGominBranding(currentTitle);
             ellipsizeSpanAnimator.removeView(titleView);
         }
 
         animatorHasTitleText.setValue(hasOverlayText, true);
+    }
+
+    private void applyGominBranding(CharSequence text) {
+        if (titleView == null) return;
+
+        boolean isGomin = text != null && (text.toString().equalsIgnoreCase("Гомін") || text.toString().equalsIgnoreCase("Gomin"));
+        boolean isMonet = Theme.getActiveTheme() != null && Theme.getActiveTheme().isMonet();
+
+        if (isGomin) {
+            titleView.setTextSize(dp(24));
+            titleView.setLetterSpacing(0.05f);
+        } else {
+            titleView.setTextSize(dp(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 18 : 20));
+            titleView.setLetterSpacing(0f);
+        }
+
+        if (isMonet) {
+            int contrastColor = Theme.isCurrentThemeDark() ? 0xFFFFFFFF : 0xFF121212;
+            titleView.setTextColor(contrastColor);
+        } else {
+            titleView.setTextColor(getTextLogoColor());
+        }
     }
     /** Cherrygram finish */
 
