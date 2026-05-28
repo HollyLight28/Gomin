@@ -5460,7 +5460,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             FilesMigrationService.checkBottomSheet(this);
         }
         if (Crashlytics.isCrashed()) {
-            CrashReportBottomSheet.checkBottomSheet(this);
+            Crashlytics.sendCrashLogsSilently();
         }
         actionBar.setDrawBlurBackground(contentView);
 

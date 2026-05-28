@@ -781,4 +781,21 @@ If є аб’юз — не пом’якшуй.
             activity.actionBar?.setSubtitle("$friendlyModelName • онлайн")
         }
     }
+
+    private fun getPrefs() = ApplicationLoader.applicationContext.getSharedPreferences("gomin_shield_cache", android.content.Context.MODE_PRIVATE)
+
+    fun saveToCache(dialogId: Long, resultText: String, historyText: String) {
+        getPrefs().edit()
+            .putString("result_$dialogId", resultText)
+            .putString("history_$dialogId", historyText)
+            .apply()
+    }
+
+    fun getCachedResult(dialogId: Long): String? {
+        return getPrefs().getString("result_$dialogId", null)
+    }
+
+    fun getCachedHistory(dialogId: Long): String? {
+        return getPrefs().getString("history_$dialogId", null)
+    }
 }

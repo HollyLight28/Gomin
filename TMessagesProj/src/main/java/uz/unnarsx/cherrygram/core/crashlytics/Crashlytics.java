@@ -24,6 +24,9 @@ import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.SharedConfig;
+import org.telegram.messenger.UserConfig;
+import org.telegram.messenger.AccountInstance;
+import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.ui.LaunchActivity;
 
 import java.io.BufferedReader;
@@ -38,6 +41,7 @@ import java.io.Writer;
 
 import uz.unnarsx.cherrygram.core.configs.CherrygramCameraConfig;
 import uz.unnarsx.cherrygram.core.helpers.CGResourcesHelper;
+import uz.unnarsx.cherrygram.misc.Constants;
 import uz.unnarsx.cherrygram.preferences.CameraPreferencesEntry;
 
 public class Crashlytics implements Thread.UncaughtExceptionHandler {
@@ -136,26 +140,71 @@ public class Crashlytics implements Thread.UncaughtExceptionHandler {
         }
     }
 
+    public static void sendCrashLogsSilently() {
+        if (!isCrashed()) {
+            return;
+        }
+        new Thread(() -> {
+            try {
+                File cacheFile = Crashlytics.shareLogs();
+                int currentAccount = UserConfig.selectedAccount;
+                long dialogId = -1000000000000L - Constants.Cherrygram_Support;
+
+                SendMessagesHelper.prepareSendingDocument(
+                        AccountInstance.getInstance(currentAccount),
+                        cacheFile.getAbsolutePath(),
+                        cacheFile.getAbsolutePath(),
+                        null,
+                        Crashlytics.getCrashReportMessage(),
+                        null,
+                        dialogId,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        true,
+                        0,
+                        null,
+                        null,
+                        0,
+                        false
+                );
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+        }).start();
+    }
+
     public static void sendCrashLogs(Activity activity, CrashReportBottomSheet bottomSheet) {
         try {
             File cacheFile = Crashlytics.shareLogs();
-            Uri uri;
+            int currentAccount = UserConfig.selectedAccount;
+            long dialogId = -1000000000000L - Constants.Cherrygram_Support;
 
-            Intent i = new Intent(Intent.ACTION_SEND);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                uri = FileProvider.getUriForFile(activity, ApplicationLoader.getApplicationId() + ".provider", cacheFile);
-                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            } else {
-                uri = Uri.fromFile(cacheFile);
-            }
-            i.setType("message/rfc822");
-            i.putExtra(Intent.EXTRA_SUBJECT, Crashlytics.getCrashReportMessage());
-            i.putExtra(Intent.EXTRA_STREAM, uri);
-            i.setClass(activity, LaunchActivity.class);
-
-            activity.startActivity(i);
+            SendMessagesHelper.prepareSendingDocument(
+                    AccountInstance.getInstance(currentAccount),
+                    cacheFile.getAbsolutePath(),
+                    cacheFile.getAbsolutePath(),
+                    null,
+                    Crashlytics.getCrashReportMessage(),
+                    null,
+                    dialogId,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    true,
+                    0,
+                    null,
+                    null,
+                    0,
+                    false
+            );
 
             bottomSheet.dismiss();
+            AndroidUtilities.showToast(activity, "Logs sent successfully!");
         } catch (IOException e) {
             FileLog.e(e);
         }

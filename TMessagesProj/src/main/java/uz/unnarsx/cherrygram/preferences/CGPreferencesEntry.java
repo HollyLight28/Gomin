@@ -195,7 +195,7 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(UItem.asShadow(null));
 
         // 🛠️ Інше
-        items.add(UItem.asHeader(getString(R.string.ThemeSettings)));
+        items.add(UItem.asHeader(getString(R.string.Theme)));
         items.add(SettingsHelper.asSwitchCG(springAnimationRow, getString(R.string.CP_SpringAnimation), getString(R.string.CP_SpringAnimation_Desc_New))
                 .setChecked(CherrygramCoreConfig.INSTANCE.getSpringAnimation() == CherrygramCoreConfig.ANIMATION_SPRING)
         );

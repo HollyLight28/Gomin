@@ -41,23 +41,26 @@ import uz.unnarsx.cherrygram.misc.Constants
 class GominShieldBottomSheet(
     private val chatActivity: ChatActivity,
     private val partnerName: String,
-    private val historyText: String
+    private val historyText: String,
+    private val cachedResult: String? = null
 ) : BottomSheet(chatActivity.parentActivity, false, chatActivity.resourceProvider) {
 
     private val container: LinearLayout
     private val scrollView: ScrollView
     private val textView: TextView
-    private val progressView: RadialProgressView
     private val loadingText: TextView
     private val actionButton: ButtonWithCounterView
     private val closeButton: ButtonWithCounterView
 
     private var analysisResult: String? = null
+    private var updateProgressRunnable: Runnable? = null
 
     init {
-        // Запобігаємо закриттю жестом вниз, щоб користувач міг скролити текст аналізу
-        setCanDismissWithSwipe(false)
+        // Дозволяємо нативний скрол та свайп вниз для закриття
+        setCanDismissWithSwipe(true)
         backgroundPaddingLeft = 0
+        backgroundPaddingTop = 0
+        setApplyTopPadding(false)
 
         val context = chatActivity.parentActivity
 
@@ -68,10 +71,9 @@ class GominShieldBottomSheet(
             setBackgroundColor(getThemedColor(Theme.key_dialogBackground))
         }
 
-        // Заголовок Bottom Sheet
+        // Заголовок Bottom Sheet (вертикальний преміум-вигляд)
         val headerView = LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
+            orientation = LinearLayout.VERTICAL
             setPadding(dp(22f), 0, dp(22f), dp(12f))
         }
 
@@ -81,15 +83,15 @@ class GominShieldBottomSheet(
             setTextColor(getThemedColor(Theme.key_dialogTextBlack))
             typeface = AndroidUtilities.bold()
         }
-        headerView.addView(headerTitle, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
+        headerView.addView(headerTitle, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
         val headerSubtitle = TextView(context).apply {
-            text = " • Аналіз маніпуляцій з $partnerName"
-            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
+            text = "Аналіз діалогу з $partnerName"
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
             setTextColor(getThemedColor(Theme.key_dialogTextGray2))
-            setPadding(dp(4f), dp(2f), 0, 0)
+            setPadding(0, dp(4f), 0, 0)
         }
-        headerView.addView(headerSubtitle, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
+        headerView.addView(headerSubtitle, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
         container.addView(headerView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
@@ -104,6 +106,7 @@ class GominShieldBottomSheet(
             overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS
             isVerticalScrollBarEnabled = true
         }
+        nestedScrollChild = scrollView
 
         // Текстове поле для аналізу
         textView = TextView(context).apply {
@@ -123,14 +126,10 @@ class GominShieldBottomSheet(
             setPadding(0, dp(40f), 0, dp(40f))
         }
 
-        progressView = RadialProgressView(context, chatActivity.resourceProvider).apply {
-            setSize(dp(40f))
-            setProgressColor(getThemedColor(Theme.key_chats_actionBackground))
-        }
-        loadingLayout.addView(progressView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
+        // progressView removed for premium minimal look
 
         loadingText = TextView(context).apply {
-            text = "Ментальний щит аналізує переписку на предмет маніпуляцій, газлайтингу та токсичності. Зачекай секунду, бро... 🤖☕"
+            text = "Зчитуємо контекст вашого діалогу... 🔍"
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
             setTextColor(getThemedColor(Theme.key_dialogTextGray2))
             gravity = Gravity.CENTER
@@ -138,6 +137,17 @@ class GominShieldBottomSheet(
             lineHeight = dp(20f)
         }
         loadingLayout.addView(loadingText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+
+        // Постійний красивий дисклеймер знизу
+        val disclaimerText = TextView(context).apply {
+            text = "⚠️ Дисклеймер: Аналіз виконано штучним інтелектом на основі відкритих психологічних патернів. Гомін AI може помилятися та не дає медичних чи юридичних діагнозів. Головний орієнтир — це твоє самопочуття, бро."
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11.5f)
+            setTextColor(getThemedColor(Theme.key_dialogTextGray2))
+            gravity = Gravity.CENTER
+            setPadding(dp(32f), dp(16f), dp(32f), 0)
+            lineHeight = dp(16f)
+        }
+        loadingLayout.addView(disclaimerText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
         container.addView(loadingLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
         container.addView(scrollView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(340f))) // Фіксуємо висоту скролу для нативності
@@ -192,8 +202,66 @@ class GominShieldBottomSheet(
         startAnalysis(loadingLayout)
     }
 
+    override fun dismiss() {
+        super.dismiss()
+        updateProgressRunnable?.let {
+            AndroidUtilities.cancelRunOnUIThread(it)
+            updateProgressRunnable = null
+        }
+    }
+
     private fun startAnalysis(loadingLayout: LinearLayout) {
+        if (cachedResult != null) {
+            loadingLayout.visibility = View.GONE
+            scrollView.visibility = View.VISIBLE
+            analysisResult = cachedResult
+            textView.text = cachedResult
+            actionButton.visibility = View.VISIBLE
+            return
+        }
+
+        val steps = arrayOf(
+            "Зчитуємо контекст вашого діалогу... 🔍",
+            "Аналізуємо структуру реплік на предмет пасивної агресії та тиску... 🧩",
+            "Перевіряємо наявність газлайтингу, знецінення та патернів DARVO... 🚩",
+            "Оцінюємо психологічний вплив на твої особисті кордони... 🛡️",
+            "Визначаємо приховані наміри та вигоди співрозмовника... 🧐",
+            "Формулюємо готові фрази-відповіді для впевненого захисту... 🗣️",
+            "Завершуємо формування твого ментального щита... 🚀"
+        )
+        var stepIndex = 0
+
+        val run = object : Runnable {
+            override fun run() {
+                if (stepIndex < steps.size) {
+                    val nextText = steps[stepIndex]
+                    stepIndex++
+                    
+                    // Плавне згасання поточного тексту, зміна тексту та плавна поява нового
+                    loadingText.animate()
+                        .alpha(0f)
+                        .setDuration(200)
+                        .withEndAction {
+                            loadingText.text = nextText
+                            loadingText.animate()
+                                .alpha(1f)
+                                .setDuration(200)
+                                .start()
+                        }
+                        .start()
+                        
+                    AndroidUtilities.runOnUIThread(this, 2200)
+                }
+            }
+        }
+        updateProgressRunnable = run
+        AndroidUtilities.runOnUIThread(run)
+
         GominAiChatHelper.analyzeManipulation(partnerName, historyText) { success, resultText ->
+            updateProgressRunnable?.let {
+                AndroidUtilities.cancelRunOnUIThread(it)
+                updateProgressRunnable = null
+            }
             loadingLayout.visibility = View.GONE
             scrollView.visibility = View.VISIBLE
             
@@ -201,6 +269,7 @@ class GominShieldBottomSheet(
                 analysisResult = resultText
                 textView.text = resultText
                 actionButton.visibility = View.VISIBLE
+                GominAiChatHelper.saveToCache(chatActivity.dialogId, resultText, historyText)
             } else {
                 textView.text = resultText
                 textView.setTextColor(getThemedColor(Theme.key_text_RedRegular))
@@ -253,7 +322,16 @@ class GominShieldBottomSheet(
                 return
             }
 
-            val bottomSheet = GominShieldBottomSheet(chatActivity, partnerName, historyText)
+            val cachedHistory = GominAiChatHelper.getCachedHistory(chatActivity.dialogId)
+            val cachedResult = GominAiChatHelper.getCachedResult(chatActivity.dialogId)
+            val isCacheValid = cachedHistory != null && cachedResult != null && cachedHistory == historyText
+
+            val bottomSheet = GominShieldBottomSheet(
+                chatActivity,
+                partnerName,
+                historyText,
+                if (isCacheValid) cachedResult else null
+            )
             bottomSheet.show()
         }
     }
