@@ -204,7 +204,7 @@ public class Crashlytics implements Thread.UncaughtExceptionHandler {
             );
 
             bottomSheet.dismiss();
-            AndroidUtilities.showToast(activity, "Logs sent successfully!");
+            android.widget.Toast.makeText(activity, "Logs sent successfully!", android.widget.Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             FileLog.e(e);
         }
