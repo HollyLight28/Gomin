@@ -102,6 +102,7 @@ public class AvatarDrawable extends Drawable {
     public static final int AVATAR_TYPE_STARS = 26;
     public static final int AVATAR_TYPE_SUGGESTION = 27;
     public static final int AVATAR_TYPE_EBLAN = 28;
+    public static final int AVATAR_TYPE_GOMIN_AI = 29;
 
     /**
      * Matches {@link org.telegram.ui.Components.AvatarConstructorFragment#defaultColors}
@@ -254,7 +255,11 @@ public class AvatarDrawable extends Drawable {
         rotate45Background = false;
         hasAdvancedGradient = false;
         hasGradient = false;
-        if (avatarType == AVATAR_TYPE_EBLAN) {
+        if (avatarType == AVATAR_TYPE_GOMIN_AI) {
+            hasGradient = true;
+            color = 0xFF4E8DFF;
+            color2 = 0xFFB063FF;
+        } else if (avatarType == AVATAR_TYPE_EBLAN) {
             hasGradient = true;
             color = getThemedColor(Theme.key_cgGradient1);
             color2 = getThemedColor(Theme.key_cgGradient2);
@@ -402,6 +407,15 @@ public class AvatarDrawable extends Drawable {
 
     public void setInfo(long id) {
         invalidateTextLayout = true;
+        if (id == 99999999L) {
+            avatarType = AVATAR_TYPE_GOMIN_AI;
+            hasGradient = true;
+            hasAdvancedGradient = false;
+            color = 0xFF4E8DFF;
+            color2 = 0xFFB063FF;
+            drawDeleted = false;
+            return;
+        }
         hasGradient = true;
         hasAdvancedGradient = false;
         color = getThemedColor(Theme.keys_avatar_background[getColorIndex(id)]);
@@ -421,6 +435,15 @@ public class AvatarDrawable extends Drawable {
 
     public void setInfo(long id, String firstName, String lastName, String custom, Integer customColor, MessagesController.PeerColor profileColor, boolean advancedGradient) {
         invalidateTextLayout = true;
+        if (id == 99999999L) {
+            avatarType = AVATAR_TYPE_GOMIN_AI;
+            hasGradient = true;
+            hasAdvancedGradient = false;
+            color = 0xFF4E8DFF;
+            color2 = 0xFFB063FF;
+            drawDeleted = false;
+            return;
+        }
         if (advancedGradient) {
             hasGradient = false;
             hasAdvancedGradient = true;
@@ -637,6 +660,8 @@ public class AvatarDrawable extends Drawable {
 
             if (avatarType == AVATAR_TYPE_EBLAN) {
                 drawable = Theme.avatarDrawables[25];
+            } else if (avatarType == AVATAR_TYPE_GOMIN_AI) {
+                drawable = ApplicationLoader.applicationContext.getResources().getDrawable(R.drawable.icon_foreground_gomin);
             } else if (customIconDrawable != null) {
                 drawable = customIconDrawable;
             } else if (avatarType == AVATAR_TYPE_SAVED) {
