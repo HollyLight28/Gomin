@@ -72,7 +72,7 @@ object CherrygramCoreConfig: CoroutineScope by CoroutineScope(
     /** Notifications finish */
 
     /** Stories start */
-    var hideStories by sharedPreferences.boolean("CP_HideStories", false)
+    var hideStories by sharedPreferences.boolean("CP_HideStories", true)
     var archiveStoriesFromUsers by sharedPreferences.boolean("CP_ArchiveStoriesFromUsers", false)
     var archiveStoriesFromChannels by sharedPreferences.boolean("CP_ArchiveStoriesFromChannels", false)
     /** Stories finish */

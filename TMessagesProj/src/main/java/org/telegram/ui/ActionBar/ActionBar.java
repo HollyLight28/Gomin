@@ -504,7 +504,7 @@ public class ActionBar extends FrameLayout implements Theme.Colorable {
             titleTextView[0].setVisibility(value != null && !isSearchFieldVisible ? VISIBLE : INVISIBLE);
             
             // Under theme change, some .attheme files override CG_AppName to Cherrygram. Enforce Gomin.
-            if (value != null && value.toString().equalsIgnoreCase("Cherrygram")) {
+            if (value != null && value.toString().contains("Cherrygram")) {
                 value = getString(R.string.CG_AppName);
             }
             
