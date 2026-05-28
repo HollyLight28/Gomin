@@ -1,5 +1,22 @@
 # Gomin Architectural Patterns
 
+### Dynamic Day/Night Theme Preference Segmentation
+To prevent theme resets under system dark mode changes, always separate day and night theme storage based on the theme's properties (`themeInfo.isDark()`). If a theme is dark, it must populate `currentNightTheme` and update the `"nighttheme"` key. If it is light, it must populate `currentDayTheme` and update the `"theme"` key. This guarantees that Android's auto night switching relies on the exact theme intended by the user:
+```java
+if (save) {
+    SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+    SharedPreferences.Editor editor = preferences.edit();
+    if (themeInfo.isDark()) {
+        currentNightTheme = themeInfo;
+        editor.putString("nighttheme", themeInfo.getKey());
+    } else {
+        currentDayTheme = themeInfo;
+        editor.putString("theme", themeInfo.getKey());
+    }
+    editor.apply();
+}
+```
+
 ### Dynamic Launcher Icons & Self-Healing
 To ensure launcher icons work across different packages and standalone/debug suffix setups, always wrap PackageManager calls in try-catch structures and fall back to the default icon on exceptions:
 ```java

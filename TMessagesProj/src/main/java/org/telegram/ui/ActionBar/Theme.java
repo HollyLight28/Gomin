@@ -6482,10 +6482,16 @@ public class Theme {
         }
         try {
             if (themeInfo.pathToFile != null || themeInfo.assetName != null) {
-                if (!nightTheme && save) {
+                if (save) {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("theme", themeInfo.getKey());
+                    if (themeInfo.isDark()) {
+                        currentNightTheme = themeInfo;
+                        editor.putString("nighttheme", themeInfo.getKey());
+                    } else {
+                        currentDayTheme = themeInfo;
+                        editor.putString("theme", themeInfo.getKey());
+                    }
                     editor.apply();
                 }
                 String[] wallpaperLink = new String[1];
@@ -6566,10 +6572,16 @@ public class Theme {
                     themedWallpaperLink = null;
                 }
             } else {
-                if (!nightTheme && save) {
+                if (save) {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.remove("theme");
+                    if (themeInfo.isDark()) {
+                        currentNightTheme = themeInfo;
+                        editor.putString("nighttheme", themeInfo.getKey());
+                    } else {
+                        currentDayTheme = themeInfo;
+                        editor.remove("theme");
+                    }
                     editor.apply();
                 }
                 currentColorsNoAccent.clear();
@@ -6578,12 +6590,16 @@ public class Theme {
                 wallpaper = null;
                 themedWallpaper = null;
             }
-            if (!nightTheme && previousTheme == null) {
-                currentDayTheme = themeInfo;
-                if (isCurrentThemeNight()) {
-                    switchNightThemeDelay = 2000;
-                    lastDelayUpdateTime = SystemClock.elapsedRealtime();
-                    AndroidUtilities.runOnUIThread(Theme::checkAutoNightThemeConditions, 2100);
+            if (themeInfo.isDark()) {
+                currentNightTheme = themeInfo;
+            } else {
+                if (!nightTheme && previousTheme == null) {
+                    currentDayTheme = themeInfo;
+                    if (isCurrentThemeNight()) {
+                        switchNightThemeDelay = 2000;
+                        lastDelayUpdateTime = SystemClock.elapsedRealtime();
+                        AndroidUtilities.runOnUIThread(Theme::checkAutoNightThemeConditions, 2100);
+                    }
                 }
             }
             currentTheme = themeInfo;
@@ -6610,10 +6626,16 @@ public class Theme {
         }
         try {
             if (themeInfo.pathToFile != null || themeInfo.assetName != null) {
-                if (!nightTheme && save) {
+                if (save) {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("theme", themeInfo.getKey());
+                    if (themeInfo.isDark()) {
+                        currentNightTheme = themeInfo;
+                        editor.putString("nighttheme", themeInfo.getKey());
+                    } else {
+                        currentDayTheme = themeInfo;
+                        editor.putString("theme", themeInfo.getKey());
+                    }
                     editor.apply();
                 }
                 String[] wallpaperLink = new String[1];
@@ -6690,12 +6712,16 @@ public class Theme {
                             themeInfo.pathToWallpaper = null;
                             themedWallpaperLink = null;
                         }
-                        if (!nightTheme && previousTheme == null) {
-                            currentDayTheme = themeInfo;
-                            if (isCurrentThemeNight()) {
-                                switchNightThemeDelay = 2000;
-                                lastDelayUpdateTime = SystemClock.elapsedRealtime();
-                                AndroidUtilities.runOnUIThread(Theme::checkAutoNightThemeConditions, 2100);
+                        if (themeInfo.isDark()) {
+                            currentNightTheme = themeInfo;
+                        } else {
+                            if (!nightTheme && previousTheme == null) {
+                                currentDayTheme = themeInfo;
+                                if (isCurrentThemeNight()) {
+                                    switchNightThemeDelay = 2000;
+                                    lastDelayUpdateTime = SystemClock.elapsedRealtime();
+                                    AndroidUtilities.runOnUIThread(Theme::checkAutoNightThemeConditions, 2100);
+                                }
                             }
                         }
                         currentTheme = themeInfo;
@@ -6723,10 +6749,16 @@ public class Theme {
                 }
                 return;
             } else {
-                if (!nightTheme && save) {
+                if (save) {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.remove("theme");
+                    if (themeInfo.isDark()) {
+                        currentNightTheme = themeInfo;
+                        editor.putString("nighttheme", themeInfo.getKey());
+                    } else {
+                        currentDayTheme = themeInfo;
+                        editor.remove("theme");
+                    }
                     editor.apply();
                 }
                 currentColorsNoAccent.clear();
@@ -6735,12 +6767,16 @@ public class Theme {
                 wallpaper = null;
                 themedWallpaper = null;
             }
-            if (!nightTheme && previousTheme == null) {
-                currentDayTheme = themeInfo;
-                if (isCurrentThemeNight()) {
-                    switchNightThemeDelay = 2000;
-                    lastDelayUpdateTime = SystemClock.elapsedRealtime();
-                    AndroidUtilities.runOnUIThread(Theme::checkAutoNightThemeConditions, 2100);
+            if (themeInfo.isDark()) {
+                currentNightTheme = themeInfo;
+            } else {
+                if (!nightTheme && previousTheme == null) {
+                    currentDayTheme = themeInfo;
+                    if (isCurrentThemeNight()) {
+                        switchNightThemeDelay = 2000;
+                        lastDelayUpdateTime = SystemClock.elapsedRealtime();
+                        AndroidUtilities.runOnUIThread(Theme::checkAutoNightThemeConditions, 2100);
+                    }
                 }
             }
             currentTheme = themeInfo;
