@@ -25,7 +25,8 @@ object CherrygramMessagesConfig {
 
     /** Gemini AI start */
     var geminiApiKey by sharedPreferences.string("CP_GeminiApiKey", "")
-    var geminiModelName by sharedPreferences.string("CP_GeminiModelName", "")
+    var geminiModelName by sharedPreferences.string("CP_GeminiModelName", "gemma-4-31b")
+    var geminiSystemModelName by sharedPreferences.string("CP_GeminiSystemModelName", "gemini-3.1-flash-lite")
     var geminiSystemPrompt by sharedPreferences.string("CP_GeminiSystemPrompt", "")
     var geminiTemperatureValue by sharedPreferences.int("CP_GeminiTemperature", 5)
 

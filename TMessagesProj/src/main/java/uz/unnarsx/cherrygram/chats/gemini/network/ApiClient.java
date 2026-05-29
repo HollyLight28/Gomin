@@ -72,7 +72,16 @@ public class ApiClient {
                         JsonObject obj = element.getAsJsonObject();
                         String name = obj.get("name").getAsString();
                         String nameLower = name.toLowerCase();
-                        if (nameLower.contains("gemini") || nameLower.contains("gemma")) {
+
+                        // 2026 Senior Filter: тільки актуальні лінійки, без сміття
+                        boolean isGoodModel = (nameLower.contains("gemini-3") || nameLower.contains("gemma-4"))
+                                && !nameLower.contains("embedding")
+                                && !nameLower.contains("veo")
+                                && !nameLower.contains("tts")
+                                && !nameLower.contains("nano")
+                                && !nameLower.contains("vision");
+
+                        if (isGoodModel) {
                             String displayName = obj.get("displayName").getAsString();
                             String description = obj.has("description") ? obj.get("description").getAsString() : null;
                             modelList.add(new ModelInfo(name, displayName, description));

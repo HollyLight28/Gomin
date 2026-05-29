@@ -9592,6 +9592,31 @@ public class MessagesStorage extends BaseController {
         });
     }
 
+    public void getMessagesForGominShield(long dialogId, int count, Utilities.Callback<ArrayList<MessageObject>> callback) {
+        storageQueue.postRunnable(() -> {
+            ArrayList<MessageObject> messages = new ArrayList<>();
+            try {
+                SQLiteCursor cursor = database.queryFinalized(String.format(Locale.US, "SELECT data, mid FROM messages_v2 WHERE uid = %d ORDER BY date DESC, mid DESC LIMIT %d", dialogId, count));
+                while (cursor.next()) {
+                    NativeByteBuffer data = cursor.byteBufferValue(0);
+                    if (data != null) {
+                        TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
+                        message.readAttachPath(data, getUserConfig().getClientUserId());
+                        data.reuse();
+                        if (message != null) {
+                            message.dialog_id = dialogId;
+                            messages.add(new MessageObject(currentAccount, message, false, true));
+                        }
+                    }
+                }
+                cursor.dispose();
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+            AndroidUtilities.runOnUIThread(() -> callback.run(messages));
+        });
+    }
+
     public void clearSentMedia() {
         storageQueue.postRunnable(() -> {
             try {

@@ -41,7 +41,7 @@ import uz.unnarsx.cherrygram.misc.Constants
 class GominShieldBottomSheet(
     private val chatActivity: ChatActivity,
     private val partnerName: String,
-    private val historyText: String,
+    var historyText: String,
     private val cachedResult: String? = null
 ) : BottomSheet(chatActivity.parentActivity, false, chatActivity.resourceProvider) {
 
@@ -280,59 +280,56 @@ class GominShieldBottomSheet(
     companion object {
         @JvmStatic
         fun show(chatActivity: ChatActivity) {
-            val messages = chatActivity.messages
             val currentAccount = chatActivity.currentAccount
+            val dialogId = chatActivity.dialogId
 
             // Збір імені співрозмовника
-            val partnerUser = MessagesController.getInstance(currentAccount).getUser(chatActivity.dialogId)
+            val partnerUser = MessagesController.getInstance(currentAccount).getUser(dialogId)
             val partnerName = if (partnerUser != null) UserObject.getUserName(partnerUser) else "Співрозмовник"
 
-            // Екстракція останніх 1000 повідомлень чату в хронологічному порядку (Оптімізовано O(N) з таймстампами)
-            val historyList = ArrayList<String>()
-            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
-            var count = 0
+            // Показуємо шторку відразу, вона сама завантажить історію
+            val bottomSheet = GominShieldBottomSheet(
+                chatActivity,
+                partnerName,
+                "", // historyText поки пустий
+                null
+            )
+            bottomSheet.show()
             
-            for (i in 0 until messages.size) {
-                val messageObject = messages[i]
-                if (messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.message != null) {
-                    val text = messageObject.messageOwner.message.trim()
-                    if (!TextUtils.isEmpty(text)) {
-                        val fromId = messageObject.messageOwner.from_id?.user_id ?: messageObject.messageOwner.peer_id?.user_id ?: 0L
-                        val senderUser = if (fromId != 0L) MessagesController.getInstance(currentAccount).getUser(fromId) else null
-                        val sender = if (senderUser != null) UserObject.getUserName(senderUser) else "Невідомий"
-                        val formattedTime = sdf.format(java.util.Date(messageObject.messageOwner.date * 1000L))
-                        historyList.add("[$formattedTime] $sender: $text")
-                        count++
-                        if (count >= 1000) break
+            // Завантажуємо останні 1000 повідомлень прямо з бази SQLite через новий безпечний метод
+            MessagesStorage.getInstance(currentAccount).getMessagesForGominShield(dialogId, 1000) { messages ->
+                val historyList = ArrayList<String>()
+                val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
+                
+                for (messageObject in messages) {
+                    if (messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.message != null) {
+                        val text = messageObject.messageOwner.message.trim()
+                        if (!android.text.TextUtils.isEmpty(text)) {
+                            val fromId = messageObject.messageOwner.from_id?.user_id ?: messageObject.messageOwner.peer_id?.user_id ?: 0L
+                            val senderUser = if (fromId != 0L) MessagesController.getInstance(currentAccount).getUser(fromId) else null
+                            val sender = if (senderUser != null) UserObject.getUserName(senderUser) else "Невідомий"
+                            val formattedTime = sdf.format(java.util.Date(messageObject.messageOwner.date * 1000L))
+                            historyList.add("[$formattedTime] $sender: $text")
+                        }
                     }
                 }
-            }
-
-            historyList.reverse()
-            val historyText = historyList.joinToString("\n").trim()
-
-            if (TextUtils.isEmpty(historyText)) {
-                AndroidUtilities.runOnUIThread {
+                
+                historyList.reverse()
+                val finalHistoryText = historyList.joinToString("\n").trim()
+                
+                if (finalHistoryText.isEmpty()) {
+                    bottomSheet.dismiss()
                     val builder = AlertDialog.Builder(chatActivity.parentActivity, chatActivity.resourceProvider)
                     builder.setTitle(LocaleController.getString(R.string.CG_GominShield))
                     builder.setMessage("Бро, у цьому чаті немає текстових повідомлень для аналізу!")
                     builder.setPositiveButton("Зрозуміло", null)
                     builder.show()
+                } else {
+                    // Оновлюємо текст в шторці та запускаємо аналіз
+                    bottomSheet.historyText = finalHistoryText
+                    bottomSheet.initAnalysis()
                 }
-                return
             }
-
-            val cachedHistory = GominAiChatHelper.getCachedHistory(chatActivity.dialogId)
-            val cachedResult = GominAiChatHelper.getCachedResult(chatActivity.dialogId)
-            val isCacheValid = cachedHistory != null && cachedResult != null && cachedHistory == historyText
-
-            val bottomSheet = GominShieldBottomSheet(
-                chatActivity,
-                partnerName,
-                historyText,
-                if (isCacheValid) cachedResult else null
-            )
-            bottomSheet.show()
         }
     }
 }

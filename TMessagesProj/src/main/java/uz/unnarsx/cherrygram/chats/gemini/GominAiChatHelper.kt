@@ -483,7 +483,7 @@ If є аб’юз — не пом’якшуй.
             temperature = CherrygramMessagesConfig.geminiTemperatureValue.toFloat() / 10f
             topK = 10
             topP = 0.5f
-            maxOutputTokens = 4096
+            maxOutputTokens = 8192
         }
 
         val safetySettings = arrayListOf(
@@ -552,16 +552,17 @@ If є аб’юз — не пом’якшуй.
         callback: (success: Boolean, resultText: String) -> Unit
     ) {
         val apiKey = CherrygramMessagesConfig.geminiApiKey
-        val modelName = CherrygramMessagesConfig.geminiModelName
+        // Shield тепер завжди використовує ту саму модель, що й чат Gomin AI
+        val modelName = CherrygramMessagesConfig.geminiModelName.ifEmpty { "gemma-4-31b" }
 
-        if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(modelName)) {
-            callback(false, "Бро, спочатку введи свій API-ключ та вибери модель в чаті ШІ! ⚙️")
+        if (TextUtils.isEmpty(apiKey)) {
+            callback(false, "Бро, спочатку введи свій API-ключ у налаштуваннях! ⚙️")
             return
         }
 
         val configBuilder = GenerationConfig.Builder().apply {
             temperature = 0.3f // Низька температура для більш точного, аналітичного результату
-            maxOutputTokens = 4096
+            maxOutputTokens = 8192
         }
 
         val safetySettings = arrayListOf(
@@ -765,14 +766,15 @@ If є аб’юз — не пом’якшуй.
 
         val rawModelName = CherrygramMessagesConfig.geminiModelName
         val model = rawModelName
-        val friendlyModelName = when (model) {
-            "gemini-3.5-flash" -> "Gemini 3.5 Flash"
-            "gemini-3.1-pro" -> "Gemini 3.1 Pro"
-            "gemini-3.1-flash-lite" -> "Gemini 3.1 Flash-Lite"
-            "gemini-3.0-pro" -> "Gemini 3.0 Pro"
-            "gemini-3.0-flash" -> "Gemini 3.0 Flash"
-            null, "" -> "Gemini 3.5 Flash"
-            else -> model.replace("models/", "").replace("-", " ").capitalize()
+        val friendlyModelName = when {
+            model.contains("gemma-4-31b") -> "Gemma 4 31B"
+            model.contains("gemma-4-26b") -> "Gemma 4 26B"
+            model.contains("gemini-3.5-flash") -> "Gemini 3.5 Flash"
+            model.contains("gemini-3.1-pro") -> "Gemini 3.1 Pro"
+            model.contains("gemini-3.1-flash-lite") -> "Gemini 3.1 Flash-Lite"
+            model.contains("gemini-3.0") -> "Gemini 3.0"
+            model == null || model == "" -> "Gemma 4 31B"
+            else -> model.replace("models/", "").replace("-", " ").uppercase()
         }
 
         if (isTyping) {

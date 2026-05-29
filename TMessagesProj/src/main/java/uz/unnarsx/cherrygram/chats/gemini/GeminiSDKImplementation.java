@@ -73,7 +73,7 @@ public class GeminiSDKImplementation {
         configBuilder.temperature = (float) CherrygramMessagesConfig.INSTANCE.getGeminiTemperatureValue() / 10;
         configBuilder.topK = 10;
         configBuilder.topP = 0.5f;
-        configBuilder.maxOutputTokens = 4096;
+        configBuilder.maxOutputTokens = 8192;
 
         ArrayList<SafetySetting> safetySettings = new ArrayList<>();
         safetySettings.add(new SafetySetting(HarmCategory.HARASSMENT, BlockThreshold.NONE));
@@ -103,8 +103,12 @@ public class GeminiSDKImplementation {
             boolean ocr, boolean transcribe
     ) {
 
+        String modelName = (translateText || summarize || transcribe || ocr) 
+                ? CherrygramMessagesConfig.INSTANCE.getGeminiSystemModelName().isEmpty() ? "gemini-3.1-flash-lite" : CherrygramMessagesConfig.INSTANCE.getGeminiSystemModelName()
+                : CherrygramMessagesConfig.INSTANCE.getGeminiModelName().isEmpty() ? "gemini-3.5-flash" : CherrygramMessagesConfig.INSTANCE.getGeminiModelName();
+
         GenerativeModel gm = new GenerativeModel(
-                CherrygramMessagesConfig.INSTANCE.getGeminiModelName(),
+                modelName,
                 CherrygramMessagesConfig.INSTANCE.getGeminiApiKey(),
                 configBuilder.build(),
                 safetySettings
@@ -154,10 +158,15 @@ public class GeminiSDKImplementation {
         progressDialog.setOnDismissListener((dialogInterface) -> shutdownGeminiSDK(response));
 
         Futures.addCallback(response, new FutureCallback<>() {
-            @Override
+                    @Override
             public void onSuccess(GenerateContentResponse result) {
                 if (result.getText() != null) {
-                    String resultText = result.getText().strip(); // Remove spaces
+                    String resultText = result.getText().strip();
+                    
+                    // Senior Cleaner: Прибираємо теги різонінгу, якщо модель їх видала
+                    resultText = resultText.replaceAll("(?s)<thought>.*?</thought>", "").trim();
+                    resultText = resultText.replaceAll("(?s)\\[reasoning\\].*?\\[/reasoning\\]", "").trim();
+
                     if (CherrygramCoreConfig.isDevBuild()) FileLog.e("успешный ответ: " + resultText);
 
                     AndroidUtilities.runOnUIThread(() -> {
@@ -260,10 +269,10 @@ public class GeminiSDKImplementation {
             if (CherrygramCoreConfig.isDevBuild()) FileLog.e("промпт: " + imagePrompt);
         } else if (translateText) { // Message translation
             String lang = capitalFirst(languageName(CherrygramMessagesConfig.INSTANCE.getTranslationTargetGemini()));
-            String translationPrompt = "You are a professional translator. Translate all input text into " +
-                    lang + " accurately and naturally, preserving the original meaning, tone, and context. " +
-                    "Do not add explanations or comments. Just return the translated text without any introduction or closing phrases. " +
-                    "Here is the text to translate into " + lang + ": " + inputText;
+            String translationPrompt = "You are a professional linguist and translator. Your goal is to translate the provided text into " +
+                    lang + " with absolute naturalness, preserving any slang, cultural nuances, and the original emotional tone. " +
+                    "Do not add any meta-comments, explanations, or quotes. Just provide the final translated text. " +
+                    "Source text: " + inputText;
             content.addText(translationPrompt);
 
             if (CherrygramCoreConfig.isDevBuild()) FileLog.e("промпт: " + translationPrompt);
@@ -274,16 +283,13 @@ public class GeminiSDKImplementation {
             String voiceToTextPrompt;
 
             if (summarize) {
-                voiceToTextPrompt = "You are an assistant that transcribes and then summarizes spoken content. " +
-                        "First, accurately and fully transcribe the voice message, keeping the original language. " +
-                        "Then, briefly summarize the transcribed text in the same language. " +
-                        "Output only the final summary. Do not include the full transcription, " +
-                        "and do not add any extra words like 'Summary' or 'Transcription'. " +
-                        "Do not explain or comment. The output must be plain and concise.";
+                voiceToTextPrompt = "You are an AI analyst. Listen to this voice message, transcribe it fully in its original language, " +
+                        "and then provide a structured, bullet-point summary of the key points. " +
+                        "Output ONLY the summary in the same language as the audio. Do not include 'Summary' titles. " +
+                        "Be concise but capture all essential facts.";
             } else {
-                voiceToTextPrompt = "You are a speech-to-text transcriber. Accurately transcribe the spoken content from the provided audio without translating it. " +
-                        "Keep the original language of the speaker. Do not explain or comment on the content. " +
-                        "Return only the plain transcribed text, without any headers, summaries, or formatting.";
+                voiceToTextPrompt = "You are a professional speech-to-text system. Accurately transcribe every word from this audio. " +
+                        "Keep the original language and punctuation. Do not translate. Output ONLY the plain text.";
             }
 
             content.addText(voiceToTextPrompt);
@@ -293,9 +299,9 @@ public class GeminiSDKImplementation {
         } else { // Answer only to text
             String textPrompt;
             if (summarize) {
-                String summarizeString = "Summarize the following text briefly and clearly in the same language it is written in. " +
-                        "Do not include any introductions, labels, or closing remarks. " +
-                        "Return only the summary as plain text. The text to summarize:";
+                String summarizeString = "Analyze the text below. Extract the main ideas, intentions, and key facts. " +
+                        "Present them as a brief, coherent summary in the original language. " +
+                        "Avoid generic phrases. Return only the summary text. Content to analyze:";
                 textPrompt = summarizeString + inputText.toString();
             } else {
                 String systemPrompt = CherrygramMessagesConfig.INSTANCE.getGeminiSystemPrompt();
