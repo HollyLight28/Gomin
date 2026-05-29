@@ -1566,6 +1566,7 @@ public class ChatActivity extends BaseFragment implements
     private final static int gomin_shield_menu_item = 991199;
     private final static int gomin_select_ai_model_menu_item = 991200;
     private final static int gomin_clear_ai_history_menu_item = 991201;
+    private final static int gomin_restart_ai_chat_menu_item = 991202;
     private final static int clear_history = 15;
     private final static int delete_chat = 16;
     private final static int share_contact = 17;
@@ -3831,6 +3832,9 @@ public class ChatActivity extends BaseFragment implements
                 } else if (id == gomin_clear_ai_history_menu_item) {
                     GominAiChatHelper.INSTANCE.showClearHistoryAlert(ChatActivity.this);
                     return;
+                } else if (id == gomin_restart_ai_chat_menu_item) {
+                    GominAiChatHelper.INSTANCE.restartChat(ChatActivity.this);
+                    return;
                 }
                 getChatActivityHelper().checkActionBarOptions(
                         id,
@@ -4668,6 +4672,7 @@ public class ChatActivity extends BaseFragment implements
             }
 
             if (dialog_id == Constants.GOMIN_AI_DIALOG_ID) {
+                headerItem.lazilyAddSubItem(gomin_restart_ai_chat_menu_item, R.drawable.msg_retry_solar, "✨ Новий чат");
                 headerItem.lazilyAddSubItem(gomin_select_ai_model_menu_item, R.drawable.magic_stick_solar, "🤖 Вибрати модель ШІ");
                 headerItem.lazilyAddSubItem(gomin_clear_ai_history_menu_item, R.drawable.msg_delete, "🧹 Очистити історію ШІ");
             }
