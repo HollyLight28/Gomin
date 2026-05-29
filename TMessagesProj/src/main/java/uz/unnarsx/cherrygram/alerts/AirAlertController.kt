@@ -18,8 +18,12 @@ object AirAlertController {
     private var mediaPlayer: MediaPlayer? = null
 
     fun init() {
-        if (CherrygramCoreConfig.airAlertEnabled && CherrygramCoreConfig.airAlertApiKey.isNotEmpty()) {
+        if (CherrygramCoreConfig.airAlertEnabled) {
             startMonitoring()
+            val regionId = CherrygramCoreConfig.airAlertRegionId
+            if (regionId.isNotEmpty()) {
+                com.google.firebase.messaging.FirebaseMessaging.getInstance().subscribeToTopic("region_$regionId")
+            }
         }
     }
 
@@ -39,38 +43,20 @@ object AirAlertController {
     }
 
     private fun checkAlertStatus() {
-        val apiKey = CherrygramCoreConfig.airAlertApiKey
         val regionId = CherrygramCoreConfig.airAlertRegionId
-        if (apiKey.isEmpty() || regionId.isEmpty()) return
+        if (regionId.isEmpty()) return
 
         try {
-            // Using alerts.in.ua as it's often more developer friendly for quick checks
-            // But user requested Option A (Ajax), so I will use api.ukrainealarm.com
-            val url = URL("https://api.ukrainealarm.com/api/v3/alerts/$regionId")
+            val url = URL("http://204.168.201.148:5000/status?region_id=$regionId")
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "GET"
-            connection.setRequestProperty("Authorization", apiKey)
             connection.connectTimeout = 5000
             connection.readTimeout = 5000
 
             if (connection.responseCode == 200) {
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
-                val jsonArray = JSONArray(response)
-                
-                // If there are any active alerts in the array, it means alert is ON
-                var hasAirAlert = false
-                for (i in 0 until jsonArray.length()) {
-                    val region = jsonArray.getJSONObject(i)
-                    val activeAlerts = region.getJSONArray("activeAlerts")
-                    for (j in 0 until activeAlerts.length()) {
-                        val alert = activeAlerts.getJSONObject(j)
-                        if (alert.getString("type") == "AIR") {
-                            hasAirAlert = true
-                            break
-                        }
-                    }
-                    if (hasAirAlert) break
-                }
+                val jsonObject = org.json.JSONObject(response)
+                val hasAirAlert = jsonObject.optBoolean("alert", false)
                 
                 AndroidUtilities.runOnUIThread {
                     setAlertStatus(hasAirAlert)
@@ -137,38 +123,21 @@ object AirAlertController {
     }
 
     fun fetchRegions(apiKey: String, callback: (List<Pair<String, String>>) -> Unit) {
-        Thread {
-            try {
-                val url = URL("https://api.ukrainealarm.com/api/v3/regions")
-                val connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = "GET"
-                connection.setRequestProperty("Authorization", apiKey)
-                
-                if (connection.responseCode == 200) {
-                    val response = connection.inputStream.bufferedReader().use { it.readText() }
-                    val jsonArray = JSONArray(response)
-                    val regions = mutableListOf<Pair<String, String>>()
-                    for (i in 0 until jsonArray.length()) {
-                        val obj = jsonArray.getJSONObject(i)
-                        val id = obj.getString("regionId")
-                        val name = obj.getString("regionName")
-                        regions.add(id to name)
-                        
-                        // Also add children (cities)
-                        if (obj.has("regionChildIds")) {
-                            val children = obj.getJSONArray("regionChildIds")
-                            for (j in 0 until children.length()) {
-                                val child = children.getJSONObject(j)
-                                regions.add(child.getString("regionId") to "  — " + child.getString("regionName"))
-                            }
-                        }
-                    }
-                    AndroidUtilities.runOnUIThread { callback(regions) }
-                }
-            } catch (e: Exception) {
-                FileLog.e(e)
-                AndroidUtilities.runOnUIThread { callback(emptyList()) }
-            }
-        }.start()
+        val regions = listOf(
+            "1" to "Вінницька", "2" to "Волинська", "3" to "Дніпропетровська", "4" to "Донецька",
+            "5" to "Житомирська", "6" to "Закарпатська", "7" to "Запорізька", "8" to "Івано-Франківська",
+            "9" to "Київська", "10" to "Кіровоградська", "11" to "Луганська", "12" to "Львівська",
+            "13" to "Миколаївська", "14" to "Одеська", "15" to "Полтавська", "16" to "Рівненська",
+            "17" to "Сумська", "18" to "Тернопільська", "19" to "Харківська", "20" to "Херсонська",
+            "21" to "Хмельницька", "22" to "Черкаська", "23" to "Чернівецька", "24" to "Чернігівська",
+            "25" to "м. Київ", "26" to "АР Крим"
+        )
+        AndroidUtilities.runOnUIThread { callback(regions) }
+    }
+
+    fun handlePushStatus(alert: Boolean) {
+        AndroidUtilities.runOnUIThread {
+            setAlertStatus(alert)
+        }
     }
 }

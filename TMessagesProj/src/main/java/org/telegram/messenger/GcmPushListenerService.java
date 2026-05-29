@@ -27,6 +27,15 @@ public class GcmPushListenerService extends FirebaseMessagingService {
             FileLog.d("FCM received data: " + data + " from: " + from);
         }
 
+        if (data.containsKey("action")) {
+            String action = data.get("action");
+            if ("alert_on".equals(action)) {
+                uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.handlePushStatus(true);
+            } else if ("alert_off".equals(action)) {
+                uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.handlePushStatus(false);
+            }
+        }
+
         PushListenerController.processRemoteMessage(PushListenerController.PUSH_TYPE_FIREBASE, data.get("p"), time);
     }
 

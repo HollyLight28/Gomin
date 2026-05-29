@@ -146,8 +146,6 @@ public class CGPreferencesEntry extends UniversalFragment {
                 .setChecked(CherrygramCoreConfig.INSTANCE.getAirAlertEnabled())
         );
         if (CherrygramCoreConfig.INSTANCE.getAirAlertEnabled()) {
-            String apiKey = CherrygramCoreConfig.INSTANCE.getAirAlertApiKey();
-            items.add(SettingsHelper.asTextDetail(airAlertApiKeyRow, 0, getString(R.string.CP_AirAlert_APIKey), apiKey.isEmpty() ? getString(R.string.NotSet) : apiKey));
             String regionName = CherrygramCoreConfig.INSTANCE.getAirAlertRegionName();
             items.add(UItem.asButton(airAlertRegionRow, getString(R.string.CP_AirAlert_Region), regionName.isEmpty() ? getString(R.string.NotSet) : regionName));
             items.add(UItem.asButton(airAlertTestRow, getString(R.string.CP_AirAlert_Test), null));
@@ -268,15 +266,20 @@ public class CGPreferencesEntry extends UniversalFragment {
             listView.adapter.update(true);
             if (CherrygramCoreConfig.INSTANCE.getAirAlertEnabled()) {
                 AirAlertController.INSTANCE.startMonitoring();
+                String currentRegion = CherrygramCoreConfig.INSTANCE.getAirAlertRegionId();
+                if (!currentRegion.isEmpty()) {
+                    com.google.firebase.messaging.FirebaseMessaging.getInstance().subscribeToTopic("region_" + currentRegion);
+                }
             } else {
                 AirAlertController.INSTANCE.stopMonitoring();
+                String currentRegion = CherrygramCoreConfig.INSTANCE.getAirAlertRegionId();
+                if (!currentRegion.isEmpty()) {
+                    com.google.firebase.messaging.FirebaseMessaging.getInstance().unsubscribeFromTopic("region_" + currentRegion);
+                }
             }
-        } else if (item.id == airAlertApiKeyRow) {
-            showAirAlertApiKeyDialog();
+
         } else if (item.id == airAlertRegionRow) {
-            String apiKey = CherrygramCoreConfig.INSTANCE.getAirAlertApiKey();
-            if (apiKey.isEmpty()) return;
-            AirAlertController.INSTANCE.fetchRegions(apiKey, regions -> {
+            AirAlertController.INSTANCE.fetchRegions("", regions -> {
                 if (regions.isEmpty()) return kotlin.Unit.INSTANCE;
                 ArrayList<String> names = new ArrayList<>();
                 ArrayList<String> ids = new ArrayList<>();
@@ -285,7 +288,15 @@ public class CGPreferencesEntry extends UniversalFragment {
                     names.add(p.getSecond());
                 }
                 PopupHelper.show(names, getString(R.string.CP_AirAlert_Region), ids.indexOf(CherrygramCoreConfig.INSTANCE.getAirAlertRegionId()), getContext(), i -> {
-                    CherrygramCoreConfig.INSTANCE.setAirAlertRegionId(ids.get(i));
+                    String oldRegionId = CherrygramCoreConfig.INSTANCE.getAirAlertRegionId();
+                    String newRegionId = ids.get(i);
+                    if (!oldRegionId.equals(newRegionId)) {
+                        if (!oldRegionId.isEmpty()) {
+                            com.google.firebase.messaging.FirebaseMessaging.getInstance().unsubscribeFromTopic("region_" + oldRegionId);
+                        }
+                        com.google.firebase.messaging.FirebaseMessaging.getInstance().subscribeToTopic("region_" + newRegionId);
+                    }
+                    CherrygramCoreConfig.INSTANCE.setAirAlertRegionId(newRegionId);
                     CherrygramCoreConfig.INSTANCE.setAirAlertRegionName(names.get(i).replace("  — ", ""));
                     listView.adapter.update(true);
                 });
