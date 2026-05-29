@@ -82,6 +82,7 @@ public class CGPreferencesEntry extends UniversalFragment {
     private final int doubleTapRow = 45;
     private final int slideActionRow = 46;
     private final int brandedScreenshotsRow = 47;
+    private final int keepDeletedMessagesRow = 48;
 
     // AI
     private final int geminiSettingsRow = 50;
@@ -179,6 +180,9 @@ public class CGPreferencesEntry extends UniversalFragment {
         );
         items.add(SettingsHelper.asSwitchCG(deleteForAllRow, getString(R.string.CP_DeleteForAll), getString(R.string.CP_DeleteForAll_Desc_New))
                 .setChecked(CherrygramMessagesConfig.INSTANCE.getDeleteForAll())
+        );
+        items.add(SettingsHelper.asSwitchCG(keepDeletedMessagesRow, getString(R.string.SP_KeepDeletedMessages), getString(R.string.SP_KeepDeletedMessages_Desc))
+                .setChecked(CherrygramPrivacyConfig.INSTANCE.getKeepDeletedMessages())
         );
         items.add(SettingsHelper.asSwitchCG(customWallpapersRow, getString(R.string.CP_PremiumWallpapers), getString(R.string.CP_PremiumWallpapers_Desc))
                 .setChecked(CherrygramChatsConfig.INSTANCE.getCustomWallpapers())
@@ -337,7 +341,10 @@ public class CGPreferencesEntry extends UniversalFragment {
             SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getAutoQuoteReplies());
         } else if (item.id == deleteForAllRow) {
             CherrygramMessagesConfig.INSTANCE.setDeleteForAll(!CherrygramMessagesConfig.INSTANCE.getDeleteForAll());
-            SettingsHelper.updateCheckState(view, CherrygramMessagesConfig.INSTANCE.getDeleteForAll());
+            listView.adapter.update(true);
+        } else if (item.id == keepDeletedMessagesRow) {
+            CherrygramPrivacyConfig.INSTANCE.setKeepDeletedMessages(!CherrygramPrivacyConfig.INSTANCE.getKeepDeletedMessages());
+            listView.adapter.update(true);
         } else if (item.id == customWallpapersRow) {
             CherrygramChatsConfig.INSTANCE.setCustomWallpapers(!CherrygramChatsConfig.INSTANCE.getCustomWallpapers());
             SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getCustomWallpapers());

@@ -13609,6 +13609,7 @@ public class MessagesStorage extends BaseController {
                 ArrayList<Pair<Long, Integer>> idsToDelete = new ArrayList<>();
                 ArrayList<TopicsController.TopicUpdate> topicUpdatesInUi = null;
                 ArrayList<TLRPC.Message> deletedMessages = currentUser == dialogId || dialogId == 0 ? new ArrayList<>() : null;
+                ArrayList<TLRPC.Message> messagesToGhost = new ArrayList<>();
 
                 if (dialogId != 0) {
                     cursor = database.queryFinalized(String.format(Locale.US, "SELECT uid, data, read_state, out, mention, mid FROM messages_v2 WHERE mid IN(%s) AND uid = %d", ids, dialogId));
@@ -13621,12 +13622,31 @@ public class MessagesStorage extends BaseController {
                         long did = cursor.longValue(0);
                         int mid = cursor.intValue(5);
                         unknownMessages.remove((Integer) mid);
-                        ArrayList<Integer> mids = messagesByDialogs.get(did);
-                        if (mids == null) {
-                            mids = new ArrayList<>();
-                            messagesByDialogs.put(did, mids);
+                        
+                        boolean kept = false;
+                        if (uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig.INSTANCE.getKeepDeletedMessages() && cursor.intValue(3) == 0) {
+                            NativeByteBuffer data = cursor.byteBufferValue(1);
+                            if (data != null) {
+                                TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
+                                data.reuse();
+                                if (message != null) {
+                                    message.flags |= 0x40000000;
+                                    message.dialog_id = did; // Store did for later update
+                                    messagesToGhost.add(message);
+                                    kept = true;
+                                }
+                            }
                         }
-                        mids.add(mid);
+
+                        if (!kept) {
+                            ArrayList<Integer> mids = messagesByDialogs.get(did);
+                            if (mids == null) {
+                                mids = new ArrayList<>();
+                                messagesByDialogs.put(did, mids);
+                            }
+                            mids.add(mid);
+                        }
+
                         if (did != currentUser) {
                             int read_state = cursor.intValue(2);
                             if (cursor.intValue(3) == 0) {
@@ -13730,6 +13750,33 @@ public class MessagesStorage extends BaseController {
                 }
 
                 database.beginTransaction();
+
+                if (!messagesToGhost.isEmpty()) {
+                    SQLitePreparedStatement updateV2 = database.executeFast("UPDATE messages_v2 SET data = ? WHERE mid = ? AND uid = ?");
+                    SQLitePreparedStatement updateTopics = database.executeFast("UPDATE messages_topics SET data = ? WHERE mid = ? AND uid = ?");
+                    for (int i = 0; i < messagesToGhost.size(); i++) {
+                        TLRPC.Message message = messagesToGhost.get(i);
+                        NativeByteBuffer outData = new NativeByteBuffer(message.getObjectSize());
+                        message.serializeToStream(outData);
+                        
+                        updateV2.requery();
+                        updateV2.bindByteBuffer(1, outData);
+                        updateV2.bindInteger(2, message.id);
+                        updateV2.bindLong(3, message.dialog_id);
+                        updateV2.step();
+                        
+                        updateTopics.requery();
+                        updateTopics.bindByteBuffer(1, outData);
+                        updateTopics.bindInteger(2, message.id);
+                        updateTopics.bindLong(3, message.dialog_id);
+                        updateTopics.step();
+                        
+                        outData.reuse();
+                    }
+                    updateV2.dispose();
+                    updateTopics.dispose();
+                }
+
                 for (int i = 0; i < 4; i++) {
                     if (i == 0) {
                         if (dialogId != 0) {
@@ -13864,14 +13911,15 @@ public class MessagesStorage extends BaseController {
                 for (int a = 0, N = messagesByDialogs.size(); a < N; a++) {
                     long did = messagesByDialogs.keyAt(a);
                     ArrayList<Integer> mids = messagesByDialogs.valueAt(a);
-                    String idsStr = TextUtils.join(",", mids);
                     if (!DialogObject.isEncryptedDialog(did)) {
+                        String idsStr = TextUtils.join(",", mids);
                         if (DialogObject.isChatDialog(did)) {
                             database.executeFast(String.format(Locale.US, "UPDATE chat_settings_v2 SET pinned = 0 WHERE uid = %d AND pinned IN (%s)", -did, idsStr)).stepThis().dispose();
                         } else {
                             database.executeFast(String.format(Locale.US, "UPDATE user_settings SET pinned = 0 WHERE uid = %d AND pinned IN (%s)", did, idsStr)).stepThis().dispose();
                         }
                     }
+                    String idsStr = TextUtils.join(",", mids);
                     database.executeFast(String.format(Locale.US, "DELETE FROM chat_pinned_v2 WHERE uid = %d AND mid IN(%s)", did, idsStr)).stepThis().dispose();
                     int updatedCount = 0;
                     cursor = database.queryFinalized("SELECT changes()");
@@ -13894,11 +13942,13 @@ public class MessagesStorage extends BaseController {
                         cursor.dispose();
                         cursor = null;
                     }
-                    database.executeFast(String.format(Locale.US, "DELETE FROM messages_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-                    database.executeFast(String.format(Locale.US, "DELETE FROM messages_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-                    database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-                    database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-                    database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
+                    if (!mids.isEmpty()) {
+                        database.executeFast(String.format(Locale.US, "DELETE FROM messages_v2 WHERE mid IN(%s) AND uid = %d", idsStr, did)).stepThis().dispose();
+                        database.executeFast(String.format(Locale.US, "DELETE FROM messages_topics WHERE mid IN(%s) AND uid = %d", idsStr, did)).stepThis().dispose();
+                        database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", idsStr, did)).stepThis().dispose();
+                        database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", idsStr, did)).stepThis().dispose();
+                        database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", idsStr, did)).stepThis().dispose();
+                    }
                     if (unknownMessages.isEmpty()) {
                         cursor = database.queryFinalized(String.format(Locale.US, "SELECT uid, type FROM media_v4 WHERE mid IN(%s) AND uid = %d", ids, did));
                         SparseArray<LongSparseArray<Integer>> mediaCounts = null;

@@ -17648,6 +17648,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         } else {
             timeString = !currentMessageObject.isMusic() && messageObject.messageOwner.forwards > 0 ? ChatsHelper.createForwardedString(messageObject) : LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
         }
+        if (currentMessageObject.messageOwner != null && (currentMessageObject.messageOwner.flags & 0x40000000) != 0 && timeString.length() > 0) {
+            timeString = "🗑 " + timeString;
+        }
         currentTimeString = new SpannableStringBuilder(timeString);
         if (signString != null) {
             if (messageObject.messageOwner.via_business_bot_id != 0) {

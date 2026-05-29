@@ -30,6 +30,7 @@ object CherrygramPrivacyConfig {
     var ghostModeHideStoryViews by sharedPreferences.boolean("SP_GhostModeHideStoryViews", false)
     var ghostModeHideOnline by sharedPreferences.boolean("SP_GhostModeHideOnline", false)
     /** Ghost Mode finish */
+    var keepDeletedMessages by sharedPreferences.boolean("SP_KeepDeletedMessages", false)
 
     /** Passcode lock start */
     var hideArchiveFromChatsList by sharedPreferences.boolean("SP_HideArchiveFromChatsList", false)

@@ -434,6 +434,8 @@
     <string name="SP_GoogleAnalytics" translatable="false">Google Analytics</string>
     <string name="SP_GoogleAnalytics_Desc">By enabling this, all application crashes and statistics will be reported to \"console.firebase.google.com\" for further review by the developer.</string>
 
+    <string name="SP_KeepDeletedMessages">Anti-Delete</string>
+    <string name="SP_KeepDeletedMessages_Desc">Do not delete messages if the sender has deleted them.</string>
     <string name="SP_AskBioToOpenChats">Ask for biometrics to open chats</string>
     <string name="SP_AskBioToOpenChats_Desc">System password (fingerprint, face id, PIN or pattern) will be required to access selected type of chats.</string>
 
