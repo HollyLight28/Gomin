@@ -8339,19 +8339,19 @@ public class Theme {
                                     value = MonetHelper.getColor(param, monetAmoled);
                                     boolean isDark = (assetName != null && assetName.contains("dark")) || (file != null && file.getName().contains("dark"));
                                     // Black Edition Contrast Boost
-                                    if ("actionBarDefaultTitle".equals(key) || "windowBackgroundWhiteBlackText".equals(key) || "actionBarDefaultSubmenuItem".equals(key) || "windowBackgroundWhiteValueText".equals(key) || "chat_messagePanelText".equals(key) || "chat_messagePanelHint".equals(key)) {
+                                    if ("actionBarDefaultTitle".equals(key) || "windowBackgroundWhiteBlueHeader".equals(key) || "windowBackgroundWhiteBlackText".equals(key) || "actionBarDefaultSubmenuItem".equals(key) || "windowBackgroundWhiteValueText".equals(key) || "chat_messagePanelText".equals(key) || "chat_messagePanelHint".equals(key)) {
                                         value = isDark ? 0xFFFFFFFF : 0xFF000000;
-                                    } else if ("actionBarDefaultSubmenuItemIcon".equals(key) || "windowBackgroundWhiteGrayIcon".equals(key) || "windowBackgroundWhiteBlueIcon".equals(key) || "profile_actionIcon".equals(key)) {
+                                    } else if ("actionBarDefaultSubmenuItemIcon".equals(key) || "windowBackgroundWhiteGrayIcon".equals(key) || "windowBackgroundWhiteBlueIcon".equals(key)) {
                                         value = isDark ? 0xFFFFFFFF : 0xFF000000;
                                     } else if ("chat_messagePanelSend".equals(key) || "chat_messagePanelVoiceBackground".equals(key) || "chat_messagePanelVideo".equals(key) || "chat_goDownButtonIcon".equals(key) || "profile_actionBackground".equals(key) || "featuredStickers_addButton".equals(key)) {
                                         // Gomin: White circle/background for dark mode
                                         value = isDark ? 0xFFFFFFFF : 0xFF121212;
-                                    } else if ("chat_messagePanelSendIcon".equals(key) || "chat_messagePanelVoiceLock".equals(key) || "featuredStickers_buttonText".equals(key)) {
+                                    } else if ("chat_messagePanelSendIcon".equals(key) || "chat_messagePanelVoiceLock".equals(key) || "profile_actionIcon".equals(key) || "featuredStickers_buttonText".equals(key)) {
                                         // Gomin: Dark icon for dark mode to contrast with white circle
                                         value = isDark ? 0xFF121212 : 0xFFFFFFFF;
-                                    } else if ("windowBackgroundWhite".equals(key) || "windowBackgroundWhiteBlueHeader".equals(key) || "actionBarDefault".equals(key) || "chat_messagePanelBackground".equals(key)) {
-                                        // Card background: #121212 for Dark, #FFFFFF for light
-                                        value = isDark ? (monetAmoled ? 0xFF121212 : 0xFF1C1C1D) : 0xFFFFFFFF;
+                                    } else if ("windowBackgroundWhite".equals(key) || "actionBarDefault".equals(key) || "chat_messagePanelBackground".equals(key)) {
+                                        // Card background: #1A1A1A for Dark, #FFFFFF for light
+                                        value = isDark ? (monetAmoled ? 0xFF1A1A1A : 0xFF222222) : 0xFFFFFFFF;
                                     } else if ("windowBackgroundGray".equals(key) || "dialogBackgroundGray".equals(key) || "graySection".equals(key)) {
                                         // Background behind cards: #000000 for AMOLED, #0F0F0F for Dark, #F0F0F0 for light
                                         value = isDark ? (monetAmoled ? 0xFF000000 : 0xFF0F0F0F) : 0xFFF0F0F0;

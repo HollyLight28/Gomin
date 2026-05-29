@@ -102,7 +102,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
         counter.setTypeface(AndroidUtilities.bold());
         counter.setCallback(this);
         counter.setGravity(Gravity.CENTER);
-        counter.setTextColor(Theme.getColor(Theme.key_actionBarDefault));
+        counter.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhite));
         counter.setTextSize(dp(10));
     }
 
@@ -264,6 +264,9 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
         colorDefault = Theme.getColor(Theme.key_glass_tabUnselected, resourcesProvider);
         colorSelected = Theme.getColor(foldersAtBottom ? Theme.key_actionBarTabLine : Theme.key_glass_tabSelected, resourcesProvider);
         colorSelectedText = Theme.getColor(foldersAtBottom ? Theme.key_actionBarTabActiveText : Theme.key_glass_tabSelectedText, resourcesProvider);
+        if (counter != null) {
+            counter.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider));
+        }
         updateColors();
         invalidate();
     }
