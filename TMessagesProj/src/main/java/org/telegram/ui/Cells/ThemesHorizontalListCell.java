@@ -752,7 +752,7 @@ public class ThemesHorizontalListCell extends RecyclerListView implements Notifi
         }
 
         SharedPreferences.Editor editor = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE).edit();
-        editor.putString(currentType == ThemeActivity.THEME_TYPE_NIGHT || themeInfo.isDark() ? "lastDarkTheme" : "lastDayTheme", themeInfo.getKey());
+        editor.putString(currentType == ThemeActivity.THEME_TYPE_NIGHT ? "lastDarkTheme" : "lastDayTheme", themeInfo.getKey());
         editor.apply();
 
         if (currentType == ThemeActivity.THEME_TYPE_NIGHT) {

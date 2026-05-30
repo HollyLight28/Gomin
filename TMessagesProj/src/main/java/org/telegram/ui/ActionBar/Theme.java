@@ -6485,7 +6485,7 @@ public class Theme {
                 if (save) {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                     SharedPreferences.Editor editor = preferences.edit();
-                    if (themeInfo.isDark()) {
+                    if (nightTheme) {
                         currentNightTheme = themeInfo;
                         editor.putString("nighttheme", themeInfo.getKey());
                     } else {
@@ -6575,7 +6575,7 @@ public class Theme {
                 if (save) {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                     SharedPreferences.Editor editor = preferences.edit();
-                    if (themeInfo.isDark()) {
+                    if (nightTheme) {
                         currentNightTheme = themeInfo;
                         editor.putString("nighttheme", themeInfo.getKey());
                     } else {
@@ -6590,10 +6590,10 @@ public class Theme {
                 wallpaper = null;
                 themedWallpaper = null;
             }
-            if (themeInfo.isDark()) {
+            if (nightTheme) {
                 currentNightTheme = themeInfo;
             } else {
-                if (!nightTheme && previousTheme == null) {
+                if (previousTheme == null) {
                     currentDayTheme = themeInfo;
                     if (isCurrentThemeNight()) {
                         switchNightThemeDelay = 2000;
@@ -6629,7 +6629,7 @@ public class Theme {
                 if (save) {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                     SharedPreferences.Editor editor = preferences.edit();
-                    if (themeInfo.isDark()) {
+                    if (nightTheme) {
                         currentNightTheme = themeInfo;
                         editor.putString("nighttheme", themeInfo.getKey());
                     } else {
@@ -6712,10 +6712,10 @@ public class Theme {
                             themeInfo.pathToWallpaper = null;
                             themedWallpaperLink = null;
                         }
-                        if (themeInfo.isDark()) {
+                        if (nightTheme) {
                             currentNightTheme = themeInfo;
                         } else {
-                            if (!nightTheme && previousTheme == null) {
+                            if (previousTheme == null) {
                                 currentDayTheme = themeInfo;
                                 if (isCurrentThemeNight()) {
                                     switchNightThemeDelay = 2000;
@@ -6752,7 +6752,7 @@ public class Theme {
                 if (save) {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                     SharedPreferences.Editor editor = preferences.edit();
-                    if (themeInfo.isDark()) {
+                    if (nightTheme) {
                         currentNightTheme = themeInfo;
                         editor.putString("nighttheme", themeInfo.getKey());
                     } else {
@@ -6767,10 +6767,10 @@ public class Theme {
                 wallpaper = null;
                 themedWallpaper = null;
             }
-            if (themeInfo.isDark()) {
+            if (nightTheme) {
                 currentNightTheme = themeInfo;
             } else {
-                if (!nightTheme && previousTheme == null) {
+                if (previousTheme == null) {
                     currentDayTheme = themeInfo;
                     if (isCurrentThemeNight()) {
                         switchNightThemeDelay = 2000;
