@@ -8337,7 +8337,7 @@ public class Theme {
                                     }
                                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && (param.startsWith("a") || param.startsWith("n") || param.startsWith("monet"))) {
                                     value = MonetHelper.getColor(param, monetAmoled);
-                                    boolean isDark = (assetName != null && assetName.contains("dark")) || (file != null && file.getName().contains("dark"));
+                                    boolean isDark = (assetName != null && assetName.toLowerCase().contains("dark")) || (file != null && file.getName().toLowerCase().contains("dark"));
                                     // Black Edition Contrast Boost
                                     if ("actionBarDefaultTitle".equals(key) || "windowBackgroundWhiteBlueHeader".equals(key) || "windowBackgroundWhiteBlackText".equals(key) || "actionBarDefaultSubmenuItem".equals(key) || "windowBackgroundWhiteValueText".equals(key) || "chat_messagePanelText".equals(key) || "chat_messagePanelHint".equals(key)) {
                                         value = isDark ? 0xFFFFFFFF : 0xFF000000;

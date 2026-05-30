@@ -92,7 +92,6 @@ public class Crashlytics implements Thread.UncaughtExceptionHandler {
             builder.append(line).append("\n");
         }
         reader.close();
-        deleteCrashLogs();
         File file = getShareLogFile();
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         writer.write(builder.toString());
@@ -147,6 +146,7 @@ public class Crashlytics implements Thread.UncaughtExceptionHandler {
         new Thread(() -> {
             try {
                 File cacheFile = Crashlytics.shareLogs();
+                Crashlytics.deleteCrashLogs();
                 int currentAccount = UserConfig.selectedAccount;
                 long dialogId = -1000000000000L - Constants.Cherrygram_Support;
 
@@ -179,6 +179,7 @@ public class Crashlytics implements Thread.UncaughtExceptionHandler {
     public static void sendCrashLogs(Activity activity, CrashReportBottomSheet bottomSheet) {
         try {
             File cacheFile = Crashlytics.shareLogs();
+            Crashlytics.deleteCrashLogs();
             int currentAccount = UserConfig.selectedAccount;
             long dialogId = -1000000000000L - Constants.Cherrygram_Support;
 
