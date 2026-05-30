@@ -2876,6 +2876,10 @@ public class ChatActivity extends BaseFragment implements
 
         dialog_id_Long = dialog_id;
 
+        if (dialog_id == uz.unnarsx.cherrygram.misc.Constants.GOMIN_AI_DIALOG_ID) {
+            reversed = false;
+        }
+
         transitionAnimationGlobalIndex = NotificationCenter.getGlobalInstance().setAnimationInProgress(transitionAnimationGlobalIndex, new int[0]);
 
         if (currentUser != null && Build.VERSION.SDK_INT < 23) {

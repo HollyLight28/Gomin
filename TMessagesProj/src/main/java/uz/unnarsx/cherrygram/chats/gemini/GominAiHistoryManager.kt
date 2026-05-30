@@ -75,26 +75,29 @@ object GominAiHistoryManager {
         var localId = 1
         
         for (gMsg in raw) {
-            val isOut = gMsg.role == "user"
-            val message = TLRPC.TL_message().apply {
-                id = localId++
-                peer_id = TLRPC.TL_peerUser().apply { user_id = Constants.GOMIN_AI_DIALOG_ID }
-                from_id = if (isOut) {
-                    TLRPC.TL_peerUser().apply { user_id = UserConfig.getInstance(currentAccount).clientUserId }
-                } else {
-                    TLRPC.TL_peerUser().apply { user_id = Constants.GOMIN_AI_DIALOG_ID }
-                }
-                message = gMsg.text
-                date = (gMsg.timestamp / 1000).toInt()
-                out = isOut
-                send_state = MessageObject.MESSAGE_SEND_STATE_SENT
-            }
-            
-            val messageObject = MessageObject(currentAccount, message, true, true)
-            objects.add(messageObject)
+            objects.add(createMessageObject(currentAccount, gMsg, localId++))
         }
 
         objects.reverse()
         return objects
+    }
+
+    fun createMessageObject(currentAccount: Int, gMsg: GominMessage, id: Int): MessageObject {
+        val isOut = gMsg.role == "user"
+        val message = TLRPC.TL_message().apply {
+            this.id = id
+            peer_id = TLRPC.TL_peerUser().apply { user_id = Constants.GOMIN_AI_DIALOG_ID }
+            from_id = if (isOut) {
+                TLRPC.TL_peerUser().apply { user_id = UserConfig.getInstance(currentAccount).clientUserId }
+            } else {
+                TLRPC.TL_peerUser().apply { user_id = Constants.GOMIN_AI_DIALOG_ID }
+            }
+            this.message = gMsg.text
+            date = (gMsg.timestamp / 1000).toInt()
+            out = isOut
+            send_state = MessageObject.MESSAGE_SEND_STATE_SENT
+        }
+        
+        return MessageObject(currentAccount, message, true, true)
     }
 }

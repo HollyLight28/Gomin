@@ -3886,8 +3886,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                 
                 final long peerFinal = peer;
                 AndroidUtilities.runOnUIThread(() -> {
-                    ArrayList<MessageObject> objects = uz.unnarsx.cherrygram.chats.gemini.GominAiHistoryManager.INSTANCE.loadMessages(currentAccount);
-                    getNotificationCenter().postNotificationName(NotificationCenter.messagesDidLoad, peerFinal, objects.size(), objects, true, 0, 0, 0, 0, 0, true, 0, 0, 0, 0, 0);
+                    ArrayList<uz.unnarsx.cherrygram.chats.gemini.GominAiHistoryManager.GominMessage> raw = uz.unnarsx.cherrygram.chats.gemini.GominAiHistoryManager.INSTANCE.loadRawMessages();
+                    if (!raw.isEmpty()) {
+                        ArrayList<MessageObject> objects = new ArrayList<>();
+                        objects.add(uz.unnarsx.cherrygram.chats.gemini.GominAiHistoryManager.INSTANCE.createMessageObject(currentAccount, raw.get(raw.size() - 1), raw.size()));
+                        getNotificationCenter().postNotificationName(NotificationCenter.didReceiveNewMessages, peerFinal, objects, false, 0);
+                    }
                 });
                 
                 uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper.INSTANCE.queryAi(currentAccount, text);

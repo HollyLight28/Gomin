@@ -483,7 +483,7 @@ If є аб’юз — не пом’якшуй.
             temperature = CherrygramMessagesConfig.geminiTemperatureValue.toFloat() / 10f
             topK = 10
             topP = 0.5f
-            maxOutputTokens = 8192
+            maxOutputTokens = 16384
         }
 
         val safetySettings = arrayListOf(
@@ -526,7 +526,13 @@ If є аб’юз — не пом’якшуй.
                 
                 AndroidUtilities.runOnUIThread {
                     setTypingStatus(false)
-                    GominAiHistoryManager.addMessage("model", replyText)
+                    val gMsg = GominAiHistoryManager.addMessage("model", replyText)
+                    
+                    val raw = GominAiHistoryManager.loadRawMessages()
+                    val objects = ArrayList<MessageObject>()
+                    objects.add(GominAiHistoryManager.createMessageObject(currentAccount, gMsg, raw.size))
+                    NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.didReceiveNewMessages, Constants.GOMIN_AI_DIALOG_ID, objects, false, 0)
+                    
                     notifyChatUpdated(currentAccount)
                 }
             }
@@ -536,7 +542,13 @@ If є аб’юз — не пом’якшуй.
                 val errorMessage = t.message ?: "Невідома помилка мережі ШІ."
                 AndroidUtilities.runOnUIThread {
                     setTypingStatus(false)
-                    GominAiHistoryManager.addMessage("model", "Помилка запиту ШІ: $errorMessage\n\nБро, можливо твій API-ключ не підходить або модель перевантажена (код 429). Перевір налаштування! ☕")
+                    val gMsg = GominAiHistoryManager.addMessage("model", "Помилка запиту ШІ: $errorMessage\n\nБро, можливо твій API-ключ не підходить або модель перевантажена (код 429). Перевір налаштування! ☕")
+                    
+                    val raw = GominAiHistoryManager.loadRawMessages()
+                    val objects = ArrayList<MessageObject>()
+                    objects.add(GominAiHistoryManager.createMessageObject(currentAccount, gMsg, raw.size))
+                    NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.didReceiveNewMessages, Constants.GOMIN_AI_DIALOG_ID, objects, false, 0)
+                    
                     notifyChatUpdated(currentAccount)
                 }
             }
@@ -737,6 +749,11 @@ If є аб’юз — не пом’якшуй.
     }
 
     private fun notifyChatUpdated(currentAccount: Int) {
+        val activity = LaunchActivity.instance?.let { la ->
+            val stack = la.actionBarLayout?.fragmentStack
+            stack?.firstOrNull { it is ChatActivity && it.dialogId == Constants.GOMIN_AI_DIALOG_ID } as? ChatActivity
+        } ?: return
+
         val objects = GominAiHistoryManager.loadMessages(currentAccount)
         NotificationCenter.getInstance(currentAccount).postNotificationName(
             NotificationCenter.messagesDidLoad,
@@ -750,6 +767,7 @@ If є аб’юз — не пом’якшуй.
             0,
             0,
             true,
+            activity.classGuid,
             0,
             0,
             0,
@@ -778,9 +796,9 @@ If є аб’юз — не пом’якшуй.
         }
 
         if (isTyping) {
-            activity.actionBar?.setSubtitle("пише...")
+            activity.avatarContainer?.setSubtitle("пише...")
         } else {
-            activity.actionBar?.setSubtitle("$friendlyModelName • онлайн")
+            activity.avatarContainer?.setSubtitle("$friendlyModelName • онлайн")
         }
     }
 

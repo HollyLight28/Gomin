@@ -559,10 +559,13 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
     }
 
     public void openProfile(boolean byAvatar, boolean fromChatAnimation, boolean removeLast) {
+        TLRPC.User user = parentFragment.getCurrentUser();
+        if (user != null && user.id == uz.unnarsx.cherrygram.misc.Constants.GOMIN_AI_DIALOG_ID) {
+            return;
+        }
         if (byAvatar && (AndroidUtilities.isTablet() || AndroidUtilities.displaySize.x > AndroidUtilities.displaySize.y || !avatarImageView.getImageReceiver().hasNotThumb())) {
             byAvatar = false;
         }
-        TLRPC.User user = parentFragment.getCurrentUser();
         TLRPC.Chat chat = parentFragment.getCurrentChat();
         final boolean monoforum = chat != null && chat.monoforum;
         if (chat != null && chat.monoforum) {

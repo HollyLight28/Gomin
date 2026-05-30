@@ -257,9 +257,8 @@ public class AvatarDrawable extends Drawable {
         hasAdvancedGradient = false;
         hasGradient = false;
         if (avatarType == AVATAR_TYPE_GOMIN_AI) {
-            hasGradient = true;
-            color = 0xFF4E8DFF;
-            color2 = 0xFFB063FF;
+            hasGradient = false;
+            color = color2 = 0xFF000000;
         } else if (avatarType == AVATAR_TYPE_EBLAN) {
             hasGradient = true;
             color = getThemedColor(Theme.key_cgGradient1);
@@ -715,8 +714,12 @@ public class AvatarDrawable extends Drawable {
                 drawable = Theme.avatarDrawables[9];
             }
             if (drawable != null) {
-                final int w = (int) (drawable.getIntrinsicWidth() * scaleSize);
-                final int h = (int) (drawable.getIntrinsicHeight() * scaleSize);
+                float currentScale = scaleSize;
+                if (avatarType == AVATAR_TYPE_GOMIN_AI) {
+                    currentScale *= (size / (float) dp(108)) * 0.70f;
+                }
+                final int w = (int) (drawable.getIntrinsicWidth() * currentScale);
+                final int h = (int) (drawable.getIntrinsicHeight() * currentScale);
                 final int x = (size - w) / 2 + iconTx;
                 final int y = (size - h) / 2 + iconTy;
                 drawable.setBounds(x, y, x + w, y + h);

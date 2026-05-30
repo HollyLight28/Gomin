@@ -52,6 +52,7 @@ class GominShieldBottomSheet(
     private val rootLayout: LinearLayout
     private val scrollView: ScrollView
     private val textView: TextView
+    private val counterTextView: TextView
     private val loadingText: TextView
     private val loadingLayout: LinearLayout
     private val actionButton: ButtonWithCounterView
@@ -59,20 +60,21 @@ class GominShieldBottomSheet(
 
     private var analysisResult: String? = null
     private var updateProgressRunnable: Runnable? = null
+    private var messagesCount: Int = 0
 
     init {
         // Дозволяємо нативний скрол та свайп вниз для закриття
         setCanDismissWithSwipe(true)
         backgroundPaddingLeft = 0
         backgroundPaddingTop = 0
-        setApplyTopPadding(false)
+        setApplyTopPadding(true)
 
         val context = chatActivity.parentActivity
 
         // Головний контейнер вертикальної верстки
         rootLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(0, dp(16f), 0, dp(16f))
+            setPadding(0, dp(24f), 0, dp(16f))
             setBackgroundColor(getThemedColor(Theme.key_dialogBackground))
         }
 
@@ -82,13 +84,24 @@ class GominShieldBottomSheet(
             setPadding(dp(22f), 0, dp(22f), dp(12f))
         }
 
+        val titleContainer = FrameLayout(context)
+
         val headerTitle = TextView(context).apply {
             text = LocaleController.getString(R.string.CG_GominShield)
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20f)
             setTextColor(getThemedColor(Theme.key_dialogTextBlack))
             typeface = AndroidUtilities.bold()
         }
-        headerView.addView(headerTitle, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+        titleContainer.addView(headerTitle, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT or Gravity.CENTER_VERTICAL))
+
+        counterTextView = TextView(context).apply {
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
+            setTextColor(getThemedColor(Theme.key_dialogTextGray2))
+            visibility = View.GONE
+        }
+        titleContainer.addView(counterTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT or Gravity.CENTER_VERTICAL))
+
+        headerView.addView(titleContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
         val headerSubtitle = TextView(context).apply {
             text = "Аналіз діалогу з $partnerName"
@@ -115,7 +128,7 @@ class GominShieldBottomSheet(
 
         // Текстове поле для аналізу
         textView = TextView(context).apply {
-            setPadding(dp(22f), dp(8f), dp(22f), dp(16f))
+            setPadding(dp(22f), dp(8f), dp(22f), dp(40f)) // Збільшено нижній відступ
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f)
             setTextColor(getThemedColor(Theme.key_dialogTextBlack))
             setTextIsSelectable(true)
@@ -155,7 +168,7 @@ class GominShieldBottomSheet(
         loadingLayout.addView(disclaimerText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
         rootLayout.addView(loadingLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
-        rootLayout.addView(scrollView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(340f))) // Фіксуємо висоту скролу для нативності
+        rootLayout.addView(scrollView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(450f))) // Ще більше висоти для скролу
         scrollView.visibility = View.GONE
 
         // Контейнер кнопок знизу
@@ -217,11 +230,21 @@ class GominShieldBottomSheet(
         }
     }
 
-    fun initAnalysis() {
+    fun initAnalysis(count: Int = 0) {
+        this.messagesCount = count
+        if (count > 0) {
+            counterTextView.text = "$count реплік"
+            counterTextView.visibility = View.VISIBLE
+        }
         startAnalysis()
     }
 
     private fun startAnalysis() {
+        if (messagesCount > 0) {
+            counterTextView.text = "$messagesCount реплік"
+            counterTextView.visibility = View.VISIBLE
+        }
+        
         if (cachedResult != null) {
             loadingLayout.visibility = View.GONE
             scrollView.visibility = View.VISIBLE
@@ -316,6 +339,7 @@ class GominShieldBottomSheet(
                 val historyList = ArrayList<String>()
                 val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
                 
+                var actualCount = 0
                 for (i in 0 until messages.size) {
                     val mo = messages[i]
                     val messageOwner = mo.messageOwner
@@ -326,6 +350,7 @@ class GominShieldBottomSheet(
                         val sender = if (senderUser != null) UserObject.getUserName(senderUser) else "Невідомий"
                         val formattedTime = sdf.format(java.util.Date(messageOwner.date * 1000L))
                         historyList.add("[$formattedTime] $sender: $text")
+                        actualCount++
                     }
                 }
                 
@@ -345,7 +370,7 @@ class GominShieldBottomSheet(
                     // Оновлюємо текст в шторці та запускаємо аналіз
                     if (!bottomSheet.isDismissed) {
                         bottomSheet.historyText = finalHistoryText
-                        bottomSheet.initAnalysis()
+                        bottomSheet.initAnalysis(actualCount)
                     }
                 }
             }
