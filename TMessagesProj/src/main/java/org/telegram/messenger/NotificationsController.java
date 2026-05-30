@@ -3343,7 +3343,14 @@ public class NotificationsController extends BaseController {
                     }
                     if (soundIn == 0 && !soundInLoaded) {
                         soundInLoaded = true;
-                        int sound = CherrygramChatsConfig.INSTANCE.getNotificationSound() == CherrygramChatsConfig.NOTIF_SOUND_IOS ? R.raw.sound_in_ios : R.raw.sound_in;
+                        int sound;
+                        if (CherrygramChatsConfig.INSTANCE.getNotificationSound() == CherrygramChatsConfig.NOTIF_SOUND_GOMIN) {
+                            sound = R.raw.gomin_notif;
+                        } else if (CherrygramChatsConfig.INSTANCE.getNotificationSound() == CherrygramChatsConfig.NOTIF_SOUND_IOS) {
+                            sound = R.raw.sound_in_ios;
+                        } else {
+                            sound = R.raw.sound_in;
+                        }
                         soundIn = soundPool.load(ApplicationLoader.applicationContext, sound, 1);
                     }
                     if (soundIn != 0) {

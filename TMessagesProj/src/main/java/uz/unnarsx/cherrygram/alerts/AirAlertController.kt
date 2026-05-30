@@ -89,8 +89,8 @@ object AirAlertController {
 
             if (isStart) {
                 // Hardcoded 15 seconds alarm or until stopped
-                val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-                mediaPlayer = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, notification)
+                val soundRes = org.telegram.messenger.R.raw.gomin_siren
+                mediaPlayer = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, soundRes)
                 mediaPlayer?.isLooping = true
                 mediaPlayer?.start()
                 
@@ -101,8 +101,8 @@ object AirAlertController {
                 }, 15000)
             } else {
                 // Short beep for end
-                val notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                mediaPlayer = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, notification)
+                val soundRes = org.telegram.messenger.R.raw.gomin_cancel
+                mediaPlayer = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, soundRes)
                 mediaPlayer?.start()
             }
         } catch (e: Exception) {

@@ -25,9 +25,12 @@ import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
+import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.UserObject
+import org.telegram.messenger.Utilities
+import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.BottomSheet
 import org.telegram.ui.ActionBar.Theme
@@ -37,6 +40,7 @@ import org.telegram.ui.Components.RadialProgressView
 import org.telegram.ui.LaunchActivity
 import org.telegram.ui.Stories.recorder.ButtonWithCounterView
 import uz.unnarsx.cherrygram.misc.Constants
+import java.util.ArrayList
 
 class GominShieldBottomSheet(
     private val chatActivity: ChatActivity,
@@ -45,10 +49,11 @@ class GominShieldBottomSheet(
     private val cachedResult: String? = null
 ) : BottomSheet(chatActivity.parentActivity, false, chatActivity.resourceProvider) {
 
-    private val container: LinearLayout
+    private val rootLayout: LinearLayout
     private val scrollView: ScrollView
     private val textView: TextView
     private val loadingText: TextView
+    private val loadingLayout: LinearLayout
     private val actionButton: ButtonWithCounterView
     private val closeButton: ButtonWithCounterView
 
@@ -65,7 +70,7 @@ class GominShieldBottomSheet(
         val context = chatActivity.parentActivity
 
         // Головний контейнер вертикальної верстки
-        container = LinearLayout(context).apply {
+        rootLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(0, dp(16f), 0, dp(16f))
             setBackgroundColor(getThemedColor(Theme.key_dialogBackground))
@@ -93,13 +98,13 @@ class GominShieldBottomSheet(
         }
         headerView.addView(headerSubtitle, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
-        container.addView(headerView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+        rootLayout.addView(headerView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
         // Розділювальна тонка лінія
         val divider = View(context).apply {
             setBackgroundColor(getThemedColor(Theme.key_dialogShadowLine))
         }
-        container.addView(divider, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 1, 0f, 0f, 0f, 8f))
+        rootLayout.addView(divider, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 1, 0f, 0f, 0f, 8f))
 
         // Скрол для результату аналізу
         scrollView = ScrollView(context).apply {
@@ -120,7 +125,7 @@ class GominShieldBottomSheet(
         scrollView.addView(textView)
 
         // Контейнер для завантаження
-        val loadingLayout = LinearLayout(context).apply {
+        loadingLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
             setPadding(0, dp(40f), 0, dp(40f))
@@ -149,8 +154,8 @@ class GominShieldBottomSheet(
         }
         loadingLayout.addView(disclaimerText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
-        container.addView(loadingLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
-        container.addView(scrollView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(340f))) // Фіксуємо висоту скролу для нативності
+        rootLayout.addView(loadingLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+        rootLayout.addView(scrollView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(340f))) // Фіксуємо висоту скролу для нативності
         scrollView.visibility = View.GONE
 
         // Контейнер кнопок знизу
@@ -194,12 +199,14 @@ class GominShieldBottomSheet(
         }
         buttonLayout.addView(closeButton, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 48))
 
-        container.addView(buttonLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+        rootLayout.addView(buttonLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
-        setCustomView(container)
+        setCustomView(rootLayout)
 
-        // Запуск асинхронного аналізу
-        startAnalysis(loadingLayout)
+        // Запуск асинхронного аналізу ТІЛЬКИ якщо є історія
+        if (!TextUtils.isEmpty(historyText)) {
+            startAnalysis()
+        }
     }
 
     override fun dismiss() {
@@ -210,7 +217,11 @@ class GominShieldBottomSheet(
         }
     }
 
-    private fun startAnalysis(loadingLayout: LinearLayout) {
+    fun initAnalysis() {
+        startAnalysis()
+    }
+
+    private fun startAnalysis() {
         if (cachedResult != null) {
             loadingLayout.visibility = View.GONE
             scrollView.visibility = View.VISIBLE
@@ -296,21 +307,25 @@ class GominShieldBottomSheet(
             )
             bottomSheet.show()
             
-            // Завантажуємо останні 1000 повідомлень прямо з бази SQLite через новий безпечний метод
-            MessagesStorage.getInstance(currentAccount).getMessagesForGominShield(dialogId, 1000) { messages ->
+             // Завантажуємо останні 1000 повідомлень прямо з бази SQLite через новий безпечний метод
+            MessagesStorage.getInstance(currentAccount).getMessagesForGominShield(dialogId, 1000) { messages: ArrayList<MessageObject>? ->
+                if (chatActivity.parentActivity == null || chatActivity.parentActivity.isFinishing || messages == null) {
+                    return@getMessagesForGominShield
+                }
+                
                 val historyList = ArrayList<String>()
                 val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
                 
-                for (messageObject in messages) {
-                    if (messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.message != null) {
-                        val text = messageObject.messageOwner.message.trim()
-                        if (!android.text.TextUtils.isEmpty(text)) {
-                            val fromId = messageObject.messageOwner.from_id?.user_id ?: messageObject.messageOwner.peer_id?.user_id ?: 0L
-                            val senderUser = if (fromId != 0L) MessagesController.getInstance(currentAccount).getUser(fromId) else null
-                            val sender = if (senderUser != null) UserObject.getUserName(senderUser) else "Невідомий"
-                            val formattedTime = sdf.format(java.util.Date(messageObject.messageOwner.date * 1000L))
-                            historyList.add("[$formattedTime] $sender: $text")
-                        }
+                for (i in 0 until messages.size) {
+                    val mo = messages[i]
+                    val messageOwner = mo.messageOwner
+                    if (messageOwner != null && !TextUtils.isEmpty(messageOwner.message)) {
+                        val text = messageOwner.message.trim()
+                        val fromId = if (messageOwner.from_id != null) messageOwner.from_id.user_id else if (messageOwner.peer_id != null) messageOwner.peer_id.user_id else 0L
+                        val senderUser = if (fromId != 0L) MessagesController.getInstance(currentAccount).getUser(fromId) else null
+                        val sender = if (senderUser != null) UserObject.getUserName(senderUser) else "Невідомий"
+                        val formattedTime = sdf.format(java.util.Date(messageOwner.date * 1000L))
+                        historyList.add("[$formattedTime] $sender: $text")
                     }
                 }
                 
@@ -318,18 +333,23 @@ class GominShieldBottomSheet(
                 val finalHistoryText = historyList.joinToString("\n").trim()
                 
                 if (finalHistoryText.isEmpty()) {
-                    bottomSheet.dismiss()
-                    val builder = AlertDialog.Builder(chatActivity.parentActivity, chatActivity.resourceProvider)
-                    builder.setTitle(LocaleController.getString(R.string.CG_GominShield))
-                    builder.setMessage("Бро, у цьому чаті немає текстових повідомлень для аналізу!")
-                    builder.setPositiveButton("Зрозуміло", null)
-                    builder.show()
+                    if (!bottomSheet.isDismissed) {
+                        bottomSheet.dismiss()
+                        val builder = AlertDialog.Builder(chatActivity.parentActivity, chatActivity.resourceProvider)
+                        builder.setTitle(LocaleController.getString(R.string.CG_GominShield))
+                        builder.setMessage("Бро, у цьому чаті немає текстових повідомлень для аналізу!")
+                        builder.setPositiveButton("Зрозуміло", null)
+                        builder.show()
+                    }
                 } else {
                     // Оновлюємо текст в шторці та запускаємо аналіз
-                    bottomSheet.historyText = finalHistoryText
-                    bottomSheet.initAnalysis()
+                    if (!bottomSheet.isDismissed) {
+                        bottomSheet.historyText = finalHistoryText
+                        bottomSheet.initAnalysis()
+                    }
                 }
             }
+
         }
     }
 }

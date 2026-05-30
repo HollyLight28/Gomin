@@ -14058,45 +14058,60 @@ public class MessagesStorage extends BaseController {
                         }
                         cursor.dispose();
                         cursor = null;
-                        if (mediaCounts != null) {
-                            state = database.executeFast("REPLACE INTO media_counts_topics VALUES(?, ?, ?, ?, ?)");
-                            for (int c = 0, N3 = mediaCounts.size(); c < N3; c++) {
-                                int type = mediaCounts.keyAt(c);
-                                HashMap<TopicKey, Integer> value = mediaCounts.valueAt(c);
-                                Iterator<TopicKey> iterator = value.keySet().iterator();
-                                while (iterator.hasNext()) {
-                                    TopicKey topicKey = iterator.next();
-                                    int count = -1;
-                                    int old = 0;
-                                    cursor = database.queryFinalized(String.format(Locale.US, "SELECT count, old FROM media_counts_topics WHERE uid = %d AND topic_id = %d AND type = %d LIMIT 1", topicKey.dialogId, topicKey.topicId, type));
-                                    if (cursor.next()) {
-                                        count = cursor.intValue(0);
-                                        old = cursor.intValue(1);
-                                    }
-                                    cursor.dispose();
-                                    if (count != -1) {
-                                        state.requery();
-                                        count = Math.max(0, count - value.get(topicKey));
-                                        state.bindLong(1, topicKey.dialogId);
-                                        state.bindLong(2, topicKey.topicId);
-                                        state.bindInteger(3, type);
-                                        state.bindInteger(4, count);
-                                        state.bindInteger(5, old);
-                                        state.step();
-                                    }
-                                }
-                            }
-                            state.dispose();
-                            state = null;
-                        }
-                    }
-                    database.executeFast(String.format(Locale.US, "DELETE FROM media_v4 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-                    database.executeFast(String.format(Locale.US, "DELETE FROM media_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-                }
-                if (!savedMessagesByDialogs.isEmpty()) {
-                    AndroidUtilities.runOnUIThread(() -> getMessagesController().getSavedMessagesController().updateDeleted(savedMessagesByDialogs));
-                }
-                database.executeFast(String.format(Locale.US, "DELETE FROM messages_seq WHERE mid IN(%s)", ids)).stepThis().dispose();
+                     if (mediaCounts != null) {
+                             state = database.executeFast("REPLACE INTO media_counts_topics VALUES(?, ?, ?, ?, ?)");
+                             for (int c = 0, N3 = mediaCounts.size(); c < N3; c++) {
+                                 int type = mediaCounts.keyAt(c);
+                                 HashMap<TopicKey, Integer> value = mediaCounts.valueAt(c);
+                                 Iterator<TopicKey> iterator = value.keySet().iterator();
+                                 while (iterator.hasNext()) {
+                                     TopicKey topicKey = iterator.next();
+                                     int count = -1;
+                                     int old = 0;
+                                     cursor = database.queryFinalized(String.format(Locale.US, "SELECT count, old FROM media_counts_topics WHERE uid = %d AND topic_id = %d AND type = %d LIMIT 1", topicKey.dialogId, topicKey.topicId, type));
+                                     if (cursor.next()) {
+                                         count = cursor.intValue(0);
+                                         old = cursor.intValue(1);
+                                     }
+                                     cursor.dispose();
+                                     if (count != -1) {
+                                         state.requery();
+                                         count = Math.max(0, count - value.get(topicKey));
+                                         state.bindLong(1, topicKey.dialogId);
+                                         state.bindLong(2, topicKey.topicId);
+                                         state.bindInteger(3, type);
+                                         state.bindInteger(4, count);
+                                         state.bindInteger(5, old);
+                                         state.step();
+                                     }
+                                 }
+                             }
+                             state.dispose();
+                             state = null;
+                         }
+                     }
+                     if (!mids.isEmpty()) {
+                        database.executeFast(String.format(Locale.US, "DELETE FROM media_v4 WHERE mid IN(%s) AND uid = %d", idsStr, did)).stepThis().dispose();
+                        database.executeFast(String.format(Locale.US, "DELETE FROM media_topics WHERE mid IN(%s) AND uid = %d", idsStr, did)).stepThis().dispose();
+                     }
+                 }
+                 if (!savedMessagesByDialogs.isEmpty()) {
+                     AndroidUtilities.runOnUIThread(() -> getMessagesController().getSavedMessagesController().updateDeleted(savedMessagesByDialogs));
+                 }
+                 
+                 // Потрібна агрегація всіх РЕАЛЬНО видалених повідомлень для messages_seq
+                 StringBuilder deletedIds = new StringBuilder();
+                 for (int a = 0; a < messagesByDialogs.size(); a++) {
+                     ArrayList<Integer> midsList = messagesByDialogs.valueAt(a);
+                     for (int b = 0; b < midsList.size(); b++) {
+                         if (deletedIds.length() > 0) deletedIds.append(",");
+                         deletedIds.append(midsList.get(b));
+                     }
+                 }
+                 if (deletedIds.length() > 0) {
+                    database.executeFast(String.format(Locale.US, "DELETE FROM messages_seq WHERE mid IN(%s)", deletedIds.toString())).stepThis().dispose();
+                 }
+
                 if (!unknownMessages.isEmpty()) {
                     if (dialogId == 0) {
                         database.executeFast("UPDATE media_counts_v2 SET old = 1 WHERE 1").stepThis().dispose();

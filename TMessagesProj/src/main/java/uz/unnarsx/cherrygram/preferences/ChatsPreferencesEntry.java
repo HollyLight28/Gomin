@@ -125,11 +125,25 @@ public class ChatsPreferencesEntry extends UniversalFragment {
             showNotificationSoundSelector(() -> {
                 SettingsHelper.updateButtonValue(view, getNotificationSoundValue());
 
-                int tone = (CherrygramChatsConfig.INSTANCE.getNotificationSound() == CherrygramChatsConfig.NOTIF_SOUND_DEFAULT) ? R.raw.sound_in : R.raw.sound_in_ios;
-                try {
-                    MediaPlayer mp = MediaPlayer.create(getContext(), tone);
-                    mp.start();
-                } catch (Exception ignored) {}
+                int tone = 0;
+                int selectedSound = CherrygramChatsConfig.INSTANCE.getNotificationSound();
+                if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN) {
+                    tone = R.raw.gomin_notif;
+                } else if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_DEFAULT) {
+                    tone = R.raw.sound_in;
+                } else if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_IOS) {
+                    tone = R.raw.sound_in_ios;
+                }
+
+                if (tone != 0) {
+                    try {
+                        MediaPlayer mp = MediaPlayer.create(getContext(), tone);
+                        if (mp != null) {
+                            mp.setOnCompletionListener(MediaPlayer::release);
+                            mp.start();
+                        }
+                    } catch (Exception ignored) {}
+                }
 
                 CGBulletinCreator.INSTANCE.createRestartBulletin(this);
             });
@@ -333,6 +347,7 @@ public class ChatsPreferencesEntry extends UniversalFragment {
 
     private String getNotificationSoundValue() {
         return switch (CherrygramChatsConfig.INSTANCE.getNotificationSound()) {
+            case CherrygramChatsConfig.NOTIF_SOUND_GOMIN -> "Гомін";
             case CherrygramChatsConfig.NOTIF_SOUND_DEFAULT -> getString(R.string.Default);
             case CherrygramChatsConfig.NOTIF_SOUND_IOS -> "iOS";
             default -> getString(R.string.PopupDisabled);
@@ -345,6 +360,9 @@ public class ChatsPreferencesEntry extends UniversalFragment {
 
         configStringKeys.add(getString(R.string.PopupDisabled));
         configValues.add(CherrygramChatsConfig.NOTIF_SOUND_DISABLE);
+
+        configStringKeys.add("Гомін");
+        configValues.add(CherrygramChatsConfig.NOTIF_SOUND_GOMIN);
 
         configStringKeys.add(getString(R.string.Default));
         configValues.add(CherrygramChatsConfig.NOTIF_SOUND_DEFAULT);

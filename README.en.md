@@ -39,12 +39,13 @@ Zero marketing fluff. Here is the exact set of features built into Gomin that ar
 We wanted to make the user interface as clean, high-contrast, and elegant as possible:
 * **Pure Black & White Contrast**: No gradients, transitions, or system palette adaptation. Only a deep, pure OLED black background and crystal-clear white accents. This is Black Edition — an uncompromising premium design that relieves eye strain during night reading and saves precious battery life on your device.
 
-### 👻 Quad-Layer Gomin Ghost Mode (Stealth Security)
+### 👻 Penta-Layer Gomin Ghost Mode (Stealth Security)
 Your digital presence is your personal space. Stay in the shadows whenever you need to:
 * **Unread Messages Guard**: Read incoming chats in full secrecy. Messages remain marked as "unread" on the server until you reply or manually sync.
 * **Typing Indicator Mask**: Completely hides your "typing..." or "recording voice..." status. Take your time composing a reply without pressure.
 * **Invisible Stories Viewer**: Watch public and personal Stories without leaving a single trace in the viewers list.
 * **Offline Presence Lock**: Chat with others while your global status remains permanently "offline".
+* **🛡️ Anti-Delete Guard**: Keep incoming messages even if the sender deletes them for everyone. "Ghost" deleted messages are marked with a subtle 🗑️ icon next to the message timestamp.
 
 ### 🚨 Gomin Air Alert (Integrated Civil Defense Siren)
 Gomin is built with deep care for the safety of our users. We have integrated the official civil defense alert system directly into the core engine:
@@ -83,10 +84,11 @@ Gomin is just getting started. Here is our honest development plan, which we wil
 
 - [x] Full removal of old legacy references, interface clean-up, and flat Gomin settings.
 - [x] Implementation of the 12-thread network booster and Shelter-Mode.
-- [x] Rock-solid 4-layer Ghost Mode.
+- [x] Rock-solid 5-layer Ghost Mode.
 - [x] Automatic message deletion for all participants by default.
 - [x] Integration of adaptive launcher icons (Adaptive Icons) with a gorgeous white bird on a blue background (#2AABEE) and perfect outline borders.
 - [x] **Gomin AI & Gomin Shield**: Interactive virtual Gemini assistant chat, model settings selector, clear history actions, and premium gaslighting profiler with pre-seeded context bridging.
+- [x] **Anti-Delete**: Secure interception and preservation of messages deleted by interlocutors, complete with a visual 🗑️ marker indicator.
 - [ ] **Gomin Drive**: A native, ultra-clean personal cloud workspace inside "Saved Messages" using the `MediaActivity` layout to manage files without hacks or hashtags.
 
 ---
