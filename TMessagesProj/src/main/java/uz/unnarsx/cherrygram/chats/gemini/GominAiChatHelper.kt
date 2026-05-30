@@ -23,6 +23,7 @@ import com.google.common.util.concurrent.Futures
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLog
+import org.telegram.messenger.MessageObject
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.LocaleController

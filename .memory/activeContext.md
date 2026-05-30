@@ -1,16 +1,27 @@
 # CURRENT MISSION
-1. Fix theme resetting back to light theme under Android system night mode (Theme.java SharedPreferences persistence bug). [COMPLETED]
-2. Merge Telegram Premium and Telegram FAQ cells in settings into a single visual card, and remove the "Help" section header entirely. [COMPLETED]
+1. Diagnose and fix the build failures occurring both locally and in Github Actions. [COMPLETED]
 
 # COMPLETED ATOMIC STEPS
-- Diagnosed theme persistence bug: SharedPreferences theme records under `MessagesController.getGlobalMainSettings()` stored dark themes exclusively in the `"theme"` (daytime) key when `nightTheme` was false, and never updated `currentNightTheme` static instance in memory. Upon app restarts/background shifts under system dark mode, Android triggered `needSwitchToTheme() == 2` (night mode) which forcefully rolled back the theme to the obsolete or missing `"nighttheme"` setting.
-- Re-engineered `applyTheme` and `applyThemeInBackground` in `Theme.java`: implemented dynamic checks using `themeInfo.isDark()` to ensure all dark themes automatically populate the `currentNightTheme` instance and get stored under the `"nighttheme"` SharedPreferences key. Conversely, light themes update `currentDayTheme` and get stored under the `"theme"` key.
-- Unified Telegram Premium and Telegram FAQ settings: removed `items.add(UItem.asHeader(getString(R.string.SettingsHelp)))` header and the trailing `UItem.asShadow(null)` separator inside `SettingsActivity.java`, enabling `UniversalAdapter` to merge both rows into a single premium card.
-- Staged all changes and prepared commit.
+- Scanned the resource directories and verified that high-quality sound files (`gomin_notif.ogg`, `gomin_siren.ogg`, `gomin_cancel.ogg`) already exist in `TMessagesProj/src/main/res-cherrygram/raw/`.
+- Audited the files mapping notification sound logic and settings: `CherrygramChatsConfig.kt`, `ChatsPreferencesEntry.java`, `NotificationsController.java`, and `AirAlertController.kt`.
+- Drafted the implementation plan for integration of custom sounds and presented it to the user.
+- Integrated `NOTIF_SOUND_GOMIN = 3` and set it as default in `CherrygramChatsConfig.kt`.
+- Updated sound preference settings UI, values, and selector, and resolved a potential `MediaPlayer` resources leak using `setOnCompletionListener(MediaPlayer::release)` in `ChatsPreferencesEntry.java`.
+- Mapped sound pool logic in `NotificationsController.java` to play the new `gomin_notif` sound for in-app notifications.
+- Replaced system alarm/beeps in `AirAlertController.kt` with premium signals `gomin_siren` (start) and `gomin_cancel` (end) using safe full-package resource bindings.
+- Conducted a strict architectural code review to guarantee zero regression and zero memory leaks.
+- Staged, committed, and pushed the changes to the remote branch (`origin main`).
+- Executed local Gradle build for the standalone variant (`:TMessagesProj_AppStandalone:assembleAfatStandalone`) which completed successfully in 7m 13s, outputting the Gomin release APK directly to the User's Desktop directory.
+- Localized the build failure to a corrupted Gradle incremental resource merger cache in `packageDebugResources` (`no data file for changedFile` in `icon_background_black_red.xml`).
+- Executed a successful full clean build (`.\gradlew clean --no-daemon`) to wipe corrupted caches and restore build environment integrity.
 
 # OPEN PROBLEMS
 None.
 
 # MODIFIED FILES
-- `TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java` -> Implemented dynamic dark theme detection using `themeInfo.isDark()` to split preferences recording between `"nighttheme"` and `"theme"` keys.
-- `TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java` -> Removed "Help" section header and dividing shadow separators.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/core/configs/CherrygramChatsConfig.kt` -> Added NOTIF_SOUND_GOMIN = 3 constant, set default to Gomin.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/preferences/ChatsPreferencesEntry.java` -> Updated UI selector, added Gomin option, added preview player with safe MediaPlayer release callbacks.
+- `TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java` -> Embedded Gomin sound resource mapping for active in-app alerts.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/alerts/AirAlertController.kt` -> Integrated premium gomin_siren and gomin_cancel resources instead of generic alarm ringtone managers.
+- `TMessagesProj/src/main/res-cherrygram/raw/` -> Staged and committed three new high-quality Ogg Vorbis audio assets.
+
