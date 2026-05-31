@@ -42,28 +42,37 @@ object AirAlertController {
         timer = null
     }
 
-    private fun checkAlertStatus() {
+    fun checkAlertStatus(callback: ((Boolean) -> Unit)? = null) {
         val regionId = CherrygramCoreConfig.airAlertRegionId
-        if (regionId.isEmpty()) return
+        if (regionId.isEmpty()) {
+            callback?.invoke(false)
+            return
+        }
 
-        try {
-            val url = URL("http://204.168.201.148:5000/status?region_id=$regionId")
-            val connection = url.openConnection() as HttpURLConnection
-            connection.requestMethod = "GET"
-            connection.connectTimeout = 5000
-            connection.readTimeout = 5000
+        Utilities.globalQueue.postRunnable {
+            try {
+                val url = URL("http://204.168.201.148:5000/status?region_id=$regionId")
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                connection.connectTimeout = 5000
+                connection.readTimeout = 5000
 
-            if (connection.responseCode == 200) {
-                val response = connection.inputStream.bufferedReader().use { it.readText() }
-                val jsonObject = org.json.JSONObject(response)
-                val hasAirAlert = jsonObject.optBoolean("alert", false)
-                
-                AndroidUtilities.runOnUIThread {
-                    setAlertStatus(hasAirAlert)
+                if (connection.responseCode == 200) {
+                    val response = connection.inputStream.bufferedReader().use { it.readText() }
+                    val jsonObject = org.json.JSONObject(response)
+                    val hasAirAlert = jsonObject.optBoolean("alert", false)
+                    
+                    AndroidUtilities.runOnUIThread {
+                        setAlertStatus(hasAirAlert)
+                        callback?.invoke(hasAirAlert)
+                    }
+                } else {
+                    AndroidUtilities.runOnUIThread { callback?.invoke(isAlertActive) }
                 }
+            } catch (e: Exception) {
+                FileLog.e(e)
+                AndroidUtilities.runOnUIThread { callback?.invoke(isAlertActive) }
             }
-        } catch (e: Exception) {
-            FileLog.e(e)
         }
     }
 

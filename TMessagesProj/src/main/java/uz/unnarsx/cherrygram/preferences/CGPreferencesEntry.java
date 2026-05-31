@@ -28,6 +28,8 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.UserCell;
+import org.telegram.ui.Components.Bulletin;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.UItem;
 import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.ui.Components.UniversalFragment;
@@ -101,6 +103,7 @@ public class CGPreferencesEntry extends UniversalFragment {
     private final int airAlertApiKeyRow = 71;
     private final int airAlertRegionRow = 72;
     private final int airAlertTestRow = 73;
+    private final int airAlertCheckStatusRow = 74;
 
     @Override
     protected CharSequence getTitle() {
@@ -149,6 +152,7 @@ public class CGPreferencesEntry extends UniversalFragment {
         if (CherrygramCoreConfig.INSTANCE.getAirAlertEnabled()) {
             String regionName = CherrygramCoreConfig.INSTANCE.getAirAlertRegionName();
             items.add(UItem.asButton(airAlertRegionRow, getString(R.string.CP_AirAlert_Region), regionName.isEmpty() ? getString(R.string.NotSet) : regionName));
+            items.add(UItem.asButton(airAlertCheckStatusRow, "Перевірити поточний статус", null));
             items.add(UItem.asButton(airAlertTestRow, getString(R.string.CP_AirAlert_Test), null));
         }
         items.add(UItem.asShadow(getString(R.string.CP_AirAlert_Instruction)));
@@ -308,6 +312,13 @@ public class CGPreferencesEntry extends UniversalFragment {
             });
         } else if (item.id == airAlertTestRow) {
             AirAlertController.INSTANCE.testAlert();
+        } else if (item.id == airAlertCheckStatusRow) {
+            AirAlertController.INSTANCE.checkAlertStatus(active -> {
+                if (getParentActivity() == null) return kotlin.Unit.INSTANCE;
+                String message = active ? "🚨 ТРИВОГА!" : "✅ Все спокійно";
+                BulletinFactory.of(this).createSimpleBulletin(active ? R.raw.alert : R.raw.contact_check, message).show();
+                return kotlin.Unit.INSTANCE;
+            });
         } else if (item.id == downloadSpeedBoostRow) {
             showDownloadSpeedBoostSelector(() -> SettingsHelper.updateButtonValue(view, getDownloadSpeedBoostValue()));
         } else if (item.id == uploadSpeedBoostRow) {
