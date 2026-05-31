@@ -16,7 +16,8 @@
 - Executed local Gradle build for the standalone variant (`:TMessagesProj_AppStandalone:assembleAfatStandalone`) which completed successfully in 7m 13s, outputting the Gomin release APK directly to the User's Desktop directory.
 - Localized the build failure to a corrupted Gradle incremental resource merger cache in `packageDebugResources` (`no data file for changedFile` in `icon_background_black_red.xml`).
 - Executed a successful full clean build (`.\gradlew clean --no-daemon`) to wipe corrupted caches and restore build environment integrity.
-- Fixed a compilation error in `GominBlackEditionActivity.kt` (line 61) by replacing `Activity.MODE_PRIVATE` with `Context.MODE_PRIVATE` to resolve the missing Activity class import, fixing the Github Actions build.
+- Fixed a compilation error in `GominBlackEditionActivity.kt` (line 61) by replacing `Activity.MODE_PRIVATE` with `Context.MODE_PRIVATE` to resolve the missing Activity class import, and added the missing `ApplicationLoader` import to fix compileStandaloneKotlin tasks.
+- Resolved an `Overload resolution ambiguity` compile failure in Kotlin by identifying and removing a duplicate `setCurrentNightTheme` setter method in `Theme.java` (lines 10826-10828), which had clean field overrides without active day/night theme updates.
 - Fixed the anti-delete message behavior in `MessagesStorage.java` (in `deleteDialog` and `markMessagesAsDeletedInternal`). Allowed saving outbound messages (`out != 0`) as ghost-messages when deletion is triggered from server/partner updates (`fromServer = true`) or when deleting the whole dialog, preserving complete dialogue context.
 - Optimized Gomin Shield's `MessagesStorage.getInstance(currentAccount).getMessagesForGominShield(dialogId, 1500)` in `GominShieldBottomSheet.kt` (line 337) to load 1500 messages instead of 3000 to improve AI generation speed and save tokens.
 
@@ -29,7 +30,8 @@ None.
 - `TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java` -> Embedded Gomin sound resource mapping for active in-app alerts.
 - `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/alerts/AirAlertController.kt` -> Integrated premium gomin_siren and gomin_cancel resources instead of generic alarm ringtone managers.
 - `TMessagesProj/src/main/res-cherrygram/raw/` -> Staged and committed three new high-quality Ogg Vorbis audio assets.
-- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/preferences/GominBlackEditionActivity.kt` -> Replaced Activity.MODE_PRIVATE with Context.MODE_PRIVATE to resolve compilation errors.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/preferences/GominBlackEditionActivity.kt` -> Replaced Activity.MODE_PRIVATE with Context.MODE_PRIVATE and added missing imports.
 - `TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java` -> Modified deleteDialog and markMessagesAsDeletedInternal to preserve outbound messages on remote deletion.
 - `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/chats/gemini/GominShieldBottomSheet.kt` -> Changed getMessagesForGominShield limit from 3000 to 1500.
+- `TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java` -> Removed duplicate setter for night theme to fix overload ambiguity.
 

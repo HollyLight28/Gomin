@@ -10823,10 +10823,6 @@ public class Theme {
         currentDayTheme = themeInfo;
     }
 
-    public static void setCurrentNightTheme(ThemeInfo themeInfo) {
-        currentNightTheme = themeInfo;
-    }
-
     public interface Colorable {
         public void updateColors();
     }
