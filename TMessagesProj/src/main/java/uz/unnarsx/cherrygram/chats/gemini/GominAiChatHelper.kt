@@ -824,6 +824,9 @@ If є аб’юз — не пом’якшуй.
     // --- Gemini Live Voice Chat Integration ---
     private var liveManager: GominLiveManager? = null
     private var liveGlowView: GominLiveEdgeGlowView? = null
+    private var isTranscriptionActive = false
+
+    fun isTranscriptionActive(): Boolean = isTranscriptionActive
 
     fun attachLiveHook(activity: ChatActivity) {
         if (activity.dialogId != Constants.GOMIN_AI_DIALOG_ID) return
@@ -831,6 +834,76 @@ If є аб’юз — не пом’якшуй.
         val avatarContainer = activity.avatarContainer ?: return
         avatarContainer.setOnClickListener {
             toggleLiveSession(activity)
+        }
+        
+        attachTranscriptionHook(activity)
+    }
+
+    private fun attachTranscriptionHook(activity: ChatActivity) {
+        val enterView = activity.chatActivityEnterView ?: return
+        val attachButton = enterView.attachButton ?: return
+        
+        attachButton.setOnLongClickListener {
+            toggleTranscriptionSession(activity)
+            true
+        }
+    }
+
+    fun toggleTranscriptionSession(activity: ChatActivity) {
+        val context = activity.parentActivity ?: ApplicationLoader.applicationContext
+        
+        if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            if (activity.parentActivity != null) {
+                androidx.core.app.ActivityCompat.requestPermissions(
+                    activity.parentActivity,
+                    arrayOf(android.Manifest.permission.RECORD_AUDIO),
+                    101
+                )
+            }
+            return
+        }
+
+        if (liveManager != null) {
+            stopLiveSession()
+        } else {
+            startTranscriptionSession(activity)
+        }
+    }
+
+    private fun startTranscriptionSession(activity: ChatActivity) {
+        val parentActivity = activity.parentActivity ?: return
+        val enterView = activity.chatActivityEnterView ?: return
+        
+        // 1. Tactile feedback
+        enterView.attachButton?.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
+
+        // 2. Setup Manager with Text Callback
+        val manager = GominLiveManager(
+            GominLiveEdgeGlowView(parentActivity),
+            isTranscriptionMode = true,
+            onTextReceived = { text ->
+                AndroidUtilities.runOnUIThread {
+                    val field = enterView.editField ?: return@runOnUIThread
+                    val currentText = field.text.toString()
+                    if (currentText.isNotEmpty() && !currentText.endsWith(" ")) {
+                        field.append(" ")
+                    }
+                    field.append(text)
+                }
+            },
+            onConnectionClosed = {
+                stopLiveSession()
+            }
+        )
+        
+        liveManager = manager
+        
+        try {
+            manager.startSession()
+            activity.avatarContainer?.setSubtitle("голос -> текст...")
+        } catch (e: Exception) {
+            FileLog.e(e)
+            stopLiveSession()
         }
     }
 
@@ -870,9 +943,9 @@ If є аб’юз — не пом’якшуй.
         rootLayout.addView(glowView)
 
         // 2. Instantiate Audio Pipeline Manager
-        val manager = GominLiveManager(glowView) {
+        val manager = GominLiveManager(glowView, onConnectionClosed = {
             stopLiveSession()
-        }
+        })
         liveManager = manager
 
         // 3. Bind tap anywhere on overlay to close session
