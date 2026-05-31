@@ -5107,6 +5107,7 @@ public class Theme {
                 autoNightLocationLongitude = 10000;
             }
             autoNightLastSunCheckDay = preferences.getInt("autoNightLastSunCheckDay", -1);
+            isInNigthMode = preferences.getBoolean("isInNigthMode", false);
         } catch (Exception e) {
             FileLog.e(e);
             throw new RuntimeException(e);
@@ -5207,6 +5208,7 @@ public class Theme {
         editor.putLong("autoNightLocationLatitude3", Double.doubleToRawLongBits(autoNightLocationLatitude));
         editor.putLong("autoNightLocationLongitude3", Double.doubleToRawLongBits(autoNightLocationLongitude));
         editor.putInt("autoNightLastSunCheckDay", autoNightLastSunCheckDay);
+        editor.putBoolean("isInNigthMode", isInNigthMode);
         if (currentNightTheme != null) {
             editor.putString("nighttheme", currentNightTheme.getKey());
         } else {
@@ -7329,7 +7331,7 @@ public class Theme {
                     return 2;
             }
         } else if (selectedAutoNightType == AUTO_NIGHT_TYPE_NONE) {
-            return 1;
+            return isInNigthMode ? 2 : 1;
         }
         return 0;
     }
@@ -7386,6 +7388,7 @@ public class Theme {
                 switchingNightTheme = true;
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, currentNightTheme, true, null, -1);
                 switchingNightTheme = false;
+                saveAutoNightThemeConfig();
             }
         } else {
             if (currentTheme != currentDayTheme && (currentTheme == null || currentDayTheme != null && currentTheme.isDark() != currentDayTheme.isDark())) {
@@ -7394,6 +7397,7 @@ public class Theme {
                 switchingNightTheme = true;
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, currentDayTheme, true, null, -1);
                 switchingNightTheme = false;
+                saveAutoNightThemeConfig();
             }
         }
     }
@@ -10808,6 +10812,19 @@ public class Theme {
             saveAutoNightThemeConfig();
             cancelAutoNightThemeCallbacks();
         }
+    }
+
+    public static void setManualNightMode(boolean night) {
+        isInNigthMode = night;
+        saveAutoNightThemeConfig();
+    }
+
+    public static void setCurrentDayTheme(ThemeInfo themeInfo) {
+        currentDayTheme = themeInfo;
+    }
+
+    public static void setCurrentNightTheme(ThemeInfo themeInfo) {
+        currentNightTheme = themeInfo;
     }
 
     public interface Colorable {

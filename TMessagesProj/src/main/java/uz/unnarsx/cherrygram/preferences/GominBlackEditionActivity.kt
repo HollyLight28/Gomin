@@ -58,6 +58,33 @@ class GominBlackEditionActivity : UniversalFragment() {
             val wasActive = Theme.getActiveTheme().isMonet()
             val newActive = !wasActive
             
+            val themeConfig = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE)
+            val editor = themeConfig.edit()
+            
+            if (newActive) {
+                // Save current themes before switching to Monet
+                val currentDay = themeConfig.getString("theme", "Blue")
+                val currentNight = themeConfig.getString("nighttheme", "Night")
+                if (currentDay != "Monet Light") editor.putString("pre_monet_day", currentDay)
+                if (currentNight != "Monet AMOLED") editor.putString("pre_monet_night", currentNight)
+                
+                editor.putString("lastDayTheme", "Monet Light")
+                editor.putString("lastDarkTheme", "Monet AMOLED")
+                
+                Theme.getTheme("Monet Light")?.let { Theme.setCurrentDayTheme(it) }
+                Theme.getTheme("Monet AMOLED")?.let { Theme.setCurrentNightTheme(it) }
+            } else {
+                val oldDay = themeConfig.getString("pre_monet_day", "Day")
+                val oldNight = themeConfig.getString("pre_monet_night", "Night")
+                
+                editor.putString("lastDayTheme", oldDay)
+                editor.putString("lastDarkTheme", oldNight)
+                
+                Theme.getTheme(oldDay)?.let { Theme.setCurrentDayTheme(it) }
+                Theme.getTheme(oldNight)?.let { Theme.setCurrentNightTheme(it) }
+            }
+            editor.apply()
+
             val targetThemeName = if (newActive) {
                 if (Theme.isCurrentThemeDark()) "Monet AMOLED" else "Monet Light"
             } else {

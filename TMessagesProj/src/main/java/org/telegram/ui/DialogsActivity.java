@@ -13408,11 +13408,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 switchingTheme = true;
                 SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE);
                 String dayThemeName = preferences.getString("lastDayTheme", "Blue");
-                if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark() || Theme.getTheme(dayThemeName).isMonet()) {
+                if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark()) {
                     dayThemeName = "Blue";
                 }
                 String nightThemeName = preferences.getString("lastDarkTheme", "Night");
-                if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark() || Theme.getTheme(nightThemeName).isMonet()) {
+                if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark()) {
                     nightThemeName = "Night";
                 }
                 Theme.ThemeInfo themeInfo = Theme.getActiveTheme();
@@ -13444,6 +13444,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 Theme.turnOffAutoNight(BulletinFactory.of(this), () -> {
                     presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_NIGHT));
                 });
+                Theme.setManualNightMode(toDark);
             });
             io.addGap();
             io.add(R.drawable.outline_groups_24, getString(R.string.NewGroup), () -> {
