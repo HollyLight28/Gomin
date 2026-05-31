@@ -19,6 +19,7 @@ import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLog
 import uz.unnarsx.cherrygram.core.configs.CherrygramMessagesConfig
+import uz.unnarsx.cherrygram.alerts.AirAlertController
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
@@ -401,7 +402,7 @@ class GominLiveManager(
                             val responseData = JSONObject()
                             if (name == "get_air_alerts") {
                                 val alertsStatus = try {
-                                    if (uz.unnarsx.cherrygram.alerts.AirAlertController.isAlertActive()) {
+                                    if (AirAlertController.isAlertActive()) {
                                         "Наразі в Україні оголошено повітряну тривогу в деяких регіонах. Ситуація під контролем."
                                     } else {
                                         "Наразі повітряних тривог в Україні немає. Все спокійно."
