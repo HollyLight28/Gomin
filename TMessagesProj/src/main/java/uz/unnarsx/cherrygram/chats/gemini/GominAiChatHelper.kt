@@ -838,13 +838,12 @@ If є аб’юз — не пом’якшуй.
         avatarContainer.setOnClickListener {
             toggleLiveSession(activity)
         }
-        
-        attachTranscriptionHook(activity)
     }
 
-    private fun attachTranscriptionHook(activity: ChatActivity) {
-        val enterView = activity.chatActivityEnterView ?: return
-        val attachButton = enterView.attachButton ?: return
+    fun attachTranscriptionHook(activity: ChatActivity) {
+        if (activity.dialogId != Constants.GOMIN_AI_DIALOG_ID) return
+        val enterView = activity.getChatActivityEnterView() ?: return
+        val attachButton = enterView.getAttachButton() ?: return
         
         attachButton.setOnLongClickListener {
             toggleTranscriptionSession(activity)
@@ -886,7 +885,7 @@ If є аб’юз — не пом’якшуй.
             isTranscriptionMode = true,
             onTextReceived = { text ->
                 AndroidUtilities.runOnUIThread {
-                    val field = enterView.editField ?: return@runOnUIThread
+                    val field = enterView.getEditField() ?: return@runOnUIThread
                     val currentText = field.text.toString()
                     if (currentText.isNotEmpty() && !currentText.endsWith(" ")) {
                         field.append(" ")
