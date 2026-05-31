@@ -510,7 +510,7 @@ If є аб’юз — не пом’якшуй.
         val isShieldMode = activeShieldContext != null && activeShieldHistory != null
 
         val contents = prepareTurns(
-            systemPrompt = CherrygramMessagesConfig.geminiSystemPrompt ?: "",
+            systemPrompt = if (isShieldMode) shieldSystemPrompt else (CherrygramMessagesConfig.geminiSystemPrompt ?: ""),
             history = historyExcludingLast,
             newQuery = newUserText,
             isShieldMode = isShieldMode,

@@ -4764,8 +4764,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         floatingButtonStories.setOnClickListener(v -> openStoriesRecorder());
         contentView.addView(floatingButtonStories, FragmentFloatingButton.createSubButtonLayoutParams());
 
-        floatingButtonAi = new FragmentFloatingButton(context, resourceProvider, true, true);
-        floatingButtonAi.setImageResource(R.drawable.lucide_sparkles);
+        floatingButtonAi = new FragmentFloatingButton(context, resourceProvider, true, false);
+        floatingButtonAi.setImageResource(R.drawable.gomin_bird);
         floatingButtonAi.setOnClickListener(v -> {
             Bundle args = new Bundle();
             args.putLong("user_id", Constants.GOMIN_AI_DIALOG_ID);
@@ -8831,21 +8831,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         final float baseTranslationY = top
             - floatingButtonPanOffset;
 
-        if (floatingButton3 != null) {
-            floatingButton3.setTranslationY(baseTranslationY - floatingButtonsOffset);
-        }
-
-        FoldersHelper.INSTANCE.updateFoldersOffset(this, onlySelect);
-
         if (floatingButtonStories != null) {
-            floatingButtonStories.setTranslationY(baseTranslationY - dp(52) - floatingButtonsOffset);
+            floatingButtonStories.setTranslationY(baseTranslationY - floatingButtonsOffset);
             if (storyHint != null) {
-                storyHint.setTranslationY(baseTranslationY - dp(52) - floatingButtonsOffset);
+                storyHint.setTranslationY(baseTranslationY - floatingButtonsOffset);
             }
         }
 
         if (floatingButtonAi != null) {
-            floatingButtonAi.setTranslationY(baseTranslationY - dp(104) - floatingButtonsOffset);
+            floatingButtonAi.setTranslationY(baseTranslationY - (storiesEnabled ? dp(52) : 0) - floatingButtonsOffset);
+        }
+
+        if (floatingButton3 != null) {
+            floatingButton3.setTranslationY(baseTranslationY - (storiesEnabled ? dp(104) : dp(52)) - floatingButtonsOffset);
         }
     }
 

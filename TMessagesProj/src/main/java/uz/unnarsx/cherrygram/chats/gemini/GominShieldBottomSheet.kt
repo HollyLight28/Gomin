@@ -168,7 +168,7 @@ class GominShieldBottomSheet(
         loadingLayout.addView(disclaimerText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
         rootLayout.addView(loadingLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
-        rootLayout.addView(scrollView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(450f))) // Ще більше висоти для скролу
+        rootLayout.addView(scrollView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 0f, 0f, 0f))
         scrollView.visibility = View.GONE
 
         // Контейнер кнопок знизу
@@ -322,16 +322,19 @@ class GominShieldBottomSheet(
             val partnerName = if (partnerUser != null) UserObject.getUserName(partnerUser) else "Співрозмовник"
 
             // Показуємо шторку відразу, вона сама завантажить історію
+            val cachedResult = GominAiChatHelper.getCachedResult(dialogId)
+            val cachedHistory = GominAiChatHelper.getCachedHistory(dialogId)
+
             val bottomSheet = GominShieldBottomSheet(
                 chatActivity,
                 partnerName,
                 "", // historyText поки пустий
-                null
+                null // cachedResult поки не передаємо, бо треба порівняти історію
             )
             bottomSheet.show()
             
-             // Завантажуємо останні 1000 повідомлень прямо з бази SQLite через новий безпечний метод
-            MessagesStorage.getInstance(currentAccount).getMessagesForGominShield(dialogId, 1000) { messages: ArrayList<MessageObject>? ->
+             // Завантажуємо останні 3000 повідомлень прямо з бази SQLite через новий безпечний метод
+            MessagesStorage.getInstance(currentAccount).getMessagesForGominShield(dialogId, 3000) { messages: ArrayList<MessageObject>? ->
                 if (chatActivity.parentActivity == null || chatActivity.parentActivity.isFinishing || messages == null) {
                     return@getMessagesForGominShield
                 }
@@ -367,10 +370,26 @@ class GominShieldBottomSheet(
                         builder.show()
                     }
                 } else {
-                    // Оновлюємо текст в шторці та запускаємо аналіз
-                    if (!bottomSheet.isDismissed) {
-                        bottomSheet.historyText = finalHistoryText
-                        bottomSheet.initAnalysis(actualCount)
+                    // Перевіряємо кеш
+                    if (cachedHistory == finalHistoryText && cachedResult != null) {
+                        // Історія не змінилася, показуємо кеш
+                        if (!bottomSheet.isDismissed) {
+                            bottomSheet.historyText = finalHistoryText
+                            bottomSheet.messagesCount = actualCount
+                            bottomSheet.counterTextView.text = "$actualCount реплік"
+                            bottomSheet.counterTextView.visibility = View.VISIBLE
+                            bottomSheet.loadingLayout.visibility = View.GONE
+                            bottomSheet.scrollView.visibility = View.VISIBLE
+                            bottomSheet.analysisResult = cachedResult
+                            bottomSheet.textView.text = cachedResult
+                            bottomSheet.actionButton.visibility = View.VISIBLE
+                        }
+                    } else {
+                        // Історія змінилася або кешу немає, запускаємо аналіз
+                        if (!bottomSheet.isDismissed) {
+                            bottomSheet.historyText = finalHistoryText
+                            bottomSheet.initAnalysis(actualCount)
+                        }
                     }
                 }
             }
