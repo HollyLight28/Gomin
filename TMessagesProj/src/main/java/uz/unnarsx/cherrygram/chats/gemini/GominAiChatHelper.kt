@@ -35,7 +35,10 @@ import org.telegram.ui.LaunchActivity
 import uz.unnarsx.cherrygram.core.configs.CherrygramMessagesConfig
 import uz.unnarsx.cherrygram.misc.Constants
 import java.util.ArrayList
+import android.Manifest
+import android.content.pm.PackageManager
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import uz.unnarsx.cherrygram.chats.gemini.network.ApiClient
 import uz.unnarsx.cherrygram.chats.gemini.network.ApiCallback
 import uz.unnarsx.cherrygram.chats.gemini.network.ModelInfo
@@ -852,11 +855,11 @@ If є аб’юз — не пом’якшуй.
     fun toggleTranscriptionSession(activity: ChatActivity) {
         val context = activity.parentActivity ?: ApplicationLoader.applicationContext
         
-        if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             if (activity.parentActivity != null) {
-                androidx.core.app.ActivityCompat.requestPermissions(
+                ActivityCompat.requestPermissions(
                     activity.parentActivity,
-                    arrayOf(android.Manifest.permission.RECORD_AUDIO),
+                    arrayOf(Manifest.permission.RECORD_AUDIO),
                     101
                 )
             }
@@ -910,11 +913,11 @@ If є аб’юз — не пом’якшуй.
     fun toggleLiveSession(activity: ChatActivity) {
         val context = activity.parentActivity ?: ApplicationLoader.applicationContext
         
-        if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             if (activity.parentActivity != null) {
-                androidx.core.app.ActivityCompat.requestPermissions(
+                ActivityCompat.requestPermissions(
                     activity.parentActivity,
-                    arrayOf(android.Manifest.permission.RECORD_AUDIO),
+                    arrayOf(Manifest.permission.RECORD_AUDIO),
                     101
                 )
             }
