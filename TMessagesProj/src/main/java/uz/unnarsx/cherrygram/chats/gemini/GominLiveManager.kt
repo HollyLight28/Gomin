@@ -66,7 +66,7 @@ class GominLiveManager(
     private var isAiSpeaking = false
 
     fun startSession() {
-        val apiKey = CherrygramMessagesConfig.geminiApiKey
+        val apiKey = uz.unnarsx.cherrygram.core.configs.CherrygramMessagesConfig.geminiApiKey
         if (apiKey.isEmpty()) {
             FileLog.e("GominLiveManager: Gemini API key is missing.")
             onConnectionClosed()
@@ -149,7 +149,7 @@ class GominLiveManager(
 
     private fun sendSetupMessage(ws: WebSocket) {
         try {
-            val userModel = CherrygramMessagesConfig.geminiModelName
+            val userModel = uz.unnarsx.cherrygram.core.configs.CherrygramMessagesConfig.geminiModelName
             val targetModel = when {
                 userModel.contains("3.0") -> "models/gemini-3.0-flash"
                 userModel.contains("2.5") -> "models/gemini-2.5-flash"
