@@ -65,7 +65,7 @@ class GominLiveManager(
     private var isAiSpeaking = false
 
     fun startSession() {
-        val apiKey = CherrygramMessagesConfig.INSTANCE.getGeminiApiKey()
+        val apiKey = CherrygramMessagesConfig.geminiApiKey
         if (apiKey.isEmpty()) {
             FileLog.e("GominLiveManager: Gemini API key is missing.")
             onConnectionClosed()
@@ -160,12 +160,12 @@ class GominLiveManager(
             val setupJson = JSONObject().apply {
                 put("setup", JSONObject().apply {
                     put("model", targetModel)
-                    put("generation_config", JSONObject().apply {
-                        put("response_modalities", JSONArray().put("AUDIO"))
-                        put("speech_config", JSONObject().apply {
-                            put("voice_config", JSONObject().apply {
-                                put("prebuilt_voice_config", JSONObject().apply {
-                                    put("voice_name", "Puck") // Rich, organic voice
+                    put("generationConfig", JSONObject().apply {
+                        put("responseModalities", JSONArray().put("AUDIO"))
+                        put("speechConfig", JSONObject().apply {
+                            put("voiceConfig", JSONObject().apply {
+                                put("prebuiltVoiceConfig", JSONObject().apply {
+                                    put("voiceName", "Puck") // Rich, organic voice
                                 })
                             })
                         })
@@ -174,11 +174,11 @@ class GominLiveManager(
                     val toolsArray = JSONArray().apply {
                         // 1. Google Search Grounding
                         put(JSONObject().apply {
-                            put("google_search", JSONObject())
+                            put("googleSearch", JSONObject())
                         })
                         // 2. Custom function for live Ukrainian Air Alerts
                         put(JSONObject().apply {
-                            put("function_declarations", JSONArray().put(JSONObject().apply {
+                            put("functionDeclarations", JSONArray().put(JSONObject().apply {
                                 put("name", "get_air_alerts")
                                 put("description", "Отримати поточний статус повітряних тривог в Україні")
                                 put("parameters", JSONObject().apply {
@@ -352,12 +352,12 @@ class GominLiveManager(
             }
         }
 
-        // Send interrupt message to server using correct snake_case keys
+        // Send interrupt message to server using correct camelCase keys
         try {
             val interruptJson = JSONObject().apply {
-                put("client_content", JSONObject().apply {
+                put("clientContent", JSONObject().apply {
                     put("turns", JSONArray())
-                    put("turn_complete", false)
+                    put("turnComplete", false)
                 })
             }
             webSocket?.send(interruptJson.toString())
