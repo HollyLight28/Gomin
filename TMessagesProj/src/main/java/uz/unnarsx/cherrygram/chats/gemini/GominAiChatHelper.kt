@@ -35,6 +35,10 @@ import org.telegram.ui.LaunchActivity
 import uz.unnarsx.cherrygram.core.configs.CherrygramMessagesConfig
 import uz.unnarsx.cherrygram.misc.Constants
 import java.util.ArrayList
+import android.Manifest
+import android.content.pm.PackageManager
+import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import uz.unnarsx.cherrygram.chats.gemini.network.ApiClient
 import uz.unnarsx.cherrygram.chats.gemini.network.ApiCallback
 import uz.unnarsx.cherrygram.chats.gemini.network.ModelInfo
@@ -818,5 +822,95 @@ If є аб’юз — не пом’якшуй.
 
     fun getCachedHistory(dialogId: Long): String? {
         return getPrefs().getString("history_$dialogId", null)
+    }
+
+    // --- Gemini Live Voice Chat Integration ---
+    private var liveManager: GominLiveManager? = null
+    private var liveGlowView: GominLiveEdgeGlowView? = null
+
+    fun attachLiveHook(activity: ChatActivity) {
+        if (activity.dialogId != Constants.GOMIN_AI_DIALOG_ID) return
+        
+        val avatarContainer = activity.avatarContainer ?: return
+        avatarContainer.setOnClickListener {
+            toggleLiveSession(activity)
+        }
+    }
+
+    fun toggleLiveSession(activity: ChatActivity) {
+        val context = activity.parentActivity ?: ApplicationLoader.applicationContext
+        
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            if (activity.parentActivity != null) {
+                ActivityCompat.requestPermissions(
+                    activity.parentActivity,
+                    arrayOf(Manifest.permission.RECORD_AUDIO),
+                    101
+                )
+            }
+            return
+        }
+
+        if (liveManager != null) {
+            stopLiveSession()
+        } else {
+            startLiveSession(activity)
+        }
+    }
+
+    private fun startLiveSession(activity: ChatActivity) {
+        val parentActivity = activity.parentActivity ?: return
+        val rootLayout = parentActivity.window.decorView as? ViewGroup ?: return
+
+        // 1. Create Living Edge-Glow Overlay
+        val glowView = GominLiveEdgeGlowView(parentActivity).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+        liveGlowView = glowView
+        rootLayout.addView(glowView)
+
+        // 2. Instantiate Audio Pipeline Manager
+        val manager = GominLiveManager(glowView) {
+            stopLiveSession()
+        }
+        liveManager = manager
+
+        // 3. Bind tap anywhere on overlay to close session
+        glowView.setOnClickListener {
+            stopLiveSession()
+        }
+
+        // 4. Start Live Voice Handshake
+        try {
+            manager.startSession()
+            setTypingStatus(true)
+            activity.avatarContainer?.setSubtitle("активний дзвінок...")
+        } catch (e: Exception) {
+            FileLog.e(e)
+            stopLiveSession()
+        }
+    }
+
+    fun stopLiveSession() {
+        val manager = liveManager ?: return
+        liveManager = null
+        
+        try {
+            manager.stopSession()
+        } catch (e: Exception) {
+            FileLog.e(e)
+        }
+
+        AndroidUtilities.runOnUIThread {
+            liveGlowView?.let { view ->
+                val parent = view.parent as? ViewGroup
+                parent?.removeView(view)
+            }
+            liveGlowView = null
+            setTypingStatus(false)
+        }
     }
 }

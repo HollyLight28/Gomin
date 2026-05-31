@@ -3381,6 +3381,7 @@ public class ChatActivity extends BaseFragment implements
         if (avatarContainer != null) {
             avatarContainer.onDestroy();
         }
+        uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper.INSTANCE.stopLiveSession();
         if (mentionContainer != null && mentionContainer.getAdapter() != null) {
             mentionContainer.getAdapter().onDestroy();
         }
@@ -4360,6 +4361,7 @@ public class ChatActivity extends BaseFragment implements
         avatarContainer.allowDrawStories = dialog_id < 0 && !isTopic;
         avatarContainer.setClipChildren(false);
         AndroidUtilities.updateViewVisibilityAnimated(avatarContainer, true, 1f, false);
+        uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper.INSTANCE.attachLiveHook(this);
         updateTopicTitleIcon();
         if (inPreviewMode || inBubbleMode || isInsideContainer) {
             avatarContainer.setOccupyStatusBar(false);

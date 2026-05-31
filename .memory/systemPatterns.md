@@ -109,3 +109,10 @@ When bridging analysis tools (such as the Gomin Shield Manipulation Analyzer) an
 
 ### Premium Outline Icon Customization Pattern (Vector Graphics)
 When adding custom action items or floating buttons for custom feature sets (e.g. AI systems), always construct or reference premium, thin-bordered (typically `strokeWidth="1.8"` or `2.0`) outline icons (such as Lucide design guidelines) inside `res-solar/drawable` or `res-cherrygram/drawable`. This maintains visual consistency with premium custom typography and OLED contrast themes. Never use thick, saturated default images.
+
+### Gemini WebSocket Live API Casing & Synchronization Pattern
+When building custom real-time audio/video communication features with Gemini Multimodal Live API via raw WebSockets:
+1. **Input Payloads (Casing)**: Outgoing messages (sent by the client), such as the initial `setup` or the interruption `client_content`, MUST use strict **snake_case** keys (`generation_config`, `response_modalities`, `speech_config`, `voice_config`, `prebuilt_voice_config`, `voice_name`, `google_search`, `function_declarations`, `client_content`, `turn_complete`).
+2. **Output Payloads (Casing)**: Incoming messages (sent by the server), such as server content or tool calls, arrive in **camelCase** (`serverContent`, `toolCall`, `functionCalls`).
+3. **Teardown Mutex**: Always wrap session termination sequence in a thread-safe `synchronized` lock check (`if (!isSessionActive) return; isSessionActive = false`) to ensure system audio resources (`AudioRecord`, `AudioTrack`) and callback handlers are released exactly once, avoiding duplicate postings to the UI main thread and race crashes.
+4. **Playback Loop CPU Protection**: Before polling or feeding PCM blocks to `AudioTrack`, always explicitly assert that the track initialized successfully (`AudioTrack.STATE_INITIALIZED`). If initialization fails, terminate the playback thread and set active flags to false to prevent infinite loops and 100% CPU drain.
