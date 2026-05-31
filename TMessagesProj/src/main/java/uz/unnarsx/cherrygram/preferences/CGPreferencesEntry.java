@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kotlin.Pair;
+import kotlin.Unit;
 import uz.unnarsx.cherrygram.alerts.AirAlertController;
 import uz.unnarsx.cherrygram.chats.helpers.ChatsHelper2;
 import uz.unnarsx.cherrygram.core.configs.CherrygramAppearanceConfig;
@@ -288,7 +289,7 @@ public class CGPreferencesEntry extends UniversalFragment {
 
         } else if (item.id == airAlertRegionRow) {
             AirAlertController.INSTANCE.fetchRegions("", regions -> {
-                if (regions.isEmpty()) return kotlin.Unit.INSTANCE;
+                if (regions.isEmpty()) return Unit.INSTANCE;
                 ArrayList<String> names = new ArrayList<>();
                 ArrayList<String> ids = new ArrayList<>();
                 for (Pair<String, String> p : regions) {
@@ -308,16 +309,16 @@ public class CGPreferencesEntry extends UniversalFragment {
                     CherrygramCoreConfig.INSTANCE.setAirAlertRegionName(names.get(i).replace("  — ", ""));
                     listView.adapter.update(true);
                 });
-                return kotlin.Unit.INSTANCE;
+                return Unit.INSTANCE;
             });
         } else if (item.id == airAlertTestRow) {
             AirAlertController.INSTANCE.testAlert();
         } else if (item.id == airAlertCheckStatusRow) {
             AirAlertController.INSTANCE.checkAlertStatus(active -> {
-                if (getParentActivity() == null) return kotlin.Unit.INSTANCE;
+                if (getParentActivity() == null) return Unit.INSTANCE;
                 String message = active ? "🚨 ТРИВОГА!" : "✅ Все спокійно";
-                BulletinFactory.of(this).createSimpleBulletin(active ? R.raw.alert : R.raw.contact_check, message).show();
-                return kotlin.Unit.INSTANCE;
+                BulletinFactory.of(this).createSimpleBulletin(active ? R.raw.error : R.raw.contact_check, message).show();
+                return Unit.INSTANCE;
             });
         } else if (item.id == downloadSpeedBoostRow) {
             showDownloadSpeedBoostSelector(() -> SettingsHelper.updateButtonValue(view, getDownloadSpeedBoostValue()));
