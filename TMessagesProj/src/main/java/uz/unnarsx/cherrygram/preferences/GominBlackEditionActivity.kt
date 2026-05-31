@@ -58,7 +58,7 @@ class GominBlackEditionActivity : UniversalFragment() {
             val wasActive = Theme.getActiveTheme().isMonet()
             val newActive = !wasActive
             
-            val themeConfig = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE)
+            val themeConfig = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Context.MODE_PRIVATE)
             val editor = themeConfig.edit()
             
             if (newActive) {

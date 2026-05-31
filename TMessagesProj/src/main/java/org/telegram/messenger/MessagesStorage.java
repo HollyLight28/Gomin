@@ -2116,7 +2116,7 @@ public class MessagesStorage extends BaseController {
                 cursor.dispose();
                 cursor = null;
                 if (!mids.isEmpty()) {
-                    markMessagesAsDeletedInternal(selfId, mids, true, 0, 0);
+                    markMessagesAsDeletedInternal(selfId, mids, true, 0, 0, false);
                     updateDialogsWithDeletedMessages(selfId, -selfId, mids, null, false);
                     AndroidUtilities.runOnUIThread(() -> {
                         getMessagesController().markDialogMessageAsDeleted(selfId, mids);
@@ -4165,7 +4165,7 @@ public class MessagesStorage extends BaseController {
                     getFileLoader().cancelLoadFiles(namesToDelete);
                     getMessagesController().markDialogMessageAsDeleted(dialogId, mids);
                 });
-                markMessagesAsDeletedInternal(dialogId, mids, false, 0, 0);
+                markMessagesAsDeletedInternal(dialogId, mids, false, 0, 0, false);
                 updateDialogsWithDeletedMessagesInternal(dialogId, DialogObject.isChatDialog(dialogId) ? -dialogId : 0, mids, null);
                 getFileLoader().deleteFiles(filesToDelete, 0);
                 if (!mids.isEmpty()) {
@@ -4378,7 +4378,7 @@ public class MessagesStorage extends BaseController {
 
                 database.executeFast("UPDATE dialogs SET unread_count = 0, unread_count_i = 0 WHERE did = " + did).stepThis().dispose();
                 if (uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig.INSTANCE.getKeepDeletedMessages()) {
-                    SQLiteCursor cursor3 = database.queryFinalized("SELECT data, mid FROM messages_v2 WHERE uid = " + did + " AND out = 0");
+                    SQLiteCursor cursor3 = database.queryFinalized("SELECT data, mid FROM messages_v2 WHERE uid = " + did);
                     SQLitePreparedStatement updateV2 = database.executeFast("UPDATE messages_v2 SET data = ? WHERE mid = ? AND uid = ?");
                     SQLitePreparedStatement updateTopics = database.executeFast("UPDATE messages_topics SET data = ? WHERE mid = ? AND uid = ?");
                     try {
@@ -4418,10 +4418,7 @@ public class MessagesStorage extends BaseController {
                     updateV2.dispose();
                     updateTopics.dispose();
 
-                    database.executeFast("DELETE FROM messages_v2 WHERE uid = " + did + " AND out != 0").stepThis().dispose();
-                    if (did == getUserConfig().getClientUserId()) {
-                        database.executeFast("DELETE FROM messages_topics WHERE uid = " + did + " AND out != 0").stepThis().dispose();
-                    }
+                    // Kept both inbound and outbound messages in messages_v2, avoiding the delete query below.
                     database.executeFast("DELETE FROM media_v4 WHERE uid = " + did + " AND mid NOT IN (SELECT mid FROM messages_v2 WHERE uid = " + did + ")").stepThis().dispose();
                 } else {
                     database.executeFast("DELETE FROM messages_v2 WHERE uid = " + did).stepThis().dispose();
@@ -13559,7 +13556,7 @@ public class MessagesStorage extends BaseController {
                         ArrayList<Integer> mids = dialogs.valueAt(a);
                         AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.messagesDeleted, mids, 0L, false));
                         updateDialogsWithReadMessagesInternal(mids, null, null, null, null);
-                        markMessagesAsDeletedInternal(dialogId, mids, true, 0, 0);
+                        markMessagesAsDeletedInternal(dialogId, mids, true, 0, 0, true);
                         updateDialogsWithDeletedMessagesInternal(dialogId, 0, mids, null);
                     }
                 }
@@ -13607,7 +13604,7 @@ public class MessagesStorage extends BaseController {
         AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.quickRepliesUpdated));
     }
 
-    private ArrayList<Long> markMessagesAsDeletedInternal(long dialogId, ArrayList<Integer> messages, boolean deleteFiles, int mode, int threadMessageId) {
+    private ArrayList<Long> markMessagesAsDeletedInternal(long dialogId, ArrayList<Integer> messages, boolean deleteFiles, int mode, int threadMessageId, boolean fromServer) {
         SQLiteCursor cursor = null;
         SQLitePreparedStatement state = null;
         try {
@@ -13701,7 +13698,7 @@ public class MessagesStorage extends BaseController {
                         unknownMessages.remove((Integer) mid);
                         
                         boolean kept = false;
-                        if (uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig.INSTANCE.getKeepDeletedMessages() && cursor.intValue(3) == 0) {
+                        if (uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig.INSTANCE.getKeepDeletedMessages() && (fromServer || cursor.intValue(3) == 0)) {
                             NativeByteBuffer data = cursor.byteBufferValue(1);
                             if (data != null) {
                                 TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
@@ -14470,9 +14467,9 @@ public class MessagesStorage extends BaseController {
             return null;
         }
         if (useQueue) {
-            storageQueue.postRunnable(() -> markMessagesAsDeletedInternal(dialogId, messages, deleteFiles, mode, topicId));
+            storageQueue.postRunnable(() -> markMessagesAsDeletedInternal(dialogId, messages, deleteFiles, mode, topicId, false));
         } else {
-            return markMessagesAsDeletedInternal(dialogId, messages, deleteFiles, mode, topicId);
+            return markMessagesAsDeletedInternal(dialogId, messages, deleteFiles, mode, topicId, true);
         }
         return null;
     }

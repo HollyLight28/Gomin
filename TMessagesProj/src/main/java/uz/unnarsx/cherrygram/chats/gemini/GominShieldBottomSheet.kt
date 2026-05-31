@@ -333,8 +333,8 @@ class GominShieldBottomSheet(
             )
             bottomSheet.show()
             
-             // Завантажуємо останні 3000 повідомлень прямо з бази SQLite через новий безпечний метод
-            MessagesStorage.getInstance(currentAccount).getMessagesForGominShield(dialogId, 3000) { messages: ArrayList<MessageObject>? ->
+             // Завантажуємо останні 1500 повідомлень прямо з бази SQLite через новий безпечний метод
+            MessagesStorage.getInstance(currentAccount).getMessagesForGominShield(dialogId, 1500) { messages: ArrayList<MessageObject>? ->
                 if (chatActivity.parentActivity == null || chatActivity.parentActivity.isFinishing || messages == null) {
                     return@getMessagesForGominShield
                 }
