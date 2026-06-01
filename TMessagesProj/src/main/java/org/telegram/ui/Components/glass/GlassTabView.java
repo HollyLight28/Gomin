@@ -131,7 +131,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
         }
     }
 
-    private static final RectF tmpRectF = new RectF();
+    private final RectF rect = new RectF();
 
     private boolean hasGestureSelectedOverride;
     private float gestureSelectedOverride;
@@ -139,6 +139,98 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
     public void setGestureSelectedOverride(float gestureSelectedOverride, boolean allow) {
         this.gestureSelectedOverride = gestureSelectedOverride;
         this.hasGestureSelectedOverride = allow;
+        invalidate();
+    }
+
+    @Override
+    protected void dispatchDraw(@NonNull Canvas canvas) {
+        final float viewWidth = hasVisualWidth ? visualWidth : getWidth();
+        final float selectedFactor = hasGestureSelectedOverride ? gestureSelectedOverride : isSelectedAnimator.getFloatValue();
+        if (selectedFactor > 0) {
+            final float alpha = AnimatorUtils.DECELERATE_INTERPOLATOR.getInterpolation(selectedFactor);
+
+            paintCounterBackground.setColor(Theme.multAlpha(colorSelected, 0.09f * alpha));
+            rect.set(0, 0, viewWidth, getHeight());
+            final float r = Math.min(rect.width(), rect.height()) / 2f;
+            final float s = lerp(0.6f, 1, selectedFactor) * MathUtils.clamp(attachScale, 0, 1);
+            canvas.save();
+            canvas.scale(s, s, rect.centerX(), rect.centerY());
+            canvas.drawRoundRect(rect, r, r, paintCounterBackground);
+            canvas.restore();
+        }
+
+        final float hasCounter = (usePremiumCounter ? 1f : isHasCounterAnimator.getFloatValue()) * attachScale;
+        final boolean saveLayer = hasCounter > 0;
+        if (saveLayer) {
+            canvas.saveLayer(0, 0, viewWidth, getHeight(), null);
+        }
+
+        super.dispatchDraw(canvas);
+
+        if (hasCounter > 0) {
+            canvas.save();
+
+            final float gap = dpf2(1.33f);
+            final float cx = viewWidth / 2f + dpf2(11);
+            final float cy = dpf2(10);
+            final float height = dpf2(16);
+            final float width = Math.max(height, counter.getCurrentWidth() + dp(8));
+            final float rOuter = dpf2(9.333f);
+            final float rInner = dpf2(8f);
+            rect.set(
+                    cx - width / 2f - gap,
+                    cy - height / 2f - gap,
+                    cx + width / 2f + gap,
+                    cy + height / 2f + gap
+            );
+
+            canvas.scale(hasCounter, hasCounter, cx, cy);
+            canvas.drawRoundRect(rect, rOuter, rOuter, Theme.PAINT_CLEAR);
+            rect.inset(gap, gap);
+
+            if (usePremiumCounter) {
+                if (premiumStarDrawable == null) {
+                    premiumStarDrawable = getContext().getResources().getDrawable(R.drawable.star).mutate();
+                }
+
+                PremiumGradient.getInstance().updateMainGradientMatrix(0, 0, dp(96), dp(16), 0, 0);
+                canvas.drawRoundRect(rect, rInner, rInner, PremiumGradient.getInstance().getMainGradientPaint());
+                int x = (int)(cx - dpf2(7f));
+                int y = (int)(cy - dpf2(7f));
+                premiumStarDrawable.setBounds(x, y, x + dp(14), y + dp(14));
+                premiumStarDrawable.draw(canvas);
+            } else {
+                int color = foldersAtBottom ? Theme.key_actionBarTabLine : Theme.key_telegram_color;
+                paintCounterBackground.setColor(ColorUtils.blendARGB(Theme.getColor(color), Theme.getColor(Theme.key_fill_RedNormal), isHasCounterErrorAnimator.getFloatValue()));
+                canvas.drawRoundRect(rect, rInner, rInner, paintCounterBackground);
+                counter.setBounds(rect);
+                counter.draw(canvas);
+            }
+            canvas.restore();
+        }
+
+        if (saveLayer) {
+            canvas.restore();
+        }
+
+        if (drawGlassBorder && Theme.isCurrentThemeDark()) {
+            if (glassPaint == null) {
+                glassPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                glassPaint.setStyle(Paint.Style.STROKE);
+                glassPaint.setStrokeWidth(dp(1));
+                glassPaint.setColor(0x26FFFFFF); // 15% white
+            }
+            rect.set(dp(0.5f), dp(0.5f), viewWidth - dp(0.5f), getHeight() - dp(0.5f));
+            float r = Math.min(rect.width(), rect.height()) / 2f;
+            canvas.drawRoundRect(rect, r, r, glassPaint);
+        }
+    }
+
+    private Paint glassPaint;
+    private boolean drawGlassBorder;
+
+    public void setDrawGlassBorder(boolean value) {
+        this.drawGlassBorder = value;
         invalidate();
     }
 
@@ -211,6 +303,18 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
 
         if (saveLayer) {
             canvas.restore();
+        }
+
+        if (drawGlassBorder && Theme.isCurrentThemeDark()) {
+            if (glassPaint == null) {
+                glassPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                glassPaint.setStyle(Paint.Style.STROKE);
+                glassPaint.setStrokeWidth(dp(1));
+                glassPaint.setColor(0x26FFFFFF); // 15% white
+            }
+            tmpRectF.set(dp(0.5f), dp(0.5f), viewWidth - dp(0.5f), getHeight() - dp(0.5f));
+            float r = Math.min(tmpRectF.width(), tmpRectF.height()) / 2f;
+            canvas.drawRoundRect(tmpRectF, r, r, glassPaint);
         }
     }
 

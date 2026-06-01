@@ -264,7 +264,26 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
     public View createView(Context context) {
         super.createView(context);
 
-        tabsView = new MainTabsLayout(context);
+        tabsView = new MainTabsLayout(context) {
+            private Paint strokePaint;
+            private RectF rect = new RectF();
+
+            @Override
+            protected void dispatchDraw(Canvas canvas) {
+                super.dispatchDraw(canvas);
+                if (Theme.isCurrentThemeDark()) {
+                    if (strokePaint == null) {
+                        strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                        strokePaint.setStyle(Paint.Style.STROKE);
+                        strokePaint.setStrokeWidth(dp(1));
+                        strokePaint.setColor(0x26FFFFFF);
+                    }
+                    rect.set(dp(0.5f), dp(0.5f), getMeasuredWidth() - dp(0.5f), getMeasuredHeight() - dp(0.5f));
+                    float rad = getMeasuredHeight() / 2f;
+                    canvas.drawRoundRect(rect, rad, rad, strokePaint);
+                }
+            }
+        };
         tabsView.setClipChildren(false);
         tabsView.setPadding(dp(DialogsActivity.MAIN_TABS_MARGIN + 4), dp(DialogsActivity.MAIN_TABS_MARGIN + 4), dp(DialogsActivity.MAIN_TABS_MARGIN + 4), dp(DialogsActivity.MAIN_TABS_MARGIN + 4));
 
@@ -349,6 +368,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
                     R.string.Search,
                     false
             );
+            searchButton.setDrawGlassBorder(true);
             searchButton.setOnClickListener(v -> onSearchButtonClick());
             searchButton.setOnLongClickListener(v -> {
                 CGChatMenuInjector.INSTANCE.openArchivedChats(this);

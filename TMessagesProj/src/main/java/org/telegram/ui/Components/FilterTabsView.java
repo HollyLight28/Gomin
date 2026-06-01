@@ -159,7 +159,7 @@ public class FilterTabsView extends FrameLayout {
             }
 
             final int counterResultWidth;
-            if (c > 0) {
+            if (false && c > 0) {
                 String counterText = String.format("%d", c);
                 int counterWidth = (int) Math.ceil(textCounterPaint.measureText(counterText));
                 int countWidth = Math.max(dp(TAB_COUNTER_HEIGHT - 10), counterWidth) + dp(10);
@@ -390,7 +390,7 @@ public class FilterTabsView extends FrameLayout {
             boolean animateCounterRemove = animateFromTabCount > 0 && currentTab.counter == 0 && animateTabCounter;
             boolean animateCounterReplace = animateFromTabCount > 0 && currentTab.counter > 0 && animateTabCounter;
 
-            if (currentTab.counter > 0 || animateCounterRemove) {
+            if (false && (currentTab.counter > 0 || animateCounterRemove)) {
                 if (animateCounterRemove) {
                     counterText = String.format("%d", animateFromTabCount);
                 } else {

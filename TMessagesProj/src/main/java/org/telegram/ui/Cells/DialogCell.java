@@ -165,8 +165,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
     public ShareDialogCell.RepostStoryDrawable repostStoryDrawable;
     public int avatarStart = 11;
     public int messagePaddingStart = 72;
-    public int heightDefault = 70;
-    public int heightThreeLines = 76;
+    public int heightDefault = 76;
+    public int heightThreeLines = 82;
     public int addHeightForTags = 3;
     public int addForumHeightForTags = 11;
     public TLRPC.TL_forumTopic forumTopic;
@@ -1143,13 +1143,13 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         }
 
         if (useForceThreeLines || SharedConfig.useThreeLinesLayout || true) {
-            Theme.dialogs_namePaint[0].setTextSize(dp(17));
-            Theme.dialogs_nameEncryptedPaint[0].setTextSize(dp(17));
+            Theme.dialogs_namePaint[0].setTextSize(dp(18));
+            Theme.dialogs_nameEncryptedPaint[0].setTextSize(dp(18));
             Theme.dialogs_messagePaint[0].setTextSize(dp(16));
             Theme.dialogs_messagePrintingPaint[0].setTextSize(dp(16));
 
-            Theme.dialogs_namePaint[1].setTextSize(dp(16));
-            Theme.dialogs_nameEncryptedPaint[1].setTextSize(dp(16));
+            Theme.dialogs_namePaint[1].setTextSize(dp(18));
+            Theme.dialogs_nameEncryptedPaint[1].setTextSize(dp(18));
             Theme.dialogs_messagePaint[1].setTextSize(dp(15));
             Theme.dialogs_messagePrintingPaint[1].setTextSize(dp(15));
 
@@ -1157,8 +1157,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             paintIndex = 1;
             thumbSize = 18;
         } else {
-            Theme.dialogs_namePaint[0].setTextSize(dp(17));
-            Theme.dialogs_nameEncryptedPaint[0].setTextSize(dp(17));
+            Theme.dialogs_namePaint[0].setTextSize(dp(18));
+            Theme.dialogs_nameEncryptedPaint[0].setTextSize(dp(18));
             Theme.dialogs_messagePaint[0].setTextSize(dp(16));
             Theme.dialogs_messagePrintingPaint[0].setTextSize(dp(16));
 
