@@ -959,7 +959,7 @@ If є аб’юз — не пом’якшуй.
         try {
             manager.startSession()
             setTypingStatus(true)
-            activity.avatarContainer?.setSubtitle("активний дзвінок...")
+            (fragment as? ChatActivity)?.avatarContainer?.setSubtitle("активний дзвінок...")
         } catch (e: Exception) {
             FileLog.e(e)
             stopLiveSession()
