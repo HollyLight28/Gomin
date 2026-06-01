@@ -4305,21 +4305,17 @@ public class MessagesStorage extends BaseController {
                 }
 
                 if (messagesOnly == 0 || messagesOnly == 3) {
-                    if (!uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig.INSTANCE.getKeepDeletedMessages()) {
-                        database.executeFast("DELETE FROM dialogs WHERE did = " + did).stepThis().dispose();
-                        database.executeFast("DELETE FROM chat_pinned_v2 WHERE uid = " + did).stepThis().dispose();
-                        database.executeFast("DELETE FROM chat_pinned_count WHERE uid = " + did).stepThis().dispose();
-                        database.executeFast("DELETE FROM channel_users_v2 WHERE did = " + did).stepThis().dispose();
-                        database.executeFast("DELETE FROM search_recent WHERE did = " + did).stepThis().dispose();
-                        if (!DialogObject.isEncryptedDialog(did)) {
-                            if (DialogObject.isChatDialog(did)) {
-                                database.executeFast("DELETE FROM chat_settings_v2 WHERE uid = " + (-did)).stepThis().dispose();
-                            }
-                        } else {
-                            database.executeFast("DELETE FROM enc_chats WHERE uid = " + DialogObject.getEncryptedChatId(did)).stepThis().dispose();
+                    database.executeFast("DELETE FROM dialogs WHERE did = " + did).stepThis().dispose();
+                    database.executeFast("DELETE FROM chat_pinned_v2 WHERE uid = " + did).stepThis().dispose();
+                    database.executeFast("DELETE FROM chat_pinned_count WHERE uid = " + did).stepThis().dispose();
+                    database.executeFast("DELETE FROM channel_users_v2 WHERE did = " + did).stepThis().dispose();
+                    database.executeFast("DELETE FROM search_recent WHERE did = " + did).stepThis().dispose();
+                    if (!DialogObject.isEncryptedDialog(did)) {
+                        if (DialogObject.isChatDialog(did)) {
+                            database.executeFast("DELETE FROM chat_settings_v2 WHERE uid = " + (-did)).stepThis().dispose();
                         }
                     } else {
-                        database.executeFast("UPDATE dialogs SET unread_count = 0, unread_count_i = 0 WHERE did = " + did).stepThis().dispose();
+                        database.executeFast("DELETE FROM enc_chats WHERE uid = " + DialogObject.getEncryptedChatId(did)).stepThis().dispose();
                     }
                 } else if (messagesOnly == 2) {
                     cursor = database.queryFinalized("SELECT last_mid_i, last_mid FROM dialogs WHERE did = " + did);
@@ -4377,56 +4373,11 @@ public class MessagesStorage extends BaseController {
                 }
 
                 database.executeFast("UPDATE dialogs SET unread_count = 0, unread_count_i = 0 WHERE did = " + did).stepThis().dispose();
-                if (uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig.INSTANCE.getKeepDeletedMessages()) {
-                    SQLiteCursor cursor3 = database.queryFinalized("SELECT data, mid FROM messages_v2 WHERE uid = " + did);
-                    SQLitePreparedStatement updateV2 = database.executeFast("UPDATE messages_v2 SET data = ? WHERE mid = ? AND uid = ?");
-                    SQLitePreparedStatement updateTopics = database.executeFast("UPDATE messages_topics SET data = ? WHERE mid = ? AND uid = ?");
-                    try {
-                        database.beginTransaction();
-                        while (cursor3.next()) {
-                            NativeByteBuffer data = cursor3.byteBufferValue(0);
-                            if (data != null) {
-                                TLRPC.Message message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
-                                data.reuse();
-                                if (message != null) {
-                                    message.readAttachPath(data, getUserConfig().clientUserId);
-                                    message.flags |= 0x40000000;
-                                    NativeByteBuffer outData = new NativeByteBuffer(message.getObjectSize());
-                                    message.serializeToStream(outData);
-                                    
-                                    updateV2.requery();
-                                    updateV2.bindByteBuffer(1, outData);
-                                    updateV2.bindInteger(2, cursor3.intValue(1));
-                                    updateV2.bindLong(3, did);
-                                    updateV2.step();
-                                    
-                                    updateTopics.requery();
-                                    updateTopics.bindByteBuffer(1, outData);
-                                    updateTopics.bindInteger(2, cursor3.intValue(1));
-                                    updateTopics.bindLong(3, did);
-                                    updateTopics.step();
-                                    
-                                    outData.reuse();
-                                }
-                            }
-                        }
-                        database.commitTransaction();
-                    } catch (Exception e) {
-                        checkSQLException(e);
-                    }
-                    cursor3.dispose();
-                    updateV2.dispose();
-                    updateTopics.dispose();
-
-                    // Kept both inbound and outbound messages in messages_v2, avoiding the delete query below.
-                    database.executeFast("DELETE FROM media_v4 WHERE uid = " + did + " AND mid NOT IN (SELECT mid FROM messages_v2 WHERE uid = " + did + ")").stepThis().dispose();
-                } else {
-                    database.executeFast("DELETE FROM messages_v2 WHERE uid = " + did).stepThis().dispose();
-                    if (did == getUserConfig().getClientUserId()) {
-                        database.executeFast("DELETE FROM messages_topics WHERE uid = " + did).stepThis().dispose();
-                    }
-                    database.executeFast("DELETE FROM media_v4 WHERE uid = " + did).stepThis().dispose();
+                database.executeFast("DELETE FROM messages_v2 WHERE uid = " + did).stepThis().dispose();
+                if (did == getUserConfig().getClientUserId()) {
+                    database.executeFast("DELETE FROM messages_topics WHERE uid = " + did).stepThis().dispose();
                 }
+                database.executeFast("DELETE FROM media_v4 WHERE uid = " + did).stepThis().dispose();
                 database.executeFast("DELETE FROM bot_keyboard WHERE uid = " + did).stepThis().dispose();
                 database.executeFast("DELETE FROM bot_keyboard_topics WHERE uid = " + did).stepThis().dispose();
                 database.executeFast("DELETE FROM media_counts_v2 WHERE uid = " + did).stepThis().dispose();
@@ -13748,7 +13699,7 @@ public class MessagesStorage extends BaseController {
                                 deletedMessages.add(message);
                             }
                             data.reuse();
-                            if (DialogObject.isEncryptedDialog(did) || deleteFiles) {
+                            if (!kept && (DialogObject.isEncryptedDialog(did) || deleteFiles)) {
                                 addFilesToDelete(message, filesToDelete, idsToDelete, namesToDelete, false);
                             }
 

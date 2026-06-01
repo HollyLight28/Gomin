@@ -2505,6 +2505,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 if (s != null) {
                     messageString = s;
                 }
+                if ((message.messageOwner.flags & 0x40000000) != 0) {
+                    messageString = TextUtils.concat("🗑 ", messageString);
+                }
             }
         }
         messageWidth = Math.max(dp(12), messageWidth);
