@@ -4764,14 +4764,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         floatingButtonStories.setOnClickListener(v -> openStoriesRecorder());
         contentView.addView(floatingButtonStories, FragmentFloatingButton.createSubButtonLayoutParams());
 
-        floatingButtonAi = new FragmentFloatingButton(context, resourceProvider, true, false);
-        floatingButtonAi.setImageResource(R.drawable.gomin_bird);
+        floatingButtonAi = new FragmentFloatingButton(context, resourceProvider, false, false);
+        floatingButtonAi.setImageResource(R.drawable.icon_foreground_gomin);
         floatingButtonAi.setOnClickListener(v -> {
             Bundle args = new Bundle();
             args.putLong("user_id", Constants.GOMIN_AI_DIALOG_ID);
             presentFragment(new ChatActivity(args));
         });
-        contentView.addView(floatingButtonAi, FragmentFloatingButton.createSubButtonLayoutParams());
+        floatingButtonAi.setOnLongClickListener(v -> {
+            v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper.INSTANCE.toggleLiveSession(this);
+            return true;
+        });
+        contentView.addView(floatingButtonAi, FragmentFloatingButton.createBigLayoutParams());
 
         floatingButton3 = new FragmentFloatingButton(context, resourceProvider);
         contentView.addView(floatingButton3, FragmentFloatingButton.createDefaultLayoutParams());
@@ -8831,19 +8836,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         final float baseTranslationY = top
             - floatingButtonPanOffset;
 
-        if (floatingButtonStories != null) {
-            floatingButtonStories.setTranslationY(baseTranslationY - floatingButtonsOffset);
-            if (storyHint != null) {
-                storyHint.setTranslationY(baseTranslationY - floatingButtonsOffset);
-            }
+        if (floatingButton3 != null) {
+            floatingButton3.setTranslationY(baseTranslationY - floatingButtonsOffset);
         }
 
         if (floatingButtonAi != null) {
-            floatingButtonAi.setTranslationY(baseTranslationY - (storiesEnabled ? dp(52) : 0) - floatingButtonsOffset);
+            floatingButtonAi.setTranslationY(baseTranslationY - dp(64) - floatingButtonsOffset);
         }
 
-        if (floatingButton3 != null) {
-            floatingButton3.setTranslationY(baseTranslationY - (storiesEnabled ? dp(104) : dp(52)) - floatingButtonsOffset);
+        if (floatingButtonStories != null) {
+            floatingButtonStories.setTranslationY(baseTranslationY - (storiesEnabled ? dp(128) : dp(64)) - floatingButtonsOffset);
+            if (storyHint != null) {
+                storyHint.setTranslationY(baseTranslationY - (storiesEnabled ? dp(128) : dp(64)) - floatingButtonsOffset);
+            }
         }
     }
 

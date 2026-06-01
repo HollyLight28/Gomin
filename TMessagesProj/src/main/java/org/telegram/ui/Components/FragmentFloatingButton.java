@@ -72,7 +72,7 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
         this.isInverse = isInverse;
 
         imageView = new RLottieImageView(context);
-        imageView.setScaleType(ImageView.ScaleType.CENTER);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         addView(imageView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
         progressView = new RadialProgressView(context);
@@ -136,7 +136,7 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
         if (id == ANIMATOR_ID_BUTTON_VISIBLE) {
             setAnimatedVisibility(this, factor);
             setClickable(factor >= 0.99f);
-            setAdditionalTranslationY(dp(isSubButton ? 64 : 40) * (1f - factor));
+            setAdditionalTranslationY(dp(isSubButton ? 64 : 80) * (1f - factor));
         } else if (id == ANIMATOR_ID_PROGRESS_VISIBLE) {
             setAnimatedVisibility(progressView, factor);
             setAnimatedVisibility(imageView, 1f - factor);
@@ -174,7 +174,7 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
                 iBlur3Background.updateColors();
                 invalidate();
 
-                int rad = dp(18);
+                int rad = dp(isSubButton ? 18 : 24);
                 int pressedColor = Theme.getColor(Theme.key_listSelector, resourcesProvider);
 
                 // Use a filled background so it's not transparent before being pressed
@@ -197,7 +197,7 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
                 iBlur3Background.updateColors();
                 invalidate();
 
-                int rad = dp(18);
+                int rad = dp(isSubButton ? 18 : 24);
                 int pressedColor = Theme.getColor(Theme.key_listSelector, resourcesProvider);
                 setBackground(Theme.createInsetRoundRectDrawable(pressedColor, rad, dp(6)));
                 iBlur3Background.setAlpha(255);
@@ -205,14 +205,14 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
         } else {
             imageView.setColorFilter(Theme.getColor(Theme.key_chats_actionIcon, resourcesProvider), PorterDuff.Mode.SRC_IN);
             progressView.setProgressColor(Theme.getColor(Theme.key_chats_actionIcon, resourcesProvider));
-            setBackground(Theme.createSimpleSelectorCircleDrawable(dp(48),
+            setBackground(Theme.createSimpleSelectorCircleDrawable(dp(SIZE),
                 Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider),
                 Theme.getColor(Theme.key_featuredStickers_addButtonPressed, resourcesProvider)
             ));
         }
     }
 
-    public static final int SIZE = 48;
+    public static final int SIZE = 60;
 
     public static FrameLayout.LayoutParams createSubButtonLayoutParams() {
         return LayoutHelper.createFrame(48, 48,
@@ -220,10 +220,16 @@ public class FragmentFloatingButton extends FrameLayout implements FactorAnimato
                 20, 0, 20, 14);
     }
 
-    public static FrameLayout.LayoutParams createDefaultLayoutParams() {
-        return LayoutHelper.createFrame(48, 48,
+    public static FrameLayout.LayoutParams createBigLayoutParams() {
+        return LayoutHelper.createFrame(60, 60,
                 (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM,
-                20, 0, 20, 14);
+                14, 0, 14, 14);
+    }
+
+    public static FrameLayout.LayoutParams createDefaultLayoutParams() {
+        return LayoutHelper.createFrame(60, 60,
+                (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM,
+                14, 0, 14, 14);
     }
 
 

@@ -909,13 +909,13 @@ If є аб’юз — не пом’якшуй.
         }
     }
 
-    fun toggleLiveSession(activity: ChatActivity) {
-        val context = activity.parentActivity ?: ApplicationLoader.applicationContext
+    fun toggleLiveSession(fragment: org.telegram.ui.ActionBar.BaseFragment) {
+        val context = fragment.parentActivity ?: ApplicationLoader.applicationContext
         
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            if (activity.parentActivity != null) {
+            if (fragment.parentActivity != null) {
                 ActivityCompat.requestPermissions(
-                    activity.parentActivity,
+                    fragment.parentActivity,
                     arrayOf(Manifest.permission.RECORD_AUDIO),
                     101
                 )
@@ -926,12 +926,12 @@ If є аб’юз — не пом’якшуй.
         if (liveManager != null) {
             stopLiveSession()
         } else {
-            startLiveSession(activity)
+            startLiveSession(fragment)
         }
     }
 
-    private fun startLiveSession(activity: ChatActivity) {
-        val parentActivity = activity.parentActivity ?: return
+    private fun startLiveSession(fragment: org.telegram.ui.ActionBar.BaseFragment) {
+        val parentActivity = fragment.parentActivity ?: return
         val rootLayout = parentActivity.window.decorView as? ViewGroup ?: return
 
         // 1. Create Living Edge-Glow Overlay

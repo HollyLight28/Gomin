@@ -8070,6 +8070,7 @@ public class ChatActivity extends BaseFragment implements
         };
         ChatActivityHelper.KeyboardHiderOnFastScroll.attachTo(chatListView, contentView, chatActivityEnterView);
         chatActivityEnterView.setVisibility(View.VISIBLE);
+        uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper.INSTANCE.attachTranscriptionHook(this);
         chatActivityEnterView.getEditField().adaptiveCreateLinkDialog = true;
         if (chatMode == MODE_EDIT_BUSINESS_LINK) {
             chatActivityEnterView.setDelegate(new ChatActivityEnterView.ChatActivityEnterViewDelegate() {
