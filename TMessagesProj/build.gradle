@@ -115,6 +115,9 @@ dependencies {
 //    implementation 'com.google.android.recaptcha:recaptcha:18.7.1'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+
+    // Unit tests (JVM only, no Android dependencies in test code)
+    testImplementation 'junit:junit:4.13.2'
 }
 
 def isWindows = String.valueOf(DefaultNativePlatform.currentOperatingSystem.toFamilyName() == OperatingSystemFamily.WINDOWS)
@@ -139,6 +142,10 @@ android {
         disable 'MissingTranslation'
         disable 'ExtraTranslation'
         disable 'BlockedPrivateApi'
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 
     sourceSets.main {

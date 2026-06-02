@@ -45,6 +45,29 @@ import uz.unnarsx.cherrygram.chats.gemini.network.ModelInfo
 
 object GominAiChatHelper {
 
+    /**
+     * Чиста функція дедуплікації для Live API транскрипції.
+     *
+     * Gemini стрімить КУМУЛЯТИВНИЙ текст, не дельту:
+     *   "Привіт" → "Привіт, як" → "Привіт, як справи"
+     *
+     * Тому: якщо попередній interim є суфіксом поточного тексту — замінюємо його.
+     * Інакше — просто дописуємо.
+     *
+     * Edge cases:
+     *  - lastInterim == "" → просто дописуємо
+     *  - currentText не містить lastInterim як суфікс → дописуємо (defensive: не втрачаємо текст)
+     *  - newChunk порожній → повертаємо currentText без змін
+     */
+    fun dedupTranscriptionChunk(currentText: String, lastInterim: String, newChunk: String): String {
+        if (newChunk.isEmpty()) return currentText
+        return if (lastInterim.isNotEmpty() && currentText.endsWith(lastInterim)) {
+            currentText.substring(0, currentText.length - lastInterim.length) + newChunk
+        } else {
+            currentText + newChunk
+        }
+    }
+
     // Context for Dmitry / manipulation chat mode
     var activeShieldContext: String? = null
     var activeShieldHistory: String? = null
@@ -828,7 +851,7 @@ If є аб’юз — не пом’якшуй.
     private var liveManager: GominLiveManager? = null
     private var liveGlowView: GominLiveEdgeGlowView? = null
     private var isTranscriptionActive = false
-    private var lastInterimLength = 0
+    private var lastInterimText = ""
 
     fun isLiveSessionActive(): Boolean = liveManager != null
     fun isTranscriptionActive(): Boolean = isTranscriptionActive
@@ -881,7 +904,7 @@ If є аб’юз — не пом’якшуй.
         // 1. Tactile feedback
         enterView.attachButton?.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
 
-        lastInterimLength = 0
+        lastInterimText = ""
         isTranscriptionActive = true
         enterView.setAttachButtonToRecordMode(true)
 
@@ -892,24 +915,19 @@ If є аб’юз — не пом’якшуй.
             onTextReceived = { text ->
                 AndroidUtilities.runOnUIThread {
                     val field = enterView.getEditField() ?: return@runOnUIThread
-                    val editable = field.text
-                    val start = field.selectionStart
-                    
-                    // Remove last interim text
-                    if (lastInterimLength > 0) {
-                        val currentText = editable.toString()
-                        if (currentText.length >= lastInterimLength) {
-                            editable.delete(currentText.length - lastInterimLength, currentText.length)
-                        }
+                    val currentText = field.text.toString()
+                    val newText = dedupTranscriptionChunk(currentText, lastInterimText, text)
+                    if (newText != currentText) {
+                        field.setText(newText)
+                        // Курсор у кінець (типова поведінка для dictation)
+                        field.setSelection(newText.length)
                     }
-                    
-                    // Append new interim text
-                    editable.append(text)
-                    lastInterimLength = text.length
+                    lastInterimText = text
                 }
             },
             onTurnComplete = {
-                lastInterimLength = 0 // Finalize current turn
+                // Turn завершено — наступний chunk буде початком нового turn-а
+                lastInterimText = ""
             },
             onConnectionClosed = {
                 stopLiveSession()

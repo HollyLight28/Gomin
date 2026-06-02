@@ -31,6 +31,14 @@ class GominLiveManager(
     private val onConnectionClosed: () -> Unit
 ) {
 
+    companion object {
+        // Перевірено через реальний запит /v1beta/models (травень 2026).
+        // Ці 4 моделі — ЄДИНЫІ, що підтримують bidiGenerateContent (Live API WebSocket).
+        // Жодна з них не приймає responseModalities:["TEXT"] — тільки ["AUDIO"].
+        private const val MODEL_TRANSCRIPTION = "models/gemini-2.5-flash-native-audio-preview-12-2025"
+        private const val MODEL_VOICE_CALL    = "models/gemini-3.1-flash-live-preview"
+    }
+
     private val client = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(0, TimeUnit.MILLISECONDS) // 0 means no timeout for WebSockets
@@ -41,6 +49,8 @@ class GominLiveManager(
     private var webSocket: WebSocket? = null
     private var isWebSocketOpen = false
     private var isSetupComplete = false
+
+    private val sessionMode: String = if (isTranscriptionMode) "transcription" else "voice-call"
 
     // Audio Pipeline Parameters
     private val sampleRateIn = 16000
@@ -153,24 +163,37 @@ class GominLiveManager(
 
     private fun sendSetupMessage(ws: WebSocket) {
         try {
+            // Розподіл моделей (перевірено через реальний запит до /v1beta/models):
+            //   - transcription: gemini-2.5-flash-native-audio-preview-12-2025 (8K output, дешевше, вистачає)
+            //   - voice-call:    gemini-3.1-flash-live-preview (65K output, довші/якісніші відповіді)
+            // ЖОДНА Live-модель не приймає responseModalities:["TEXT"] — тільки ["AUDIO"].
+            // Для транскрипції використовуємо side-channel `inputAudioTranscription`,
+            // який працює разом з AUDIO modality і стрімить текст того, що сказав користувач.
             val targetModel = if (isTranscriptionMode) {
-                "models/gemini-2.5-flash-native-audio-preview-12-2025"
+                MODEL_TRANSCRIPTION
             } else {
-                "models/gemini-3.1-flash-live-preview"
+                MODEL_VOICE_CALL
             }
-            FileLog.d("GominLiveManager: Using model $targetModel for Live API")
+            FileLog.d("GominLiveManager: Using model $targetModel (mode=$sessionMode)")
 
             val setupJson = JSONObject().apply {
                 put("setup", JSONObject().apply {
                     put("model", targetModel)
-                    
-                    if (isTranscriptionMode) {
-                        put("inputAudioTranscription", JSONObject())
+
+                    // inputAudioTranscription — джерело тексту в transcription mode.
+                    // В voice-call mode також увімкнено: дозволяє показати юзеру, що саме він сказав
+                    // (наприклад, у вигляді субтитрів або для логування).
+                    put("inputAudioTranscription", JSONObject())
+
+                    if (!isTranscriptionMode) {
+                        // outputAudioTranscription дає текстову версію того, що модель сказала голосом.
+                        // Корисно для UI-підказок і для дебагу, на продуктивність майже не впливає.
+                        put("outputAudioTranscription", JSONObject())
                     }
 
                     put("generationConfig", JSONObject().apply {
-                        put("responseModalities", JSONArray().put(if (isTranscriptionMode) "TEXT" else "AUDIO"))
-                        
+                        put("responseModalities", JSONArray().put("AUDIO"))
+
                         if (!isTranscriptionMode) {
                             put("speechConfig", JSONObject().apply {
                                 put("voiceConfig", JSONObject().apply {
@@ -306,13 +329,16 @@ class GominLiveManager(
                             accumulatedBytes.reset()
 
                             // Send audio chunk
+                            // NOTE: realtimeInput.mediaChunks is DEPRECATED by Google (повертає помилку).
+                            // New format: realtimeInput.audio.{mimeType, data}.
+                            // Verified May 2026 via WebSocket test.
                             val base64Data = Base64.encodeToString(chunkToSend, Base64.NO_WRAP)
                             val inputJson = JSONObject().apply {
                                 put("realtimeInput", JSONObject().apply {
-                                    put("mediaChunks", JSONArray().put(JSONObject().apply {
-                                        put("mimeType", "audio/pcm")
+                                    put("audio", JSONObject().apply {
+                                        put("mimeType", "audio/pcm;rate=16000")
                                         put("data", base64Data)
-                                    }))
+                                    })
                                 })
                             }
                             
@@ -383,6 +409,8 @@ class GominLiveManager(
             }
 
             // 2. Нативна транскрипція (June 2026 recommended approach) - Top Level
+            // ТІЛЬКИ inputAudioTranscription — це те, що говорить КОРИСТУВАЧ (ти).
+            // outputAudioTranscription — це текст відповіді МОДЕЛІ, ігноруємо (у transcription mode ми не хочемо його бачити).
             if (obj.has("inputAudioTranscription")) {
                 val transcription = obj.getJSONObject("inputAudioTranscription")
                 val text = transcription.optString("text", "")
@@ -393,6 +421,32 @@ class GominLiveManager(
 
             // 3. Парсинг контенту (camelCase)
             if (obj.has("serverContent")) {
+                val serverContent = obj.getJSONObject("serverContent")
+                
+                // Barge-in: сервер каже, що користувач почав говорити під час аудіо-відповіді
+                if (serverContent.optBoolean("interrupted", false)) {
+                    isAiSpeaking = false
+                    audioPlayQueue.clear()
+                    synchronized(audioLock) {
+                        try {
+                            audioTrack?.pause()
+                            audioTrack?.flush()
+                            audioTrack?.play()
+                        } catch (e: Exception) {
+                            FileLog.e(e)
+                        }
+                    }
+                }
+
+                // Turn complete: фінал turn-а, можна комітити транскрипцію
+                if (serverContent.optBoolean("turnComplete", false)) {
+                    isAiSpeaking = false
+                    AndroidUtilities.runOnUIThread {
+                        glowView.setAmplitude(0f, false)
+                    }
+                    onTurnComplete?.invoke()
+                }
+
                 if (serverContent.has("modelTurn")) {
                     val modelTurn = serverContent.getJSONObject("modelTurn")
                     val parts = modelTurn.optJSONArray("parts")
@@ -441,13 +495,20 @@ class GominLiveManager(
                             
                             // Аудіо та текст
                             if (part.has("inlineData")) {
-                                val inlineData = part.getJSONObject("inlineData")
-                                val dataBase64 = inlineData.getString("data")
-                                val pcmBytes = Base64.decode(dataBase64, Base64.NO_WRAP)
-                                audioPlayQueue.offer(pcmBytes)
+                                // У transcription mode ігноруємо аудіо-відповідь (вона нам не потрібна)
+                                if (!isTranscriptionMode) {
+                                    val inlineData = part.getJSONObject("inlineData")
+                                    val dataBase64 = inlineData.getString("data")
+                                    val pcmBytes = Base64.decode(dataBase64, Base64.NO_WRAP)
+                                    audioPlayQueue.offer(pcmBytes)
+                                }
                             } else if (part.has("text")) {
-                                val textPart = part.getString("text")
-                                onTextReceived?.invoke(textPart)
+                                // parts[].text — це текстова відповідь моделі.
+                                // У transcription mode ігноруємо (нам потрібна тільки inputAudioTranscription).
+                                if (!isTranscriptionMode) {
+                                    val textPart = part.getString("text")
+                                    onTextReceived?.invoke(textPart)
+                                }
                             }
                         }
                     }
