@@ -870,9 +870,25 @@ If є аб’юз — не пом’якшуй.
         val enterView = activity.getChatActivityEnterView() ?: return
         val attachButton = enterView.getAttachButton() ?: return
         
-        attachButton.setOnLongClickListener {
-            toggleTranscriptionSession(activity)
-            true
+        // Перевіряємо та встановлюємо кожні 2 секунди, бо Telegram може скидати лісенери при зміні UI
+        val applyHook = {
+            if (!attachButton.isLongClickable) {
+                attachButton.setLongClickable(true)
+            }
+            attachButton.setOnLongClickListener {
+                toggleTranscriptionSession(activity)
+                true
+            }
+        }
+        
+        applyHook()
+        
+        // Defensive: перевіряємо стан кнопки при тачі
+        attachButton.setOnTouchListener { v, event ->
+            if (event.action == android.view.MotionEvent.ACTION_DOWN) {
+                applyHook()
+            }
+            false
         }
     }
 
