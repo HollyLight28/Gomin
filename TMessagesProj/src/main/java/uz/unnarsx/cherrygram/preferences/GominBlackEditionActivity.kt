@@ -55,10 +55,10 @@ class GominBlackEditionActivity : UniversalFragment() {
                 text = content
                 setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, size)
                 setTextColor(primaryColor)
-                lineSpacingMultiplier = 1.35f // Increased for better readability
+                setLineSpacing(0f, 1.35f)
                 if (isBold) typeface = AndroidUtilities.bold()
             }
-            container.addView(tv, org.telegram.ui.Components.LayoutHelper.createLinear(-1, -2, 0f, leftMargin.toFloat(), topMargin.toFloat(), 0f, 0f))
+            container.addView(tv, org.telegram.ui.Components.LayoutHelper.createLinear(-1, -2, 0, leftMargin, topMargin, 0, 0))
         }
 
         addText("🌑 ГОМІН: ПІТЬМА", 28f, true, 0)

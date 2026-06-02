@@ -32,27 +32,21 @@ class GominLiveManager(
 ) {
 
     companion object {
-        // Перевірено через реальний запит /v1beta/models (травень 2026).
-        // Ці 4 моделі — ЄДИНЫІ, що підтримують bidiGenerateContent (Live API WebSocket).
-        // Жодна з них не приймає responseModalities:["TEXT"] — тільки ["AUDIO"].
         private const val MODEL_TRANSCRIPTION = "models/gemini-2.5-flash-native-audio-preview-12-2025"
         private const val MODEL_VOICE_CALL    = "models/gemini-3.1-flash-live-preview"
     }
 
     private val client = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(0, TimeUnit.MILLISECONDS) // 0 means no timeout for WebSockets
+        .readTimeout(0, TimeUnit.MILLISECONDS)
         .writeTimeout(10, TimeUnit.SECONDS)
-        .pingInterval(15, TimeUnit.SECONDS) // Keep connection alive
+        .pingInterval(15, TimeUnit.SECONDS)
         .build()
 
     private var webSocket: WebSocket? = null
     private var isWebSocketOpen = false
     private var isSetupComplete = false
 
-    private val sessionMode: String = if (isTranscriptionMode) "transcription" else "voice-call"
-
-    // Audio Pipeline Parameters
     private val sampleRateIn = 16000
     private val sampleRateOut = 24000
     private val bufferSizeIn = AudioRecord.getMinBufferSize(
@@ -106,7 +100,6 @@ class GominLiveManager(
                 )
                 audioRecord = record
 
-                // Initialize Acoustic Echo Canceler and Noise Suppressor using record session ID
                 if (record.state == AudioRecord.STATE_INITIALIZED) {
                     val sessionId = record.audioSessionId
                     if (AcousticEchoCanceler.isAvailable()) {
@@ -121,7 +114,6 @@ class GominLiveManager(
                     }
                 }
 
-                // Enforce STREAM_MUSIC to enable loudspeaker routing on Android
                 audioTrack = AudioTrack(
                     AudioManager.STREAM_MUSIC,
                     sampleRateOut,
@@ -169,17 +161,12 @@ class GominLiveManager(
             val setupJson = JSONObject().apply {
                 put("setup", JSONObject().apply {
                     put("model", targetModel)
-
-                    // inputAudioTranscription — ПРЯМО в setup, без зайвих config-врапперів
                     put("inputAudioTranscription", JSONObject())
-
                     if (!isTranscriptionMode) {
                         put("outputAudioTranscription", JSONObject())
                     }
-
                     put("generationConfig", JSONObject().apply {
                         put("responseModalities", JSONArray().put("AUDIO"))
-
                         if (!isTranscriptionMode) {
                             put("speechConfig", JSONObject().apply {
                                 put("voiceConfig", JSONObject().apply {
@@ -199,12 +186,10 @@ class GominLiveManager(
     }
 
     private fun startAudioThreads() {
-        // Playback Thread
         if (!isTranscriptionMode) {
             playThread = Thread {
                 val track = synchronized(audioLock) { audioTrack }
                 if (track == null || track.state != AudioTrack.STATE_INITIALIZED) {
-                    FileLog.e("GominLiveManager: AudioTrack not initialized")
                     AndroidUtilities.runOnUIThread { stopSession() }
                 } else {
                     try {
@@ -220,23 +205,16 @@ class GominLiveManager(
                         val activeTrack = synchronized(audioLock) { audioTrack }
                         if (pcmData != null && isSessionActive && activeTrack != null && activeTrack.state == AudioTrack.STATE_INITIALIZED) {
                             isAiSpeaking = true
-                            
-                            // Calculate RMS for glow view pulsing
                             val rms = calculateRms(pcmData)
-                            AndroidUtilities.runOnUIThread {
-                                glowView.setAmplitude(rms, false)
-                            }
-
+                            AndroidUtilities.runOnUIThread { glowView.setAmplitude(rms, false) }
                             try {
                                 activeTrack.write(pcmData, 0, pcmData.size)
                             } catch (e: Exception) {
                                 FileLog.e(e)
                             }
-                        } else if (isSessionActive) { // Only reset amplitude if session is still active
+                        } else if (isSessionActive) {
                             isAiSpeaking = false
-                            AndroidUtilities.runOnUIThread {
-                                glowView.setAmplitude(0f, false)
-                            }
+                            AndroidUtilities.runOnUIThread { glowView.setAmplitude(0f, false) }
                         }
                     } catch (e: InterruptedException) {
                         break
@@ -250,7 +228,6 @@ class GominLiveManager(
             }
         }
 
-        // Recording Thread
         recordThread = Thread {
             val buffer = ShortArray(bufferSizeIn / 2)
             val record = synchronized(audioLock) { audioRecord }
@@ -262,12 +239,10 @@ class GominLiveManager(
                     AndroidUtilities.runOnUIThread { stopSession() }
                 }
             } else {
-                FileLog.e("GominLiveManager: AudioRecord not initialized")
                 AndroidUtilities.runOnUIThread { stopSession() }
             }
 
             val accumulatedBytes = java.io.ByteArrayOutputStream()
-            // 100ms of 16kHz 16-bit mono audio is 3200 bytes.
             val bytesToAccumulate = 3200
 
             while (isSessionActive) {
@@ -279,18 +254,15 @@ class GominLiveManager(
                     }
                     val read = activeRecord.read(buffer, 0, buffer.size)
                     if (read <= 0) {
-                        Thread.sleep(100) // Prevent 100% CPU infinite-loop
+                        Thread.sleep(100)
                         continue
                     }
                     if (isSessionActive) {
-                        // Compute RMS
                         val byteBuffer = ByteArray(read * 2)
                         var sumOfSquares = 0.0
                         for (i in 0 until read) {
                             val sample = buffer[i]
                             sumOfSquares += sample * sample
-                            
-                            // Convert short to little-endian bytes
                             byteBuffer[i * 2] = (sample.toInt() and 0xFF).toByte()
                             byteBuffer[i * 2 + 1] = ((sample.toInt() shr 8) and 0xFF).toByte()
                         }
@@ -298,12 +270,9 @@ class GominLiveManager(
                         val rms = Math.sqrt(sumOfSquares / read) / 32768.0
                         val rmsFloat = rms.toFloat()
 
-                        AndroidUtilities.runOnUIThread {
-                            glowView.setAmplitude(rmsFloat, true)
-                        }
+                        AndroidUtilities.runOnUIThread { glowView.setAmplitude(rmsFloat, true) }
 
-                        // Local Interruption (Barge-in): User starts speaking while AI speaks
-                        if (rmsFloat > 0.08f && isAiSpeaking) { // Raised from 0.04f to 0.08f to avoid ambient noise trigger
+                        if (rmsFloat > 0.08f && isAiSpeaking) {
                             triggerLocalInterruption()
                         }
 
@@ -313,8 +282,6 @@ class GominLiveManager(
                             val chunkToSend = accumulatedBytes.toByteArray()
                             accumulatedBytes.reset()
 
-                            // Send audio chunk
-                            // CORRECT FORMAT for Multimodal Live API (WebSocket): mediaChunks array
                             val base64Data = Base64.encodeToString(chunkToSend, Base64.NO_WRAP)
                             val inputJson = JSONObject().apply {
                                 put("realtimeInput", JSONObject().apply {
@@ -325,22 +292,6 @@ class GominLiveManager(
                                     put("mediaChunks", JSONArray().put(chunk))
                                 })
                             }
-                            
-                            if (isWebSocketOpen && isSetupComplete) {
-                                webSocket?.send(inputJson.toString())
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    FileLog.e(e)
-                }
-            }
-        }.apply {
-            priority = Thread.MAX_PRIORITY
-            start()
-        }
-    }
-
                             
                             if (isWebSocketOpen && isSetupComplete) {
                                 webSocket?.send(inputJson.toString())
@@ -383,7 +334,6 @@ class GominLiveManager(
             }
         }
 
-        // Send interrupt message to server using correct camelCase keys
         try {
             val interruptJson = JSONObject().apply {
                 put("clientContent", JSONObject().apply {
@@ -399,12 +349,8 @@ class GominLiveManager(
 
     private fun parseServerMessage(text: String) {
         try {
-            // Log raw message for debugging (remove in production)
-            // FileLog.d("GominLiveManager Raw: $text")
-
             val obj = JSONObject(text)
             
-            // Check for errors first
             if (obj.has("error")) {
                 val error = obj.getJSONObject("error")
                 FileLog.e("GominLiveManager Server Error: ${error.optString("message")}")
@@ -412,19 +358,14 @@ class GominLiveManager(
                 return
             }
 
-            // 1. Очікуємо handshake
             if (obj.has("setupComplete")) {
-                FileLog.d("GominLiveManager: Received setupComplete. Starting audio stream.")
                 isSetupComplete = true
                 startAudioThreads()
             }
 
-            // 2. Парсинг контенту (camelCase)
             if (obj.has("serverContent")) {
                 val serverContent = obj.getJSONObject("serverContent")
 
-                // Нативна транскрипція (June 2026 recommended approach)
-                // ТІЛЬКИ inputTranscription — це те, що говорить КОРИСТУВАЧ.
                 if (serverContent.has("inputTranscription")) {
                     val inputTranscription = serverContent.getJSONObject("inputTranscription")
                     val transcriptionText = inputTranscription.optString("text", "")
@@ -437,7 +378,6 @@ class GominLiveManager(
                     }
                 }
                 
-                // Barge-in: сервер каже, що користувач почав говорити під час аудіо-відповіді
                 if (serverContent.optBoolean("interrupted", false)) {
                     isAiSpeaking = false
                     audioPlayQueue.clear()
@@ -452,12 +392,9 @@ class GominLiveManager(
                     }
                 }
 
-                // Turn complete: фінал turn-а, можна комітити транскрипцію
                 if (serverContent.optBoolean("turnComplete", false)) {
                     isAiSpeaking = false
-                    AndroidUtilities.runOnUIThread {
-                        glowView.setAmplitude(0f, false)
-                    }
+                    AndroidUtilities.runOnUIThread { glowView.setAmplitude(0f, false) }
                     onTurnComplete?.invoke()
                 }
 
@@ -468,7 +405,6 @@ class GominLiveManager(
                         for (i in 0 until parts.length()) {
                             val part = parts.getJSONObject(i)
                             
-                            // Обробка виклику функцій (tools)
                             if (part.has("functionCall")) {
                                 val call = part.getJSONObject("functionCall")
                                 val name = call.getString("name")
@@ -476,18 +412,14 @@ class GominLiveManager(
                                 
                                 val responseData = JSONObject()
                                 if (name == "get_air_alerts") {
-                                    val alertsStatus = try {
-                                        if (AirAlertController.isAlertActive()) {
-                                            "Наразі в Україні оголошено повітряну тривогу в деяких регіонах. Ситуація під контролем."
-                                        } else {
-                                            "Наразі повітряних тривог в Україні немає. Все спокійно."
-                                        }
-                                    } catch (e: Exception) {
-                                        "Не вдалося отримати статус тривог. Спробуйте пізніше."
+                                    val alertsStatus = if (AirAlertController.isAlertActive()) {
+                                        "Наразі в Україні оголошено повітряну тривогу в деяких регіонах."
+                                    } else {
+                                        "Наразі повітряних тривог в Україні немає."
                                     }
                                     responseData.put("status", alertsStatus)
                                 } else {
-                                    responseData.put("result", "Інструмент виконано успішно.")
+                                    responseData.put("result", "Виконано.")
                                 }
 
                                 val fResp = JSONObject().apply {
@@ -496,7 +428,6 @@ class GominLiveManager(
                                     put("response", responseData)
                                 }
                                 
-                                // Send back Tool Response in camelCase
                                 val responseJson = JSONObject().apply {
                                     put("toolResponse", JSONObject().apply {
                                         put("functionResponses", JSONArray().put(fResp))
@@ -507,9 +438,7 @@ class GominLiveManager(
                                 }
                             }
                             
-                            // Аудіо та текст
                             if (part.has("inlineData")) {
-                                // У transcription mode ігноруємо аудіо-відповідь (вона нам не потрібна)
                                 if (!isTranscriptionMode) {
                                     val inlineData = part.getJSONObject("inlineData")
                                     val dataBase64 = inlineData.getString("data")
@@ -517,8 +446,6 @@ class GominLiveManager(
                                     audioPlayQueue.offer(pcmBytes)
                                 }
                             } else if (part.has("text")) {
-                                // parts[].text — це текстова відповідь моделі.
-                                // У transcription mode ігноруємо (нам потрібна тільки inputAudioTranscription).
                                 if (!isTranscriptionMode) {
                                     val textPart = part.getString("text")
                                     onTextReceived?.invoke(textPart)
@@ -541,51 +468,22 @@ class GominLiveManager(
         isWebSocketOpen = false
         isSetupComplete = false
         
-        try {
-            webSocket?.close(1000, "Session ended")
-        } catch (e: Exception) {
-            // Ignore
-        }
-
+        try { webSocket?.close(1000, "Session ended") } catch (e: Exception) { }
         recordThread?.interrupt()
         playThread?.interrupt()
 
         synchronized(audioLock) {
-            try {
-                echoCanceler?.enabled = false
-                echoCanceler?.release()
-            } catch (e: Exception) {
-                // Ignore
-            }
-            try {
-                noiseSuppressor?.enabled = false
-                noiseSuppressor?.release()
-            } catch (e: Exception) {
-                // Ignore
-            }
-            try {
-                audioRecord?.stop()
-                audioRecord?.release()
-            } catch (e: Exception) {
-                // Ignore
-            }
-            try {
-                audioTrack?.stop()
-                audioTrack?.release()
-            } catch (e: Exception) {
-                // Ignore
-            }
+            try { echoCanceler?.enabled = false; echoCanceler?.release() } catch (e: Exception) { }
+            try { noiseSuppressor?.enabled = false; noiseSuppressor?.release() } catch (e: Exception) { }
+            try { audioRecord?.stop(); audioRecord?.release() } catch (e: Exception) { }
+            try { audioTrack?.stop(); audioTrack?.release() } catch (e: Exception) { }
 
             echoCanceler = null
             noiseSuppressor = null
             audioRecord = null
             audioTrack = null
         }
-
         webSocket = null
-
-        AndroidUtilities.runOnUIThread {
-            onConnectionClosed()
-        }
+        AndroidUtilities.runOnUIThread { onConnectionClosed() }
     }
 }
