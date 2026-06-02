@@ -29391,6 +29391,11 @@ public class ChatActivity extends BaseFragment implements
     @Override
     public void onPause() {
         super.onPause();
+        try {
+            if (dialog_id == uz.unnarsx.cherrygram.misc.Constants.GOMIN_AI_DIALOG_ID) {
+                uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper.INSTANCE.stopLiveSession();
+            }
+        } catch (Exception ignore) {}
         scrolling = false;
         if (scrimPopupWindow != null) {
             scrimPopupWindow.setPauseNotifications(false);

@@ -32,8 +32,9 @@ class GominLiveManager(
 
     private val client = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(0, TimeUnit.MILLISECONDS) // 0 means no timeout for WebSockets
         .writeTimeout(10, TimeUnit.SECONDS)
+        .pingInterval(15, TimeUnit.SECONDS) // Keep connection alive
         .build()
 
     private var webSocket: WebSocket? = null
@@ -108,9 +109,9 @@ class GominLiveManager(
                     }
                 }
 
-                // Enforce STREAM_VOICE_CALL to enable hardware acoustic echo cancellation routing on Android
+                // Enforce STREAM_MUSIC to enable loudspeaker routing on Android
                 audioTrack = AudioTrack(
-                    AudioManager.STREAM_VOICE_CALL,
+                    AudioManager.STREAM_MUSIC,
                     sampleRateOut,
                     AudioFormat.CHANNEL_OUT_MONO,
                     AudioFormat.ENCODING_PCM_16BIT,
@@ -131,7 +132,6 @@ class GominLiveManager(
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 isConnected = true
                 sendSetupMessage(webSocket)
-                startAudioThreads()
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {
@@ -151,13 +151,46 @@ class GominLiveManager(
 
     private fun sendSetupMessage(ws: WebSocket) {
         try {
-            val userModel = CherrygramMessagesConfig.geminiModelName
-            val targetModel = when {
-                userModel.contains("3.0") -> "models/gemini-3.0-flash"
-                userModel.contains("2.5") -> "models/gemini-2.5-flash"
-                userModel.contains("3.1") -> "models/gemini-3.1-flash"
-                else -> "models/gemini-2.5-flash" // Преміальний Native Audio фолбек за замовчуванням
+            val targetModel = if (isTranscriptionMode) {
+                "models/gemini-3.0-live"
+            } else {
+                "models/gemini-2.5-flash"
             }
+            FileLog.d("GominLiveManager: Using model $targetModel for Live API")
+
+            val setupJson = JSONObject().apply {
+                put("setup", JSONObject().apply {
+                    put("model", targetModel)
+                    
+                    if (isTranscriptionMode) {
+                        val instruction = "Ти — невидимий асистент-стенографіст. Перетворюй почуте аудіо в точний український текст. " +
+                                "Виправляй граматику, став пунктуацію. Виводь ТІЛЬКИ текст транскрипції без коментарів."
+                        put("systemInstruction", JSONObject().apply {
+                            put("parts", JSONArray().put(JSONObject().apply { put("text", instruction) }))
+                        })
+                    }
+
+                    put("generationConfig", JSONObject().apply {
+                        put("responseModalities", JSONArray().put(if (isTranscriptionMode) "TEXT" else "AUDIO"))
+                        
+                        if (!isTranscriptionMode) {
+                            put("speechConfig", JSONObject().apply {
+                                put("voiceConfig", JSONObject().apply {
+                                    put("prebuiltVoiceConfig", JSONObject().apply {
+                                        put("voiceName", "Puck") // Rich, organic voice
+                                    })
+                                })
+                            })
+                        }
+                    })
+                    // Tools are temporarily disabled for Live MVP stability
+                })
+            }
+            ws.send(setupJson.toString())
+        } catch (e: Exception) {
+            FileLog.e(e)
+        }
+    }
             FileLog.d("GominLiveManager: Using model $targetModel for Live API")
 
             val setupJson = JSONObject().apply {
@@ -182,7 +215,7 @@ class GominLiveManager(
                             })
                         }
                     })
-                    // Enable Tools: Google Search (Grounding) & Ukrainian Air Alerts
+                    /* Enable Tools: Google Search & Air Alerts (Temporarily disabled for Live MVP stability)
                     val toolsArray = JSONArray().apply {
                         // 1. Google Search Grounding
                         put(JSONObject().apply {
@@ -202,6 +235,7 @@ class GominLiveManager(
                         })
                     }
                     put("tools", toolsArray)
+                    */
                 })
             }
             ws.send(setupJson.toString())
@@ -216,18 +250,18 @@ class GominLiveManager(
             val track = synchronized(audioLock) { audioTrack }
             if (track == null || track.state != AudioTrack.STATE_INITIALIZED) {
                 FileLog.e("GominLiveManager: AudioTrack not initialized")
-                isSessionActive = false
+                AndroidUtilities.runOnUIThread { stopSession() }
             } else {
                 try {
                     track.play()
                 } catch (e: Exception) {
                     FileLog.e(e)
-                    isSessionActive = false
+                    AndroidUtilities.runOnUIThread { stopSession() }
                 }
             }
             while (isSessionActive) {
                 try {
-                    val pcmData = audioPlayQueue.poll(100, TimeUnit.MILLISECONDS)
+                    val pcmData = audioPlayQueue.poll(500, TimeUnit.MILLISECONDS)
                     val activeTrack = synchronized(audioLock) { audioTrack }
                     if (pcmData != null && isSessionActive && activeTrack != null && activeTrack.state == AudioTrack.STATE_INITIALIZED) {
                         isAiSpeaking = true
@@ -243,7 +277,7 @@ class GominLiveManager(
                         } catch (e: Exception) {
                             FileLog.e(e)
                         }
-                    } else {
+                    } else if (isSessionActive) { // Only reset amplitude if session is still active
                         isAiSpeaking = false
                         AndroidUtilities.runOnUIThread {
                             glowView.setAmplitude(0f, false)
@@ -269,12 +303,16 @@ class GominLiveManager(
                     record.startRecording()
                 } catch (e: Exception) {
                     FileLog.e(e)
-                    isSessionActive = false
+                    AndroidUtilities.runOnUIThread { stopSession() }
                 }
             } else {
                 FileLog.e("GominLiveManager: AudioRecord not initialized")
-                isSessionActive = false
+                AndroidUtilities.runOnUIThread { stopSession() }
             }
+
+            val accumulatedBytes = java.io.ByteArrayOutputStream()
+            // 100ms of 16kHz 16-bit mono audio is 3200 bytes.
+            val bytesToAccumulate = 3200
 
             while (isSessionActive) {
                 try {
@@ -313,19 +351,26 @@ class GominLiveManager(
                             triggerLocalInterruption()
                         }
 
-                        // Send audio chunk
-                        val base64Data = Base64.encodeToString(byteBuffer, Base64.NO_WRAP)
-                        val inputJson = JSONObject().apply {
-                            put("realtimeInput", JSONObject().apply {
-                                put("mediaChunks", JSONArray().put(JSONObject().apply {
-                                    put("mimeType", "audio/pcm")
-                                    put("data", base64Data)
-                                }))
-                            })
-                        }
-                        
-                        if (isConnected) {
-                            webSocket?.send(inputJson.toString())
+                        accumulatedBytes.write(byteBuffer)
+
+                        if (accumulatedBytes.size() >= bytesToAccumulate) {
+                            val chunkToSend = accumulatedBytes.toByteArray()
+                            accumulatedBytes.reset()
+
+                            // Send audio chunk
+                            val base64Data = Base64.encodeToString(chunkToSend, Base64.NO_WRAP)
+                            val inputJson = JSONObject().apply {
+                                put("realtimeInput", JSONObject().apply {
+                                    put("mediaChunks", JSONArray().put(JSONObject().apply {
+                                        put("mimeType", "audio/pcm;rate=16000")
+                                        put("data", base64Data)
+                                    }))
+                                })
+                            }
+                            
+                            if (isConnected) {
+                                webSocket?.send(inputJson.toString())
+                            }
                         }
                     }
                 } catch (e: Exception) {
@@ -381,6 +426,15 @@ class GominLiveManager(
     private fun parseServerMessage(text: String) {
         try {
             val obj = JSONObject(text)
+            
+            // 1. Очікуємо handshake
+            if (obj.has("setupComplete")) {
+                FileLog.d("GominLiveManager: Received setupComplete. Starting audio stream.")
+                startAudioThreads()
+                // Видалено return, щоб не проковтнути інші дані в цьому ж JSON
+            }
+
+            // 2. Парсинг контенту (camelCase)
             if (obj.has("serverContent")) {
                 val serverContent = obj.getJSONObject("serverContent")
                 
@@ -399,59 +453,62 @@ class GominLiveManager(
                     }
                 }
 
-                // Handle Tool Calls (Google Search grounding & custom Air Alerts)
-                if (serverContent.has("toolCall")) {
-                    val toolCall = serverContent.getJSONObject("toolCall")
-                    val functionCalls = toolCall.optJSONArray("functionCalls")
-                    if (functionCalls != null) {
-                        val functionResponses = JSONArray()
-                        for (i in 0 until functionCalls.length()) {
-                            val call = functionCalls.getJSONObject(i)
-                            val name = call.getString("name")
-                            val callId = call.getString("id")
-                            
-                            val responseData = JSONObject()
-                            if (name == "get_air_alerts") {
-                                val alertsStatus = try {
-                                    if (AirAlertController.isAlertActive()) {
-                                        "Наразі в Україні оголошено повітряну тривогу в деяких регіонах. Ситуація під контролем."
-                                    } else {
-                                        "Наразі повітряних тривог в Україні немає. Все спокійно."
-                                    }
-                                } catch (e: Exception) {
-                                    "Не вдалося отримати статус тривог. Спробуйте пізніше."
-                                }
-                                responseData.put("status", alertsStatus)
-                            } else {
-                                responseData.put("result", "Інструмент виконано успішно.")
-                            }
-
-                            val fResp = JSONObject().apply {
-                                put("name", name)
-                                put("id", callId)
-                                put("response", JSONObject().apply { put("output", responseData) })
-                            }
-                            functionResponses.put(fResp)
-                        }
-
-                        // Send back Tool Response
-                        val responseJson = JSONObject().apply {
-                            put("toolResponse", JSONObject().apply {
-                                put("functionResponses", functionResponses)
-                            })
-                        }
-                        if (isConnected) {
-                            webSocket?.send(responseJson.toString())
-                        }
+                // Turn complete signal
+                if (serverContent.optBoolean("turnComplete", false)) {
+                    isAiSpeaking = false
+                    AndroidUtilities.runOnUIThread {
+                        glowView.setAmplitude(0f, false)
                     }
                 }
 
+                // Handle Tool Calls (Google Search grounding & custom Air Alerts)
                 if (serverContent.has("modelTurn")) {
                     val modelTurn = serverContent.getJSONObject("modelTurn")
                     val parts = modelTurn.optJSONArray("parts")
                     if (parts != null) {
                         for (i in 0 until parts.length()) {
                             val part = parts.getJSONObject(i)
+                            
+                            // Обробка виклику функцій (tools)
+                            if (part.has("functionCall")) {
+                                val call = part.getJSONObject("functionCall")
+                                val name = call.getString("name")
+                                val callId = call.optString("id", "")
+                                
+                                val responseData = JSONObject()
+                                if (name == "get_air_alerts") {
+                                    val alertsStatus = try {
+                                        if (AirAlertController.isAlertActive()) {
+                                            "Наразі в Україні оголошено повітряну тривогу в деяких регіонах. Ситуація під контролем."
+                                        } else {
+                                            "Наразі повітряних тривог в Україні немає. Все спокійно."
+                                        }
+                                    } catch (e: Exception) {
+                                        "Не вдалося отримати статус тривог. Спробуйте пізніше."
+                                    }
+                                    responseData.put("status", alertsStatus)
+                                } else {
+                                    responseData.put("result", "Інструмент виконано успішно.")
+                                }
+
+                                val fResp = JSONObject().apply {
+                                    put("name", name)
+                                    put("id", callId)
+                                    put("response", responseData)
+                                }
+                                
+                                // Send back Tool Response in camelCase
+                                val responseJson = JSONObject().apply {
+                                    put("toolResponse", JSONObject().apply {
+                                        put("functionResponses", JSONArray().put(fResp))
+                                    })
+                                }
+                                if (isConnected) {
+                                    webSocket?.send(responseJson.toString())
+                                }
+                            }
+                            
+                            // Аудіо та текст
                             if (part.has("inlineData")) {
                                 val inlineData = part.getJSONObject("inlineData")
                                 val dataBase64 = inlineData.getString("data")
@@ -485,6 +542,12 @@ class GominLiveManager(
 
         recordThread?.interrupt()
         playThread?.interrupt()
+
+        synchronized(audioLock) {
+            try {
+                audioRecord?.stop()
+            } catch (e: Exception) {}
+        }
 
         synchronized(audioLock) {
             try {

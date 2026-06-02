@@ -829,6 +829,7 @@ If є аб’юз — не пом’якшуй.
     private var liveGlowView: GominLiveEdgeGlowView? = null
     private var isTranscriptionActive = false
 
+    fun isLiveSessionActive(): Boolean = liveManager != null
     fun isTranscriptionActive(): Boolean = isTranscriptionActive
 
     fun attachLiveHook(activity: ChatActivity) {
@@ -879,6 +880,9 @@ If є аб’юз — не пом’якшуй.
         // 1. Tactile feedback
         enterView.attachButton?.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
 
+        isTranscriptionActive = true
+        enterView.setAttachButtonToRecordMode(true)
+
         // 2. Setup Manager with Text Callback
         val manager = GominLiveManager(
             GominLiveEdgeGlowView(parentActivity),
@@ -886,10 +890,6 @@ If є аб’юз — не пом’якшуй.
             onTextReceived = { text ->
                 AndroidUtilities.runOnUIThread {
                     val field = enterView.getEditField() ?: return@runOnUIThread
-                    val currentText = field.text.toString()
-                    if (currentText.isNotEmpty() && !currentText.endsWith(" ")) {
-                        field.append(" ")
-                    }
                     field.append(text)
                 }
             },
@@ -950,15 +950,19 @@ If є аб’юз — не пом’якшуй.
         })
         liveManager = manager
 
-        // 3. Bind tap anywhere on overlay to close session
-        glowView.setOnClickListener {
-            stopLiveSession()
-        }
+        // 3. (Removed) Bind tap anywhere on overlay to close session
+        // Users now use back gesture or long-press FAB to close
+        // glowView.setOnClickListener {
+        //     stopLiveSession()
+        // }
 
         // 4. Start Live Voice Handshake
         try {
             manager.startSession()
             setTypingStatus(true)
+            if (fragment is org.telegram.ui.DialogsActivity) {
+                fragment.setLive(true)
+            }
             (fragment as? ChatActivity)?.avatarContainer?.setSubtitle("активний дзвінок...")
         } catch (e: Exception) {
             FileLog.e(e)
@@ -970,6 +974,9 @@ If є аб’юз — не пом’якшуй.
         val manager = liveManager ?: return
         liveManager = null
         
+        val wasTranscriptionActive = isTranscriptionActive
+        isTranscriptionActive = false
+
         try {
             manager.stopSession()
         } catch (e: Exception) {
@@ -977,6 +984,19 @@ If є аб’юз — не пом’якшуй.
         }
 
         AndroidUtilities.runOnUIThread {
+            LaunchActivity.instance?.let { la ->
+                val stack = la.actionBarLayout?.fragmentStack
+                stack?.forEach { 
+                    if (it is org.telegram.ui.DialogsActivity) {
+                        it.setLive(false)
+                    } else if (it is ChatActivity && it.dialogId == Constants.GOMIN_AI_DIALOG_ID) {
+                        if (wasTranscriptionActive) {
+                            it.chatActivityEnterView?.setAttachButtonToRecordMode(false)
+                            it.chatActivityEnterView?.checkSendButton(true)
+                        }
+                    }
+                }
+            }
             liveGlowView?.let { view ->
                 val parent = view.parent as? ViewGroup
                 parent?.removeView(view)

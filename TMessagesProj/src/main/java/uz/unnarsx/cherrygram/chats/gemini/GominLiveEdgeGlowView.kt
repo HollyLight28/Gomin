@@ -15,17 +15,17 @@ class GominLiveEdgeGlowView @JvmOverloads constructor(
 
     private val glowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        strokeWidth = 32f
-        maskFilter = BlurMaskFilter(24f, BlurMaskFilter.Blur.OUTER)
+        strokeWidth = 48f
+        maskFilter = BlurMaskFilter(64f, BlurMaskFilter.Blur.OUTER)
     }
 
     private val corePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        strokeWidth = 8f
+        strokeWidth = 12f
     }
 
     private val dimPaint = Paint().apply {
-        color = Color.argb(180, 10, 10, 15) // Deep, high-contrast premium OLED dark background
+        color = Color.TRANSPARENT // Completely transparent background to see chats
     }
 
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -91,6 +91,8 @@ class GominLiveEdgeGlowView @JvmOverloads constructor(
 
     init {
         setLayerType(LAYER_TYPE_SOFTWARE, null) // Required for BlurMaskFilter compatibility
+        isClickable = false
+        isFocusable = false
         animator.start()
     }
 
@@ -135,21 +137,11 @@ class GominLiveEdgeGlowView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // Draw Dim Background
+        // Draw Dim Background (Now Transparent)
         canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), dimPaint)
 
-        // Draw Siri-like Status Text & Pulse Indicator
-        val textY = 200f
-        canvas.drawText("ГОМІН LIVE", width / 2f, textY, textPaint)
-        canvas.drawText("Натисніть на екран, щоб завершити розмову", width / 2f, height - 200f, subTextPaint)
-
-        // Draw pulsing green status indicator next to text
-        val textWidth = textPaint.measureText("ГОМІН LIVE")
-        val circleX = (width / 2f) + (textWidth / 2f) + 40f
-        val circleY = textY - 16f
-        // Dynamic pulse radius using rotation angle sine for organic motion
-        val pulseRadius = 12f + Math.sin(Math.toRadians(rotationAngle.toDouble())).toFloat() * 4f
-        canvas.drawCircle(circleX, circleY, pulseRadius, pulseCirclePaint)
+        // Siri-like status text removed for cleaner "transparent" look
+        // as requested by user ("хай взагалі нічого не зміняється")
 
         val shader = sweepShader ?: return
         val cx = width / 2f

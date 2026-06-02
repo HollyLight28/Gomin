@@ -740,6 +740,25 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private Long statusDrawableGiftId;
     private Drawable logoDrawable;
     private AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable statusDrawable;
+
+    private uz.unnarsx.cherrygram.chats.gemini.LiveIndicatorView liveIndicator;
+
+    public void setLive(boolean active) {
+        AndroidUtilities.runOnUIThread(() -> {
+            if (liveIndicator == null && active && getParentActivity() != null) {
+                liveIndicator = new uz.unnarsx.cherrygram.chats.gemini.LiveIndicatorView(getParentActivity());
+                actionBar.addView(liveIndicator, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
+            }
+            if (liveIndicator != null) {
+                liveIndicator.setVisibility(active ? View.VISIBLE : View.GONE);
+                if (active) {
+                    liveIndicator.startAnimation();
+                } else {
+                    liveIndicator.stopAnimation();
+                }
+            }
+        });
+    }
     private AnimatedStatusView animatedStatusView;
     public RightSlidingDialogContainer rightSlidingDialogContainer;
 
@@ -7290,6 +7309,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     @Override
     public boolean onBackPressed(boolean invoked) {
+        if (uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper.INSTANCE.isLiveSessionActive()) {
+            if (invoked) uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper.INSTANCE.stopLiveSession();
+            return false;
+        }
         if (hasShownSheet()) {
             if (invoked) closeSheet();
             return false;
