@@ -408,20 +408,23 @@ class GominLiveManager(
                 startAudioThreads()
             }
 
-            // 2. Нативна транскрипція (June 2026 recommended approach) - Top Level
-            // ТІЛЬКИ inputAudioTranscription — це те, що говорить КОРИСТУВАЧ (ти).
-            // outputAudioTranscription — це текст відповіді МОДЕЛІ, ігноруємо (у transcription mode ми не хочемо його бачити).
-            if (obj.has("inputAudioTranscription")) {
-                val transcription = obj.getJSONObject("inputAudioTranscription")
-                val text = transcription.optString("text", "")
-                if (text.isNotEmpty()) {
-                    onTextReceived?.invoke(text)
-                }
-            }
-
-            // 3. Парсинг контенту (camelCase)
+            // 2. Парсинг контенту (camelCase)
             if (obj.has("serverContent")) {
                 val serverContent = obj.getJSONObject("serverContent")
+
+                // Нативна транскрипція (June 2026 recommended approach)
+                // ТІЛЬКИ inputTranscription — це те, що говорить КОРИСТУВАЧ.
+                if (serverContent.has("inputTranscription")) {
+                    val inputTranscription = serverContent.getJSONObject("inputTranscription")
+                    val transcriptionText = inputTranscription.optString("text", "")
+                    val isPartial = inputTranscription.optBoolean("partial", true)
+                    if (transcriptionText.isNotEmpty()) {
+                        onTextReceived?.invoke(transcriptionText)
+                        if (!isPartial) {
+                            onTurnComplete?.invoke()
+                        }
+                    }
+                }
                 
                 // Barge-in: сервер каже, що користувач почав говорити під час аудіо-відповіді
                 if (serverContent.optBoolean("interrupted", false)) {

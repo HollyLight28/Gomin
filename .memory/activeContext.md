@@ -33,6 +33,10 @@
   2. Implemented thread-safe exactly-once session teardown in `stopSession()` under `audioLock` mutex, resolving race conditions and UI thread crashes.
   3. Added initialization verification for `AudioTrack` inside `playThread` to abort and stop polling if the device cannot initialize the track, saving CPU and battery.
 - Formulated the long-term architectural design and plan for Jarvis-like features (Live web retrieval grounding and reading target Telegram channels/chats to summarize updates).
+- Fixed compilation error in `ChatActivityEnterView.java` by replacing non-existent `R.drawable.msg_voice_record` with the valid `R.drawable.input_mic`.
+- Corrected Gemini Live API input transcription parsing in `GominLiveManager.kt` from top-level `inputAudioTranscription` to `serverContent.inputTranscription` as per Google WebSocket specifications.
+- Enabled active triggering of `onTurnComplete` callback upon receiving finalized `partial = false` transcripts to feed the de-duplication pipeline.
+- Successfully verified the build and ran the unit test suite (`GominAiChatHelperDedupTest.kt`) showing 100% green status.
 
 
 # OPEN PROBLEMS
@@ -49,4 +53,5 @@ None.
 - `TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java` -> Modified deleteDialog and markMessagesAsDeletedInternal to preserve outbound messages on remote deletion.
 - `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/chats/gemini/GominShieldBottomSheet.kt` -> Changed getMessagesForGominShield limit from 3000 to 1500.
 - `org/telegram/ui/ActionBar/Theme.java` -> Removed duplicate setter for night theme to fix overload ambiguity.
-- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/chats/gemini/GominLiveManager.kt` -> Fixed 3 critical bugs: camelCase to snake_case setup & client_content JSON, synchronized exactly-once teardown check, playThread AudioTrack initialization safety check.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/chats/gemini/GominLiveManager.kt` -> Fixed 3 critical bugs, corrected transcription parser path to use `serverContent.inputTranscription`, and added `onTurnComplete` callback triggers.
+- `TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java` -> Changed fallback record mode icon resource to `input_mic` to resolve build failure.

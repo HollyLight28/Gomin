@@ -7653,7 +7653,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         if (attachButton == null) return;
         
         if (isRecording) {
-            attachButton.setImageResource(R.drawable.msg_voice_record);
+            attachButton.setImageResource(R.drawable.input_mic);
             attachButton.setColorFilter(new PorterDuffColorFilter(0xFFE53935, PorterDuff.Mode.MULTIPLY));
             attachButton.setAlpha(1.0f);
             attachButton.setScaleX(1.0f);
