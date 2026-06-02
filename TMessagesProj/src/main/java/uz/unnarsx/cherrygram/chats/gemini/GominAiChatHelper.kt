@@ -828,6 +828,7 @@ If є аб’юз — не пом’якшуй.
     private var liveManager: GominLiveManager? = null
     private var liveGlowView: GominLiveEdgeGlowView? = null
     private var isTranscriptionActive = false
+    private var lastInterimLength = 0
 
     fun isLiveSessionActive(): Boolean = liveManager != null
     fun isTranscriptionActive(): Boolean = isTranscriptionActive
@@ -880,6 +881,7 @@ If є аб’юз — не пом’якшуй.
         // 1. Tactile feedback
         enterView.attachButton?.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
 
+        lastInterimLength = 0
         isTranscriptionActive = true
         enterView.setAttachButtonToRecordMode(true)
 
@@ -890,8 +892,24 @@ If є аб’юз — не пом’якшуй.
             onTextReceived = { text ->
                 AndroidUtilities.runOnUIThread {
                     val field = enterView.getEditField() ?: return@runOnUIThread
-                    field.append(text)
+                    val editable = field.text
+                    val start = field.selectionStart
+                    
+                    // Remove last interim text
+                    if (lastInterimLength > 0) {
+                        val currentText = editable.toString()
+                        if (currentText.length >= lastInterimLength) {
+                            editable.delete(currentText.length - lastInterimLength, currentText.length)
+                        }
+                    }
+                    
+                    // Append new interim text
+                    editable.append(text)
+                    lastInterimLength = text.length
                 }
+            },
+            onTurnComplete = {
+                lastInterimLength = 0 // Finalize current turn
             },
             onConnectionClosed = {
                 stopLiveSession()
@@ -945,9 +963,12 @@ If є аб’юз — не пом’якшуй.
         rootLayout.addView(glowView)
 
         // 2. Instantiate Audio Pipeline Manager
-        val manager = GominLiveManager(glowView, onConnectionClosed = {
-            stopLiveSession()
-        })
+        val manager = GominLiveManager(
+            glowView = glowView,
+            onConnectionClosed = {
+                stopLiveSession()
+            }
+        )
         liveManager = manager
 
         // 3. (Removed) Bind tap anywhere on overlay to close session
