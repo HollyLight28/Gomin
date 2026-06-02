@@ -220,17 +220,29 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
                 glassPaint.setStrokeWidth(dp(1));
                 glassPaint.setColor(0x26FFFFFF); // 15% white
             }
-            rect.set(dp(0.5f), dp(0.5f), viewWidth - dp(0.5f), getHeight() - dp(0.5f));
-            float r = Math.min(rect.width(), rect.height()) / 2f;
+            rect.set(glassBorderInset + dp(0.5f), glassBorderInset + dp(0.5f), viewWidth - glassBorderInset - dp(0.5f), getHeight() - glassBorderInset - dp(0.5f));
+            float r = glassBorderRadius >= 0 ? glassBorderRadius : Math.min(rect.width(), rect.height()) / 2f;
             canvas.drawRoundRect(rect, r, r, glassPaint);
         }
     }
 
     private Paint glassPaint;
     private boolean drawGlassBorder;
+    private float glassBorderRadius = -1;
+    private float glassBorderInset = 0;
 
     public void setDrawGlassBorder(boolean value) {
         this.drawGlassBorder = value;
+        invalidate();
+    }
+
+    public void setGlassBorderRadius(float radius) {
+        this.glassBorderRadius = radius;
+        invalidate();
+    }
+
+    public void setGlassBorderInset(float inset) {
+        this.glassBorderInset = inset;
         invalidate();
     }
 

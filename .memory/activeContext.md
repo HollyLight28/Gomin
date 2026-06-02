@@ -4,8 +4,10 @@
 3. Optimize Gomin Shield message loading limit to 1500. [COMPLETED]
 4. Fix the critical air alert server parser bug where region alert state resets to False every 10 seconds. [COMPLETED]
 5. Verify and fix the 3 critical bugs in GominLiveManager.kt (Live API). [COMPLETED]
-6. Design and implement a premium "Про Гомін" (About Gomin) custom settings screen containing the emotional story and philosophy of the solo developer. [PENDING STORY]
-7. Plan the premium bidirectional Jarvis features (Google Search web retrieval and Reading target Telegram channels/chats to summarize updates). [PLANNED]
+6. Rebrand "Black Edition" to a premium, stylish Ukrainian name (e.g., "Гомін: Пітьма") and rewrite its manifesto. [IN PROGRESS]
+7. Design and implement a premium "Про Гомін" (About Gomin) custom settings screen containing the emotional story and philosophy of the solo developer. [PENDING STORY]
+8. Plan the premium bidirectional Jarvis features (Google Search web retrieval and Reading target Telegram channels/chats to summarize updates). [PLANNED]
+
 
 
 # COMPLETED ATOMIC STEPS
@@ -36,8 +38,14 @@
 - Fixed compilation error in `ChatActivityEnterView.java` by replacing non-existent `R.drawable.msg_voice_record` with the valid `R.drawable.input_mic`.
 - Corrected Gemini Live API input transcription parsing in `GominLiveManager.kt` from top-level `inputAudioTranscription` to `serverContent.inputTranscription` as per Google WebSocket specifications.
 - Enabled active triggering of `onTurnComplete` callback upon receiving finalized `partial = false` transcripts to feed the de-duplication pipeline.
-- Successfully verified the build and ran the unit test suite (`GominAiChatHelperDedupTest.kt`) showing 100% green status.
+- Successfully verified the balanced build and ran the unit test suite (`GominAiChatHelperDedupTest.kt`) showing 100% green status.
 - Executed a successful full clean build and compiled the release standalone APK variant (:TMessagesProj_AppStandalone:assembleAfatStandalone) which completed in 27m 11s, generating the fresh build package.
+- Audited `GominBlackEditionActivity.kt` and retrieved the original "Black Edition" manifesto text.
+- Drafted the final Ukrainian concept "Гомін: Пітьма" with the subtitle "Філософія нашого стилю" and a revamped, readable manifesto with emojis.
+- Redesigned the manifesto with a respectful, non-commercial, and deeply convincing tone, emphasizing personal vision and mental health benefit over Wikipedia-like dry facts.
+
+
+
 
 
 # OPEN PROBLEMS

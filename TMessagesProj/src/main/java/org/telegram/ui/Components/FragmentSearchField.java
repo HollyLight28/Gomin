@@ -206,6 +206,9 @@ public class FragmentSearchField extends FrameLayout implements FactorAnimator.T
 
     private Drawable bg;
 
+    private Paint strokePaint;
+    private final android.graphics.RectF rect = new android.graphics.RectF();
+
     @Override
     protected void dispatchDraw(@NonNull Canvas canvas) {
         canvas.save();
@@ -225,6 +228,16 @@ public class FragmentSearchField extends FrameLayout implements FactorAnimator.T
                     getWidth() - getPaddingRight() + dp(4),
                     (getHeight() - getPaddingBottom()) + dp(4));
             blurredBackgroundDrawable.draw(canvas);
+        }
+        if (Theme.isCurrentThemeDark()) {
+            if (strokePaint == null) {
+                strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                strokePaint.setStyle(Paint.Style.STROKE);
+                strokePaint.setStrokeWidth(dp(1));
+                strokePaint.setColor(0x26FFFFFF);
+            }
+            rect.set(getPaddingLeft() + dp(0.5f), getPaddingTop() + dp(0.5f), getWidth() - getPaddingRight() - dp(0.5f), getHeight() - getPaddingBottom() - dp(0.5f));
+            canvas.drawRoundRect(rect, dp(20), dp(20), strokePaint);
         }
         super.dispatchDraw(canvas);
         canvas.restore();

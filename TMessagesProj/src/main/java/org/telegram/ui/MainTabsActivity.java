@@ -278,8 +278,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
                         strokePaint.setStrokeWidth(dp(1));
                         strokePaint.setColor(0x26FFFFFF);
                     }
-                    rect.set(dp(0.5f), dp(0.5f), getMeasuredWidth() - dp(0.5f), getMeasuredHeight() - dp(0.5f));
-                    float rad = getMeasuredHeight() / 2f;
+                    float inset = DialogsActivity.MAIN_TABS_MARGIN;
+                    rect.set(inset + dp(0.5f), inset + dp(0.5f), getMeasuredWidth() - inset - dp(0.5f), getMeasuredHeight() - inset - dp(0.5f));
+                    float rad = dp(DialogsActivity.MAIN_TABS_HEIGHT / 2f);
                     canvas.drawRoundRect(rect, rad, rad, strokePaint);
                 }
             }
@@ -369,6 +370,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
                     false
             );
             searchButton.setDrawGlassBorder(true);
+            searchButton.setGlassBorderRadius(dp(DialogsActivity.MAIN_TABS_HEIGHT / 2f));
+            searchButton.setGlassBorderInset(DialogsActivity.MAIN_TABS_MARGIN);
             searchButton.setOnClickListener(v -> onSearchButtonClick());
             searchButton.setOnLongClickListener(v -> {
                 CGChatMenuInjector.INSTANCE.openArchivedChats(this);

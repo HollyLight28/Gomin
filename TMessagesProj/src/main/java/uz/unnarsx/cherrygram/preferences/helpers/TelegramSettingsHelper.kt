@@ -269,8 +269,8 @@ class TelegramSettingsHelper(
             if (dark) 0xFFFFFFFF.toInt() else 0xFF121212.toInt(),
             if (dark) 0xFFFFFFFF.toInt() else 0xFF121212.toInt(),
             R.drawable.filled_rating_crown,
-            "Гомін Black Edition",
-            "Інструмент когнітивної переваги"
+            "Гомін: Пітьма",
+            "Філософія нашого стилю"
         )
         items.add(blackEditionItem)
 

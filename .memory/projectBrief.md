@@ -19,7 +19,7 @@ Transform a Telegram fork into a high-end, professional Ukrainian client ("Gomin
 - **Base**: Cherrygram (Telegram fork)
 - **Language**: Java/Kotlin
 - **Build System**: Gradle
-- **Fonts**: Geist (Vercel) for UI/Messages, Playfair (Serif) for Headers.
+- **Fonts**: Nunito.
 - **AI**: Gemini/Vertex AI integration.
 
 ## App Configuration
