@@ -745,9 +745,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     public void setLive(boolean active) {
         AndroidUtilities.runOnUIThread(() -> {
-            if (liveIndicator == null && active && getParentActivity() != null) {
-                liveIndicator = new uz.unnarsx.cherrygram.chats.gemini.LiveIndicatorView(getParentActivity());
-                actionBar.addView(liveIndicator, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
+            if (active && getParentActivity() != null && actionBar != null) {
+                if (liveIndicator == null) {
+                    liveIndicator = new uz.unnarsx.cherrygram.chats.gemini.LiveIndicatorView(getParentActivity());
+                    actionBar.addView(liveIndicator, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
+                }
             }
             if (liveIndicator != null) {
                 liveIndicator.setVisibility(active ? View.VISIBLE : View.GONE);

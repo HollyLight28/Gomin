@@ -373,7 +373,15 @@
     <string name="SP_TestFingerprint_Desc">Якщо автентифікація відбитком пальця вже ввімкнена і ви не бачите функції, спробуйте натиснути кнопку \"Перевірити відбиток\" для вирішення проблеми.</string>
     <string name="SP_BiometricUnavailable_Test_Fixed">Відбиток пальця успішно виявлено!</string>
     <string name="SP_BiometricUnavailable_Test_Wrong_Desc">Спробуйте перезавантажити пристрій або перевірити системні налаштування.</string>
+    <string name="SP_Header_Security">Безпека чатів</string>
+    <string name="SP_BiometricForEncrypted">Захищати секретні чати</string>
+    <string name="SP_BiometricForEncrypted_Desc">Запитувати біометрію перед відкриттям секретного чату.</string>
+    <string name="SP_BiometricForArchive">Захищати архів</string>
+    <string name="SP_BiometricForArchive_Desc">Запитувати біометрію перед відкриттям архіву. Текст повідомлень в архіві буде замінено на спойлери.</string>
+    <string name="SP_Biometric_NotAvailable">Налаштуйте відбиток пальця або Face ID у системних налаштуваннях, щоб увімкнути біометричний захист.</string>
+    <string name="SP_Maintenance">Обслуговування</string>
     <string name="SP_DeleteAccount">Видалення акаунта</string>
+    <string name="AP_HideSearchBar">Приховати пошук</string>
     <!--Security Preferences-->
     <!--Updates Preferences-->
     <string name="UP_Category_Updates">Оновлення</string>

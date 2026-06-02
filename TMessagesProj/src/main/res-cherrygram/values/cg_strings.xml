@@ -458,6 +458,14 @@
     <string name="SP_BiometricUnavailable_Test_Fixed">Fingerprint has been detected successfully!</string>
     <string name="SP_BiometricUnavailable_Test_Wrong_Desc">Try to reboot your device or check system settings.</string>
 
+    <string name="SP_Header_Security">Chat Security</string>
+    <string name="SP_BiometricForEncrypted">Protect secret chats</string>
+    <string name="SP_BiometricForEncrypted_Desc">Require biometrics before opening a secret chat.</string>
+    <string name="SP_BiometricForArchive">Protect archive</string>
+    <string name="SP_BiometricForArchive_Desc">Require biometrics before opening archive. Message text in archive will be replaced with spoilers.</string>
+    <string name="SP_Biometric_NotAvailable">Set up a fingerprint or Face ID in system settings to enable biometric protection.</string>
+    <string name="SP_Maintenance">Maintenance</string>
+
     <string name="SP_GhostMode_Header">Gomin Ghost</string>
     <string name="SP_GhostMode_ReadMessages">Invisible read</string>
     <string name="SP_GhostMode_ReadMessages_Desc">Messages will remain unread for others, but you can read them normally.</string>

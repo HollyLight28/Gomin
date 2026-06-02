@@ -191,58 +191,6 @@ class GominLiveManager(
             FileLog.e(e)
         }
     }
-            FileLog.d("GominLiveManager: Using model $targetModel for Live API")
-
-            val setupJson = JSONObject().apply {
-                put("setup", JSONObject().apply {
-                    put("model", targetModel)
-                    put("generationConfig", JSONObject().apply {
-                        put("responseModalities", JSONArray().put(if (isTranscriptionMode) "TEXT" else "AUDIO"))
-                        
-                        if (isTranscriptionMode) {
-                            val instruction = "Ти — невидимий асистент-стенографіст. Перетворюй почуте аудіо в точний український текст. " +
-                                    "Виправляй граматику, став пунктуацію. Виводь ТІЛЬКИ текст транскрипції без коментарів."
-                            put("systemInstruction", JSONObject().apply {
-                                put("parts", JSONArray().put(JSONObject().apply { put("text", instruction) }))
-                            })
-                        } else {
-                            put("speechConfig", JSONObject().apply {
-                                put("voiceConfig", JSONObject().apply {
-                                    put("prebuiltVoiceConfig", JSONObject().apply {
-                                        put("voiceName", "Puck") // Rich, organic voice
-                                    })
-                                })
-                            })
-                        }
-                    })
-                    /* Enable Tools: Google Search & Air Alerts (Temporarily disabled for Live MVP stability)
-                    val toolsArray = JSONArray().apply {
-                        // 1. Google Search Grounding
-                        put(JSONObject().apply {
-                            put("googleSearch", JSONObject())
-                        })
-                        // 2. Custom function for live Ukrainian Air Alerts
-                        put(JSONObject().apply {
-                            put("functionDeclarations", JSONArray().put(JSONObject().apply {
-                                put("name", "get_air_alerts")
-                                put("description", "Отримати поточний статус повітряних тривог в Україні")
-                                put("parameters", JSONObject().apply {
-                                    put("type", "OBJECT")
-                                    put("properties", JSONObject())
-                                    put("required", JSONArray())
-                                })
-                            }))
-                        })
-                    }
-                    put("tools", toolsArray)
-                    */
-                })
-            }
-            ws.send(setupJson.toString())
-        } catch (e: Exception) {
-            FileLog.e(e)
-        }
-    }
 
     private fun startAudioThreads() {
         // Playback Thread

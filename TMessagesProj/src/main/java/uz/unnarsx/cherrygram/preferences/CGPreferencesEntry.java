@@ -156,7 +156,6 @@ public class CGPreferencesEntry extends UniversalFragment {
             items.add(UItem.asButton(airAlertCheckStatusRow, "Перевірити поточний статус", null));
             items.add(UItem.asButton(airAlertTestRow, getString(R.string.CP_AirAlert_Test), null));
         }
-        items.add(UItem.asShadow(getString(R.string.CP_AirAlert_Instruction)));
 
         // ⚡ Speed Engine (Killer Feature) - ТЕПЕР ОДНА КАРТКА!
         items.add(UItem.asHeader(getString(R.string.EP_SpeedEngine)));
@@ -196,6 +195,9 @@ public class CGPreferencesEntry extends UniversalFragment {
 
         // 🎨 Інтерфейс
         items.add(UItem.asHeader(getString(R.string.EP_Header_Interface)));
+        items.add(SettingsHelper.asSwitchCG(hideSearchBarRow, getString(R.string.AP_HideSearchBar), getString(R.string.AP_HideSearchBar_Desc))
+                .setChecked(CherrygramAppearanceConfig.INSTANCE.getHideSearchFiled())
+        );
         items.add(SettingsHelper.asSwitchCG(hideStoriesRow, getString(R.string.CP_HideStories), getString(R.string.CP_HideStories_Desc))
                 .setChecked(CherrygramCoreConfig.INSTANCE.getHideStories())
         );
@@ -331,7 +333,7 @@ public class CGPreferencesEntry extends UniversalFragment {
         } else if (item.id == hideSearchBarRow) {
             CherrygramAppearanceConfig.INSTANCE.setHideSearchFiled(!CherrygramAppearanceConfig.INSTANCE.getHideSearchFiled());
             SettingsHelper.updateCheckState(view, CherrygramAppearanceConfig.INSTANCE.getHideSearchFiled());
-            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgUpdateSearchFiledVisibility);
+            getNotificationCenter().postNotificationName(NotificationCenter.cgUpdateSearchFiledVisibility);
         } else if (item.id == hideStoriesRow) {
             CherrygramCoreConfig.INSTANCE.setHideStories(!CherrygramCoreConfig.INSTANCE.getHideStories());
             SettingsHelper.updateCheckState(view, CherrygramCoreConfig.INSTANCE.getHideStories());

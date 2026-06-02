@@ -6742,6 +6742,10 @@ public class ChatActivityEnterView extends FrameLayout implements
             animators.add(ObjectAnimator.ofFloat(recordDeleteImageView, View.SCALE_Y, 0.0f));
 
             animators.add(ObjectAnimator.ofFloat(recordedAudioPanel, View.ALPHA, 0.0f));
+            boolean isTranscriptionModeActive = false;
+            try {
+                isTranscriptionModeActive = uz.unnarsx.cherrygram.chats.gemini.GominAiChatHelper.INSTANCE.isTranscriptionActive();
+            } catch (Exception ignore) {}
                     if (attachButton != null && !isTranscriptionModeActive) {
                         if (attachButtonAnimator != null) {
                             attachButtonAnimator.cancel();
