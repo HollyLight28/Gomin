@@ -37,6 +37,7 @@
 - Corrected Gemini Live API input transcription parsing in `GominLiveManager.kt` from top-level `inputAudioTranscription` to `serverContent.inputTranscription` as per Google WebSocket specifications.
 - Enabled active triggering of `onTurnComplete` callback upon receiving finalized `partial = false` transcripts to feed the de-duplication pipeline.
 - Successfully verified the build and ran the unit test suite (`GominAiChatHelperDedupTest.kt`) showing 100% green status.
+- Executed a successful full clean build and compiled the release standalone APK variant (:TMessagesProj_AppStandalone:assembleAfatStandalone) which completed in 27m 11s, generating the fresh build package.
 
 
 # OPEN PROBLEMS
