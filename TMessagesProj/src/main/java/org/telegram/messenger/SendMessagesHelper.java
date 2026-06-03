@@ -3880,7 +3880,11 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
             return;
         }
         if (peer == uz.unnarsx.cherrygram.misc.Constants.GOMIN_AI_DIALOG_ID) {
-            final String text = message != null ? message : (caption != null ? caption : "");
+            String text = message != null ? message : (caption != null ? caption : "");
+            boolean hasMedia = photo != null || document != null || location != null;
+            if (hasMedia && android.text.TextUtils.isEmpty(text)) {
+                text = "🖼️ [Фото або файл]. Опиши що на ньому зображено.";
+            }
             if (!android.text.TextUtils.isEmpty(text)) {
                 uz.unnarsx.cherrygram.chats.gemini.GominAiHistoryManager.INSTANCE.addMessage("user", text);
                 

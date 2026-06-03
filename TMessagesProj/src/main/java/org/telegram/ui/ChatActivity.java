@@ -24631,7 +24631,7 @@ public class ChatActivity extends BaseFragment implements
         }
     }
 
-    private void clearHistory(boolean overwrite, TLRPC.TL_updates_channelDifferenceTooLong differenceTooLong) {
+    public void clearHistory(boolean overwrite, TLRPC.TL_updates_channelDifferenceTooLong differenceTooLong) {
         if (overwrite) {
             if (BuildVars.LOGS_ENABLED) {
                 FileLog.d("clear history by overwrite firstLoading=" + firstLoading + " minMessage=" + minMessageId[0] + " topMessage=" + differenceTooLong.dialog.top_message);

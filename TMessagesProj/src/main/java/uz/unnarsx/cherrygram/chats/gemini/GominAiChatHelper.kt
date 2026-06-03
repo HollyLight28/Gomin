@@ -769,8 +769,8 @@ If є аб’юз — не пом’якшуй.
             GominAiHistoryManager.clearHistory()
             activeShieldContext = null
             activeShieldHistory = null
-            notifyChatUpdated(UserConfig.selectedAccount)
             dialog.dismiss()
+            activity.clearHistory(false, null)
         }
         builder.setNegativeButton("Скасувати", null)
         builder.show()

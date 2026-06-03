@@ -14487,7 +14487,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         private int drawableColor;
 
         public void updateColors() {
-            int color = isNewDesignSendButton ? Theme.getColor(Theme.key_chat_messagePanelSendIcon, resourcesProvider) : Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider);
+            int color = (isNewDesignSendButton || shouldDrawBackground()) ? Theme.getColor(Theme.key_chat_messagePanelSendIcon, resourcesProvider) : Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider);
             if (color != drawableColor) {
                 drawableColor = color;
                 drawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));

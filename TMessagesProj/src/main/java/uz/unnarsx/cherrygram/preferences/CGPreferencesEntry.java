@@ -630,13 +630,13 @@ public class CGPreferencesEntry extends UniversalFragment {
     private String getNotificationSoundValue() {
         int sound = CherrygramChatsConfig.INSTANCE.getNotificationSound();
         if (sound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN) {
-            return "Гомін: Сіріус";
+            return "Гомін: Дзвіночок";
         } else if (sound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN_1) {
-            return "Гомін: Алара";
+            return "Гомін: Маріо";
         } else if (sound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN_2) {
-            return "Гомін: Пилюка";
+            return "Гомін: Сурма";
         } else if (sound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN_3) {
-            return "Гомін: Сіріус";
+            return "Гомін: Дзвіночок";
         } else if (sound == CherrygramChatsConfig.NOTIF_SOUND_DEFAULT) {
             return getString(R.string.Default);
         } else {
@@ -651,13 +651,13 @@ public class CGPreferencesEntry extends UniversalFragment {
         configStringKeys.add(getString(R.string.Default));
         configValues.add(CherrygramChatsConfig.NOTIF_SOUND_DEFAULT);
 
-        configStringKeys.add("Гомін: Алара");
+        configStringKeys.add("Гомін: Маріо");
         configValues.add(CherrygramChatsConfig.NOTIF_SOUND_GOMIN_1);
 
-        configStringKeys.add("Гомін: Пилюка");
+        configStringKeys.add("Гомін: Сурма");
         configValues.add(CherrygramChatsConfig.NOTIF_SOUND_GOMIN_2);
 
-        configStringKeys.add("Гомін: Сіріус");
+        configStringKeys.add("Гомін: Дзвіночок");
         configValues.add(CherrygramChatsConfig.NOTIF_SOUND_GOMIN_3);
 
         PopupHelper.show(configStringKeys, "Звук сповіщень", configValues.indexOf(CherrygramChatsConfig.INSTANCE.getNotificationSound()), getContext(), i -> {

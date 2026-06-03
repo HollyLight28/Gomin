@@ -133,3 +133,10 @@ if (soundPath.equalsIgnoreCase("Default") || soundPath.equals(defaultPath)) {
     } // ...
 }
 ```
+
+### JVM Unit-Test Safe Layout Constant Pattern (Double-Scaling Prevention)
+When defining layout constants (e.g. padding, margins) shared between LayoutManagers/XML layout definitions and custom views doing direct Canvas rendering:
+1. **Raw Integer Declaration**: Always store the constant as a raw density-independent integer value in class static fields, rather than executing runtime DPI scaling methods like `AndroidUtilities.dp()` during class static initialization. Static initialization calls to Android runtime stubs cause unit tests in `src/test/` to crash immediately with a `NullPointerException` or stub exception during class loading.
+2. **Explicit Scaling at Call Site**: Call the scaling method (e.g., `dp()`) explicitly at the call sites where the value is used (e.g., in `dispatchDraw` or layout padding assignment).
+3. **Double Scaling Prevention**: Layout configuration utilities (such as `LayoutHelper.createFrame`) perform DP-to-pixel scaling internally. Ensure the raw constant is passed to layout managers, and the scaled `dp()` version is ONLY passed to pure pixel rendering methods (like `canvas.drawRect`).
+
