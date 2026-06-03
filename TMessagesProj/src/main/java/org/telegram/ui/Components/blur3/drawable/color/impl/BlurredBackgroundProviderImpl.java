@@ -27,7 +27,7 @@ public class BlurredBackgroundProviderImpl {
             .setStrokeColorTop(0x22000000, 0x33FFFFFF)
             .setStrokeColorBottom(0x33000000, 0x22FFFFFF)
             .setShadowColor(0x20000000, 0x04FFFFFF)
-            .setShadowLayer(dpf2(2.667f), 0, dpf2(0.85f))
+            .setShadowLayer(dpf2(1.0f), 0, dpf2(0.33f))
             .setStrokeWidth(dpf2(1f), dpf2(1f))
             .build();
     }

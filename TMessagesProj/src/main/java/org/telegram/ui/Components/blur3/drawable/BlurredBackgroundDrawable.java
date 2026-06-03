@@ -392,9 +392,9 @@ public abstract class BlurredBackgroundDrawable extends Drawable {
                 canvas.save();
                 if (canvas.clipRect(left, top, right, MathUtils.clamp(top + radii[0] * 2, top, bottom))) {
                     canvas.drawRoundRect(
-                            left - strokeHalf,
+                            left,
                             top + strokeHalf,
-                            right + strokeHalf,
+                            right,
                             bottom + strokeHalf,
                             radii[0], radii[0],
                             paint
@@ -407,9 +407,9 @@ public abstract class BlurredBackgroundDrawable extends Drawable {
                 canvas.save();
                 if (canvas.clipRect(left, MathUtils.clamp(bottom - radii[4] * 2, top, bottom), right, bottom)) {
                     canvas.drawRoundRect(
-                            left - strokeHalf,
+                            left,
                             top - strokeHalf,
-                            right + strokeHalf,
+                            right,
                             bottom - strokeHalf,
                             radii[4], radii[4],
                             paint

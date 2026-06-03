@@ -8359,13 +8359,48 @@ public class Theme {
                                     } else if ("windowBackgroundGray".equals(key) || "dialogBackgroundGray".equals(key) || "graySection".equals(key)) {
                                         // Background behind cards: #000000 for AMOLED, #0F0F0F for Dark, #F0F0F0 for light
                                         value = isDark ? (monetAmoled ? 0xFF000000 : 0xFF0F0F0F) : 0xFFF0F0F0;
-                                    } else if ("chat_inBubble".equals(key)) {
-                                        value = isDark ? 0xFF121212 : value;
                                     } else if ("chat_outBubble".equals(key)) {
                                         value = isDark ? 0xFF222222 : value;
                                     }
+                                    // Gomin Black Edition: Chat list text — pure black/white
+                                    else if (key.startsWith("chats_name") || "chats_draft".equals(key) || "chats_date".equals(key) || "chats_date_bold".equals(key) || "chats_message".equals(key) || "chats_messageArchived".equals(key) || "chats_message_threeLines".equals(key) || "chats_secretName".equals(key)) {
+                                        value = isDark ? 0xFFFFFFFF : 0xFF000000;
+                                    }
+                                    // Gomin Black Edition: Dialog buttons & text — pure black/white
+                                    else if ("dialogButton".equals(key) || key.startsWith("dialogTextGray") || "dialogTextHint".equals(key) || key.startsWith("dialogTextBlue") || "dialogTextBlack".equals(key) || "dialogTextLink".equals(key) || "dialogEmptyText".equals(key) || "dialogSearchHint".equals(key)) {
+                                        value = isDark ? 0xFFFFFFFF : 0xFF000000;
+                                    }
+                                    // Gomin Black Edition: General gray text — pure black/white
+                                    else if (key.startsWith("windowBackgroundWhiteGrayText") || key.startsWith("windowBackgroundWhiteBlueText") || key.startsWith("windowBackgroundWhiteGreenText") || "windowBackgroundWhiteHintText".equals(key) || "key_graySectionText".equals(key) || "groupcreate_sectionText".equals(key) || "groupcreate_hintText".equals(key)) {
+                                        value = isDark ? 0xFFFFFFFF : 0xFF000000;
+                                    }
+                                    // Gomin Black Edition: Avatar circles — black on light / white on dark
+                                    else if (key.startsWith("avatar_background") && !key.contains("ActionBar") && !key.contains("Selector")) {
+                                        value = isDark ? 0xFFFFFFFF : 0xFF000000;
+                                    }
+                                    // Gomin Black Edition: Avatar text/icon on circle
+                                    else if ("avatar_text".equals(key)) {
+                                        value = isDark ? 0xFF000000 : 0xFFFFFFFF;
+                                    }
+                                    // Gomin Black Edition: Profile & media text — pure black/white
+                                    else if ("profile_tabText".equals(key) || "profile_status".equals(key) || "inappPlayerPerformer".equals(key) || "inappPlayerTitle".equals(key) || "player_time".equals(key) || "player_actionBarSubtitle".equals(key) || "player_actionBarTitle".equals(key) || "chat_status".equals(key) || "chat_fieldOverlayText".equals(key) || "chat_secretChatStatusText".equals(key) || "chat_emojiPanelEmptyText".equals(key)) {
+                                        value = isDark ? 0xFFFFFFFF : 0xFF000000;
+                                    }
+                                    // Gomin Black Edition: Bot text — pure black/white (NOT backgrounds!)
+                                    else if ("chat_botButtonText".equals(key) || "chat_botKeyboardButtonText".equals(key) || "chat_botSwitchToInlineText".equals(key)) {
+                                        value = isDark ? 0xFFFFFFFF : 0xFF000000;
+                                    }
+                                    // Gomin Black Edition: Sticker text — pure black/white (NOT backgrounds!)
+                                    else if ("chat_stickerNameText".equals(key) || "chat_stickerReplyMessageText".equals(key) || "chat_stickerReplyNameText".equals(key) || "chat_stickerViaBotNameText".equals(key) || "featuredStickers_removeButtonText".equals(key) || "featuredStickers_unread".equals(key)) {
+                                        value = isDark ? 0xFFFFFFFF : 0xFF000000;
+                                    }
                                 } else {
                                     value = Utilities.parseInt(param);
+                                    // Gomin Black Edition: Fix outgoing message text on dark bubbles (raw int in monet_dark)
+                                    boolean isDark = (assetName != null && assetName.toLowerCase().contains("dark")) || (file != null && file.getName().toLowerCase().contains("dark"));
+                                    if ("chat_messageTextOut".equals(key)) {
+                                        value = isDark ? 0xFFFFFFFF : 0xFF000000;
+                                    }
                                 }
                                 int keyFromString = ThemeColors.stringKeyToInt(key);
                                 if (keyFromString >= 0) {
