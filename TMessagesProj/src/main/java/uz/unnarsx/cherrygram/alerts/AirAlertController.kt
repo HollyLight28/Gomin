@@ -17,11 +17,15 @@ object AirAlertController {
     private var timer: Timer? = null
     private var mediaPlayer: MediaPlayer? = null
     private var testStopRunnable: Runnable? = null
+    private var sirenStopRunnable: Runnable? = null
     private var safetyStopRunnable: Runnable? = null
     @Volatile
     private var isTesting = false
     private var savedAlertState = false
-    private const val SAFETY_TIMEOUT_MS = 900000L // 15 хвилин safety timeout для реальних тривог
+    @Volatile
+    private var pendingAlertStatus: Boolean? = null
+    private const val SAFETY_TIMEOUT_MS = 900000L
+    private const val SIREN_DURATION_MS = 15000L
 
     fun init() {
         if (CherrygramCoreConfig.airAlertEnabled) {
@@ -88,7 +92,10 @@ object AirAlertController {
     }
 
     private fun setAlertStatus(active: Boolean) {
-        if (isTesting) return
+        if (isTesting) {
+            pendingAlertStatus = active
+            return
+        }
         if (isAlertActive != active) {
             isAlertActive = active
             if (isAlertActive) {
@@ -124,8 +131,17 @@ object AirAlertController {
                 val soundRes = org.telegram.messenger.R.raw.gomin_siren
                 val player = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, soundRes)
                 mediaPlayer = player
-                player.isLooping = true
                 player.start()
+
+                if (!isTesting) {
+                    sirenStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+                    val stopRunnable = Runnable {
+                        stopSirenOnly()
+                        sirenStopRunnable = null
+                    }
+                    sirenStopRunnable = stopRunnable
+                    AndroidUtilities.runOnUIThread(stopRunnable, SIREN_DURATION_MS)
+                }
             } else {
                 val soundRes = org.telegram.messenger.R.raw.gomin_cancel
                 val player = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, soundRes)
@@ -146,6 +162,25 @@ object AirAlertController {
         }
     }
 
+    private fun stopSirenOnly() {
+        mediaPlayer?.setOnCompletionListener(null)
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+    fun stopSiren() {
+        AndroidUtilities.runOnUIThread {
+            sirenStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+            sirenStopRunnable = null
+            if (isTesting) {
+                stopTest()
+                return@runOnUIThread
+            }
+            stopSirenOnly()
+        }
+    }
+
     fun testAlert() {
         if (isTesting) {
             stopTest()
@@ -154,6 +189,8 @@ object AirAlertController {
 
         isTesting = true
         savedAlertState = isAlertActive
+        safetyStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+        safetyStopRunnable = null
         isAlertActive = true
         playSound(true)
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
@@ -169,11 +206,19 @@ object AirAlertController {
         isTesting = false
         testStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
         testStopRunnable = null
+        sirenStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+        sirenStopRunnable = null
+
+        if (pendingAlertStatus != null) {
+            savedAlertState = pendingAlertStatus!!
+            pendingAlertStatus = null
+        }
+
         isAlertActive = savedAlertState
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
         if (savedAlertState) {
-            // Real alert була активною до тесту — сирена вже грає, просто оновлюємо safety таймер
             safetyStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+            playSound(true)
             val runnable = Runnable {
                 playSound(false)
                 isAlertActive = false
@@ -184,7 +229,6 @@ object AirAlertController {
             AndroidUtilities.runOnUIThread(runnable, SAFETY_TIMEOUT_MS)
         } else {
             playSound(false)
-            checkAlertStatus()
         }
     }
 
@@ -203,7 +247,11 @@ object AirAlertController {
 
     fun handlePushStatus(alert: Boolean) {
         AndroidUtilities.runOnUIThread {
-            setAlertStatus(alert)
+            if (isTesting) {
+                pendingAlertStatus = alert
+            } else {
+                setAlertStatus(alert)
+            }
         }
     }
 }

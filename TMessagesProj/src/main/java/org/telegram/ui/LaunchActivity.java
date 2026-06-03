@@ -8354,6 +8354,12 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 }
             }
         }
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0 && (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP || event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+            if (uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.isAlertActive()) {
+                uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.stopSiren();
+                return true;
+            }
+        }
         try {
             return super.dispatchKeyEvent(event);
         } catch (Exception e) {
