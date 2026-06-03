@@ -116,3 +116,20 @@ When building custom real-time audio/video communication features with Gemini Mu
 2. **Output Payloads (Casing)**: Incoming messages (sent by the server), such as server content or tool calls, arrive in **camelCase** (`serverContent`, `toolCall`, `functionCalls`).
 3. **Teardown Mutex**: Always wrap session termination sequence in a thread-safe `synchronized` lock check (`if (!isSessionActive) return; isSessionActive = false`) to ensure system audio resources (`AudioRecord`, `AudioTrack`) and callback handlers are released exactly once, avoiding duplicate postings to the UI main thread and race crashes.
 4. **Playback Loop CPU Protection**: Before polling or feeding PCM blocks to `AudioTrack`, always explicitly assert that the track initialized successfully (`AudioTrack.STATE_INITIALIZED`). If initialization fails, terminate the playback thread and set active flags to false to prevent infinite loops and 100% CPU drain.
+
+### Dynamic Android 8.0+ Notification Channel Sound Re-registration
+To override system notification tones at the app layer (as opposed to per-chat basis), map incoming default alert paths in `NotificationsController.java` to custom resource URIs. However, Android caches channel sounds upon creation. To force updates when a user changes settings, immediately clear cached notification channels and force recreate:
+1. Clear cache:
+```java
+NotificationsController.getInstance(currentAccount).resetInChatSound();
+NotificationsController.getInstance(currentAccount).deleteAllNotificationChannels();
+```
+2. Re-register path in `NotificationsController.java`:
+```java
+if (soundPath.equalsIgnoreCase("Default") || soundPath.equals(defaultPath)) {
+    int selectedSound = CherrygramChatsConfig.INSTANCE.getNotificationSound();
+    if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN_1) {
+        sound = Uri.parse("android.resource://" + context.getPackageName() + "/raw/gomin_notif_1");
+    } // ...
+}
+```

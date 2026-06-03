@@ -103,6 +103,7 @@ public class CGPreferencesEntry extends UniversalFragment {
     private final int airAlertRegionRow = 72;
     private final int airAlertTestRow = 73;
     private final int airAlertCheckStatusRow = 74;
+    private final int notificationSoundRow = 80;
 
     @Override
     protected CharSequence getTitle() {
@@ -154,6 +155,11 @@ public class CGPreferencesEntry extends UniversalFragment {
             items.add(UItem.asButton(airAlertCheckStatusRow, "Перевірити поточний статус", null));
             items.add(UItem.asButton(airAlertTestRow, getString(R.string.CP_AirAlert_Test), null));
         }
+        items.add(UItem.asShadow(null));
+
+        // Звук сповіщень
+        items.add(UItem.asHeader("Звук сповіщень"));
+        items.add(UItem.asButton(notificationSoundRow, "Вибір звуку сповіщень", getNotificationSoundValue()));
         items.add(UItem.asShadow(null));
 
         // ⚡ Speed Engine
@@ -357,6 +363,40 @@ public class CGPreferencesEntry extends UniversalFragment {
             showSlideActionSelector(() -> SettingsHelper.updateButtonValue(view, getSlideActionValue()));
         } else if (item.id == geminiSettingsRow) {
             CherrygramPreferencesNavigator.INSTANCE.createGemini(this);
+        } else if (item.id == notificationSoundRow) {
+            showNotificationSoundSelector(() -> {
+                SettingsHelper.updateButtonValue(view, getNotificationSoundValue());
+
+                int tone = 0;
+                int selectedSound = CherrygramChatsConfig.INSTANCE.getNotificationSound();
+                if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN) {
+                    tone = R.raw.gomin_notif_3;
+                } else if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN_1) {
+                    tone = R.raw.gomin_notif_1;
+                } else if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN_2) {
+                    tone = R.raw.gomin_notif_2;
+                } else if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN_3) {
+                    tone = R.raw.gomin_notif_3;
+                } else if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_DEFAULT) {
+                    tone = R.raw.sound_in;
+                }
+
+                if (tone != 0) {
+                    Context ctx = getContext();
+                    if (ctx != null) {
+                        try {
+                            android.media.MediaPlayer mp = android.media.MediaPlayer.create(ctx, tone);
+                            if (mp != null) {
+                                mp.setOnCompletionListener(android.media.MediaPlayer::release);
+                                mp.start();
+                            }
+                        } catch (Exception ignored) {}
+                    }
+                }
+
+                org.telegram.messenger.NotificationsController.getInstance(currentAccount).resetInChatSound();
+                org.telegram.messenger.NotificationsController.getInstance(currentAccount).deleteAllNotificationChannels();
+            });
         }
     }
 
@@ -585,6 +625,45 @@ public class CGPreferencesEntry extends UniversalFragment {
         }
 
         return userCell;
+    }
+
+    private String getNotificationSoundValue() {
+        int sound = CherrygramChatsConfig.INSTANCE.getNotificationSound();
+        if (sound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN) {
+            return "Гомін: Сіріус";
+        } else if (sound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN_1) {
+            return "Гомін: Алара";
+        } else if (sound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN_2) {
+            return "Гомін: Пилюка";
+        } else if (sound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN_3) {
+            return "Гомін: Сіріус";
+        } else if (sound == CherrygramChatsConfig.NOTIF_SOUND_DEFAULT) {
+            return getString(R.string.Default);
+        } else {
+            return getString(R.string.Default);
+        }
+    }
+
+    private void showNotificationSoundSelector(Runnable runnable) {
+        ArrayList<String> configStringKeys = new ArrayList<>();
+        ArrayList<Integer> configValues = new ArrayList<>();
+
+        configStringKeys.add(getString(R.string.Default));
+        configValues.add(CherrygramChatsConfig.NOTIF_SOUND_DEFAULT);
+
+        configStringKeys.add("Гомін: Алара");
+        configValues.add(CherrygramChatsConfig.NOTIF_SOUND_GOMIN_1);
+
+        configStringKeys.add("Гомін: Пилюка");
+        configValues.add(CherrygramChatsConfig.NOTIF_SOUND_GOMIN_2);
+
+        configStringKeys.add("Гомін: Сіріус");
+        configValues.add(CherrygramChatsConfig.NOTIF_SOUND_GOMIN_3);
+
+        PopupHelper.show(configStringKeys, "Звук сповіщень", configValues.indexOf(CherrygramChatsConfig.INSTANCE.getNotificationSound()), getContext(), i -> {
+            CherrygramChatsConfig.INSTANCE.setNotificationSound(configValues.get(i));
+            if (runnable != null) runnable.run();
+        });
     }
 
 }

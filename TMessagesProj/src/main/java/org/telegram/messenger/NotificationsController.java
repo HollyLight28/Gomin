@@ -3344,15 +3344,7 @@ public class NotificationsController extends BaseController {
                     }
                     if (soundIn == 0 && !soundInLoaded) {
                         soundInLoaded = true;
-                        int sound;
-                        if (CherrygramChatsConfig.INSTANCE.getNotificationSound() == CherrygramChatsConfig.NOTIF_SOUND_GOMIN) {
-                            sound = R.raw.gomin_notif;
-                        } else if (CherrygramChatsConfig.INSTANCE.getNotificationSound() == CherrygramChatsConfig.NOTIF_SOUND_IOS) {
-                            sound = R.raw.sound_in_ios;
-                        } else {
-                            sound = R.raw.sound_in;
-                        }
-                        soundIn = soundPool.load(ApplicationLoader.applicationContext, sound, 1);
+                        soundIn = soundPool.load(ApplicationLoader.applicationContext, R.raw.gomin_in_chat, 1);
                     }
                     if (soundIn != 0) {
                         try {
@@ -3368,6 +3360,18 @@ public class NotificationsController extends BaseController {
         } catch (Exception e) {
             FileLog.e(e);
         }
+    }
+
+    public void resetInChatSound() {
+        notificationsQueue.postRunnable(() -> {
+            if (soundPool != null) {
+                if (soundIn != 0) {
+                    soundPool.unload(soundIn);
+                    soundIn = 0;
+                }
+            }
+            soundInLoaded = false;
+        });
     }
 
     private void scheduleNotificationDelay(boolean onlineReason) {
@@ -4677,7 +4681,16 @@ public class NotificationsController extends BaseController {
                 if (soundPath != null && !soundPath.equalsIgnoreCase("NoSound")) {
                     if (Build.VERSION.SDK_INT >= 26) {
                         if (soundPath.equalsIgnoreCase("Default") || soundPath.equals(defaultPath)) {
-                            sound = Settings.System.DEFAULT_NOTIFICATION_URI;
+                            int selectedSound = uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig.INSTANCE.getNotificationSound();
+                            if (selectedSound == uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig.NOTIF_SOUND_GOMIN || selectedSound == uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig.NOTIF_SOUND_GOMIN_3) {
+                                sound = Uri.parse("android.resource://" + ApplicationLoader.applicationContext.getPackageName() + "/raw/gomin_notif_3");
+                            } else if (selectedSound == uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig.NOTIF_SOUND_GOMIN_1) {
+                                sound = Uri.parse("android.resource://" + ApplicationLoader.applicationContext.getPackageName() + "/raw/gomin_notif_1");
+                            } else if (selectedSound == uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig.NOTIF_SOUND_GOMIN_2) {
+                                sound = Uri.parse("android.resource://" + ApplicationLoader.applicationContext.getPackageName() + "/raw/gomin_notif_2");
+                            } else {
+                                sound = Settings.System.DEFAULT_NOTIFICATION_URI;
+                            }
                         } else {
                             if (isInternalSoundFile) {
                                 sound = FileProvider.getUriForFile(ApplicationLoader.applicationContext, ApplicationLoader.getApplicationId() + ".provider", new File(soundPath));
@@ -4688,7 +4701,21 @@ public class NotificationsController extends BaseController {
                         }
                     } else {
                         if (soundPath.equals(defaultPath)) {
-                            mBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
+                            int selectedSound = uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig.INSTANCE.getNotificationSound();
+                            Uri customUri = null;
+                            if (selectedSound == uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig.NOTIF_SOUND_GOMIN || selectedSound == uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig.NOTIF_SOUND_GOMIN_3) {
+                                customUri = Uri.parse("android.resource://" + ApplicationLoader.applicationContext.getPackageName() + "/raw/gomin_notif_3");
+                            } else if (selectedSound == uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig.NOTIF_SOUND_GOMIN_1) {
+                                customUri = Uri.parse("android.resource://" + ApplicationLoader.applicationContext.getPackageName() + "/raw/gomin_notif_1");
+                            } else if (selectedSound == uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig.NOTIF_SOUND_GOMIN_2) {
+                                customUri = Uri.parse("android.resource://" + ApplicationLoader.applicationContext.getPackageName() + "/raw/gomin_notif_2");
+                            }
+
+                            if (customUri != null) {
+                                mBuilder.setSound(customUri, AudioManager.STREAM_NOTIFICATION);
+                            } else {
+                                mBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI, AudioManager.STREAM_NOTIFICATION);
+                            }
                         } else {
                             if (Build.VERSION.SDK_INT >= 24 && soundPath.startsWith("file://") && !AndroidUtilities.isInternalUri(Uri.parse(soundPath))) {
                                 try {

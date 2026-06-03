@@ -101,9 +101,7 @@ public class ChatsPreferencesEntry extends UniversalFragment {
         );
         items.add(UItem.asShadow(null));
 
-        items.add(UItem.asHeader(getString(R.string.SettingsNotifications)));
-        items.add(UItem.asButton(notificationSoundRow, getString(R.string.NotificationsSound), getNotificationSoundValue()));
-        items.add(UItem.asShadow(null));
+
     }
 
     @Override
@@ -121,32 +119,7 @@ public class ChatsPreferencesEntry extends UniversalFragment {
         } else if (item.id == disableSwipeToNextRow) {
             CherrygramChatsConfig.INSTANCE.setDisableSwipeToNext(!CherrygramChatsConfig.INSTANCE.getDisableSwipeToNext());
             SettingsHelper.updateCheckState(view, CherrygramChatsConfig.INSTANCE.getDisableSwipeToNext());
-        } else if (item.id == notificationSoundRow) {
-            showNotificationSoundSelector(() -> {
-                SettingsHelper.updateButtonValue(view, getNotificationSoundValue());
 
-                int tone = 0;
-                int selectedSound = CherrygramChatsConfig.INSTANCE.getNotificationSound();
-                if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN) {
-                    tone = R.raw.gomin_notif;
-                } else if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_DEFAULT) {
-                    tone = R.raw.sound_in;
-                } else if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_IOS) {
-                    tone = R.raw.sound_in_ios;
-                }
-
-                if (tone != 0) {
-                    try {
-                        MediaPlayer mp = MediaPlayer.create(getContext(), tone);
-                        if (mp != null) {
-                            mp.setOnCompletionListener(MediaPlayer::release);
-                            mp.start();
-                        }
-                    } catch (Exception ignored) {}
-                }
-
-                CGBulletinCreator.INSTANCE.createRestartBulletin(this);
-            });
         } else if (item.id == vibrateInChatsRow) {
             showVibrationSelector(() -> {
                 try {
@@ -345,36 +318,7 @@ public class ChatsPreferencesEntry extends UniversalFragment {
         handleMenuAlert(getString(R.string.CP_AdminActions), menuItems, fragment);
     }
 
-    private String getNotificationSoundValue() {
-        return switch (CherrygramChatsConfig.INSTANCE.getNotificationSound()) {
-            case CherrygramChatsConfig.NOTIF_SOUND_GOMIN -> "Гомін";
-            case CherrygramChatsConfig.NOTIF_SOUND_DEFAULT -> getString(R.string.Default);
-            case CherrygramChatsConfig.NOTIF_SOUND_IOS -> "iOS";
-            default -> getString(R.string.PopupDisabled);
-        };
-    }
 
-    private void showNotificationSoundSelector(Runnable runnable) {
-        ArrayList<String> configStringKeys = new ArrayList<>();
-        ArrayList<Integer> configValues = new ArrayList<>();
-
-        configStringKeys.add(getString(R.string.PopupDisabled));
-        configValues.add(CherrygramChatsConfig.NOTIF_SOUND_DISABLE);
-
-        configStringKeys.add("Гомін");
-        configValues.add(CherrygramChatsConfig.NOTIF_SOUND_GOMIN);
-
-        configStringKeys.add(getString(R.string.Default));
-        configValues.add(CherrygramChatsConfig.NOTIF_SOUND_DEFAULT);
-
-        configStringKeys.add("iOS");
-        configValues.add(CherrygramChatsConfig.NOTIF_SOUND_IOS);
-
-        PopupHelper.show(configStringKeys, getString(R.string.NotificationsSound), configValues.indexOf(CherrygramChatsConfig.INSTANCE.getNotificationSound()), getContext(), i -> {
-            CherrygramChatsConfig.INSTANCE.setNotificationSound(configValues.get(i));
-            if (runnable != null) runnable.run();
-        });
-    }
 
     private String getVibrationValue() {
         return switch (CherrygramChatsConfig.INSTANCE.getVibrateInChats()) {

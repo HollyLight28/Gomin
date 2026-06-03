@@ -76,8 +76,10 @@ object CherrygramChatsConfig: CoroutineScope by CoroutineScope(
     /** Notifications start */
     const val NOTIF_SOUND_DISABLE = 0
     const val NOTIF_SOUND_DEFAULT = 1
-    const val NOTIF_SOUND_IOS = 2
     const val NOTIF_SOUND_GOMIN = 3
+    const val NOTIF_SOUND_GOMIN_1 = 4
+    const val NOTIF_SOUND_GOMIN_2 = 5
+    const val NOTIF_SOUND_GOMIN_3 = 6
     var notificationSound by sharedPreferences.int("CP_Notification_Sound", NOTIF_SOUND_GOMIN)
 
     const val VIBRATION_DISABLE = 0
