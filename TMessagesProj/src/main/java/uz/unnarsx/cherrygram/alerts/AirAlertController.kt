@@ -1,8 +1,6 @@
 package uz.unnarsx.cherrygram.alerts
 
 import android.media.MediaPlayer
-import android.media.RingtoneManager
-import org.json.JSONArray
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.NotificationCenter
@@ -14,9 +12,16 @@ import java.util.*
 
 object AirAlertController {
 
+    @Volatile
     private var isAlertActive = false
     private var timer: Timer? = null
     private var mediaPlayer: MediaPlayer? = null
+    private var testStopRunnable: Runnable? = null
+    private var safetyStopRunnable: Runnable? = null
+    @Volatile
+    private var isTesting = false
+    private var savedAlertState = false
+    private const val SAFETY_TIMEOUT_MS = 900000L // 15 хвилин safety timeout для реальних тривог
 
     fun init() {
         if (CherrygramCoreConfig.airAlertEnabled) {
@@ -35,7 +40,7 @@ object AirAlertController {
             override fun run() {
                 checkAlertStatus()
             }
-        }, 0, 60000) // Every minute
+        }, 0, 60000)
     }
 
     fun stopMonitoring() {
@@ -44,9 +49,14 @@ object AirAlertController {
     }
 
     fun checkAlertStatus(callback: ((Boolean) -> Unit)? = null) {
+        if (isTesting) {
+            if (callback != null) AndroidUtilities.runOnUIThread { callback(isAlertActive) }
+            return
+        }
+
         val regionId = CherrygramCoreConfig.airAlertRegionId
         if (regionId.isEmpty()) {
-            callback?.invoke(false)
+            if (callback != null) AndroidUtilities.runOnUIThread { callback(false) }
             return
         }
 
@@ -62,7 +72,7 @@ object AirAlertController {
                     val response = connection.inputStream.bufferedReader().use { it.readText() }
                     val jsonObject = org.json.JSONObject(response)
                     val hasAirAlert = jsonObject.optBoolean("alert", false)
-                    
+
                     AndroidUtilities.runOnUIThread {
                         setAlertStatus(hasAirAlert)
                         callback?.invoke(hasAirAlert)
@@ -78,11 +88,23 @@ object AirAlertController {
     }
 
     private fun setAlertStatus(active: Boolean) {
+        if (isTesting) return
         if (isAlertActive != active) {
             isAlertActive = active
             if (isAlertActive) {
                 playSound(true)
+                safetyStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+                val runnable = Runnable {
+                    playSound(false)
+                    isAlertActive = false
+                    safetyStopRunnable = null
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
+                }
+                safetyStopRunnable = runnable
+                AndroidUtilities.runOnUIThread(runnable, SAFETY_TIMEOUT_MS)
             } else {
+                safetyStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+                safetyStopRunnable = null
                 playSound(false)
             }
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
@@ -93,43 +115,77 @@ object AirAlertController {
 
     private fun playSound(isStart: Boolean) {
         try {
+            mediaPlayer?.setOnCompletionListener(null)
             mediaPlayer?.stop()
             mediaPlayer?.release()
             mediaPlayer = null
 
             if (isStart) {
-                // Hardcoded 15 seconds alarm or until stopped
                 val soundRes = org.telegram.messenger.R.raw.gomin_siren
-                mediaPlayer = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, soundRes)
-                mediaPlayer?.isLooping = true
-                mediaPlayer?.start()
-                
-                AndroidUtilities.runOnUIThread({
-                    mediaPlayer?.stop()
-                    mediaPlayer?.release()
-                    mediaPlayer = null
-                }, 15000)
+                val player = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, soundRes)
+                mediaPlayer = player
+                player.isLooping = true
+                player.start()
             } else {
-                // Short beep for end
                 val soundRes = org.telegram.messenger.R.raw.gomin_cancel
-                mediaPlayer = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, soundRes)
-                mediaPlayer?.start()
+                val player = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, soundRes)
+                mediaPlayer = player
+                player.setOnCompletionListener {
+                    if (mediaPlayer === player) {
+                        mediaPlayer?.release()
+                        mediaPlayer = null
+                    } else {
+                        player.release()
+                    }
+                }
+                player.start()
             }
         } catch (e: Exception) {
             FileLog.e(e)
+            mediaPlayer = null
         }
     }
-    
+
     fun testAlert() {
-        playSound(true)
+        if (isTesting) {
+            stopTest()
+            return
+        }
+
+        isTesting = true
+        savedAlertState = isAlertActive
         isAlertActive = true
+        playSound(true)
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
-        
-        AndroidUtilities.runOnUIThread({
+
+        val stopRunnable = Runnable {
+            stopTest()
+        }
+        testStopRunnable = stopRunnable
+        AndroidUtilities.runOnUIThread(stopRunnable, 15000)
+    }
+
+    private fun stopTest() {
+        isTesting = false
+        testStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+        testStopRunnable = null
+        isAlertActive = savedAlertState
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
+        if (savedAlertState) {
+            // Real alert була активною до тесту — сирена вже грає, просто оновлюємо safety таймер
+            safetyStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+            val runnable = Runnable {
+                playSound(false)
+                isAlertActive = false
+                safetyStopRunnable = null
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
+            }
+            safetyStopRunnable = runnable
+            AndroidUtilities.runOnUIThread(runnable, SAFETY_TIMEOUT_MS)
+        } else {
             playSound(false)
-            isAlertActive = false
-            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
-        }, 15000)
+            checkAlertStatus()
+        }
     }
 
     fun fetchRegions(apiKey: String, callback: (List<Pair<String, String>>) -> Unit) {

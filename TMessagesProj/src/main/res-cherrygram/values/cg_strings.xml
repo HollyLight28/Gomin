@@ -466,7 +466,7 @@
     <string name="SP_Biometric_NotAvailable">Set up a fingerprint or Face ID in system settings to enable biometric protection.</string>
     <string name="SP_Maintenance">Maintenance</string>
 
-    <string name="SP_GhostMode_Header">Gomin Ghost</string>
+    <string name="SP_GhostMode_Header">Ghost Mode</string>
     <string name="SP_GhostMode_ReadMessages">Invisible read</string>
     <string name="SP_GhostMode_ReadMessages_Desc">Messages will remain unread for others, but you can read them normally.</string>
     <string name="SP_GhostMode_HideTyping">Hide typing status</string>
@@ -495,7 +495,7 @@
     <string name="EP_DownloadSpeedBoost_Shadow">Technical accelerator: increases the number of threads from 4 to 12 and packet size from 128 KB to 1 MB for maximum download speed.</string>
     <string name="CP_PremiumWallpapers">Premium User Backgrounds</string>
     <string name="CP_PremiumWallpapers_Desc">Allows you to see custom wallpapers set by other users in chats.</string>
-    <string name="CP_SystemAI">System &amp; AI</string>
+    <string name="CP_SystemAI">Gomin AI</string>
     <string name="CP_SpringAnimation_Desc_New">Replaces standard animations with Gomin\'s signature soft transitions.</string>
     <string name="CGP_SupportGominTitle">Support Gomin ❤️</string>
     <string name="CGP_SupportGominDesc">Your support is the heart of our project. Help the author pay for servers and keep making Gomin better!</string>

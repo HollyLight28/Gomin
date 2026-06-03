@@ -72,8 +72,6 @@ public class CGPreferencesEntry extends UniversalFragment {
     private final int slowNetworkModeRow = 22;
 
     // Camera
-    private final int cameraQualityRow = 30;
-    private final int cameraFpsRow = 31;
     private final int cameraDualRow = 32;
 
     // Chats & Messages
@@ -156,22 +154,22 @@ public class CGPreferencesEntry extends UniversalFragment {
             items.add(UItem.asButton(airAlertCheckStatusRow, "Перевірити поточний статус", null));
             items.add(UItem.asButton(airAlertTestRow, getString(R.string.CP_AirAlert_Test), null));
         }
+        items.add(UItem.asShadow(null));
 
-        // ⚡ Speed Engine (Killer Feature) - ТЕПЕР ОДНА КАРТКА!
+        // ⚡ Speed Engine
         items.add(UItem.asHeader(getString(R.string.EP_SpeedEngine)));
         items.add(UItem.asButton(downloadSpeedBoostRow, getString(R.string.EP_DownloadSpeedBoost), getDownloadSpeedBoostValue()));
+        items.add(UItem.asShadow(getString(R.string.EP_DownloadSpeedBoost_Shadow)));
         items.add(SettingsHelper.asSwitchCG(uploadSpeedBoostRow, getString(R.string.EP_UploadloadSpeedBoost), getString(R.string.EP_UploadloadSpeedBoost_Desc))
                 .setChecked(CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost())
         );
         items.add(SettingsHelper.asSwitchCG(slowNetworkModeRow, getString(R.string.EP_SlowNetworkMode), getString(R.string.EP_SlowNetworkMode_Desc))
                 .setChecked(CherrygramCoreConfig.INSTANCE.getSlowNetworkMode())
         );
-        items.add(UItem.asShadow(getString(R.string.EP_DownloadSpeedBoost_Shadow)));
+        items.add(UItem.asShadow(null));
 
         // 📷 Камера
         items.add(UItem.asHeader(getString(R.string.CP_Category_Camera)));
-        items.add(UItem.asButton(cameraQualityRow, getString(R.string.CP_CameraQuality), CherrygramCameraConfig.INSTANCE.getCameraResolution() + "p"));
-        items.add(UItem.asButton(cameraFpsRow, "FPS", getCameraXFpsRange()));
         items.add(SettingsHelper.asSwitchCG(cameraDualRow, getString(R.string.CP_CameraDualCamera), getString(R.string.CP_CameraDualCamera_Desc))
                 .setChecked(CherrygramCameraConfig.INSTANCE.getUseDualCamera())
         );
@@ -243,16 +241,6 @@ public class CGPreferencesEntry extends UniversalFragment {
         card.addView(desc, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 0, 10, 0, 0));
 
         return card;
-    }
-
-    private String getCameraXFpsRange() {
-        return switch (CherrygramCameraConfig.INSTANCE.getCameraXFpsRange()) {
-            case CherrygramCameraConfig.CameraXFpsRange25to30 -> "25-30";
-            case CherrygramCameraConfig.CameraXFpsRange30to30 -> "30-30";
-            case CherrygramCameraConfig.CameraXFpsRange30to60 -> "30-60";
-            case CherrygramCameraConfig.CameraXFpsRange60to60 -> "60-60";
-            default -> getString(R.string.Default);
-        };
     }
 
     @Override
@@ -343,10 +331,6 @@ public class CGPreferencesEntry extends UniversalFragment {
             CherrygramAppearanceConfig.INSTANCE.setShowMainTabs(!CherrygramAppearanceConfig.INSTANCE.getShowMainTabs());
             SettingsHelper.updateCheckState(view, CherrygramAppearanceConfig.INSTANCE.getShowMainTabs());
             CGBulletinCreator.INSTANCE.createRestartBulletin(this);
-        } else if (item.id == cameraQualityRow) {
-            // ... existing camera logic (assuming I should keep it or it was there)
-        } else if (item.id == cameraFpsRow) {
-            // ... existing camera logic
         } else if (item.id == cameraDualRow) {
             CherrygramCameraConfig.INSTANCE.setUseDualCamera(!CherrygramCameraConfig.INSTANCE.getUseDualCamera());
             SettingsHelper.updateCheckState(view, CherrygramCameraConfig.INSTANCE.getUseDualCamera());
