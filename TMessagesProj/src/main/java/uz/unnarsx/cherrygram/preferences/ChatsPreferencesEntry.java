@@ -128,7 +128,7 @@ public class ChatsPreferencesEntry extends UniversalFragment {
                 int tone = 0;
                 int selectedSound = CherrygramChatsConfig.INSTANCE.getNotificationSound();
                 if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_GOMIN) {
-                    tone = R.raw.gomin_test;
+                    tone = R.raw.gomin_notif;
                 } else if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_DEFAULT) {
                     tone = R.raw.sound_in;
                 } else if (selectedSound == CherrygramChatsConfig.NOTIF_SOUND_IOS) {

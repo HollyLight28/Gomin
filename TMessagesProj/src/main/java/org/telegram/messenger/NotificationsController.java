@@ -3346,7 +3346,7 @@ public class NotificationsController extends BaseController {
                         soundInLoaded = true;
                         int sound;
                         if (CherrygramChatsConfig.INSTANCE.getNotificationSound() == CherrygramChatsConfig.NOTIF_SOUND_GOMIN) {
-                            sound = R.raw.gomin_test;
+                            sound = R.raw.gomin_notif;
                         } else if (CherrygramChatsConfig.INSTANCE.getNotificationSound() == CherrygramChatsConfig.NOTIF_SOUND_IOS) {
                             sound = R.raw.sound_in_ios;
                         } else {
