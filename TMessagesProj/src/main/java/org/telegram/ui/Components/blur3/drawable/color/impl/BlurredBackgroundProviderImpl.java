@@ -24,8 +24,8 @@ public class BlurredBackgroundProviderImpl {
                 final int colorTarget = Theme.getColor(Theme.key_glass_targetMainTabs, r);
                 return solveSrcColor(colorBg, colorTarget, alpha);
             })
-            .setStrokeColorTop(0x22000000, 0x33FFFFFF)
-            .setStrokeColorBottom(0x33000000, 0x22FFFFFF)
+            .setStrokeColorTop(0x22000000, 0x00000000)
+            .setStrokeColorBottom(0x33000000, 0x00000000)
             .setShadowColor(0x20000000, 0x04FFFFFF)
             .setShadowLayer(dpf2(1.0f), 0, dpf2(0.33f))
             .setStrokeWidth(dpf2(1f), dpf2(1f))
