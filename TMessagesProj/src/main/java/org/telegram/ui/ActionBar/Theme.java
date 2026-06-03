@@ -8342,25 +8342,30 @@ public class Theme {
                                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && (param.startsWith("a") || param.startsWith("n") || param.startsWith("monet"))) {
                                     value = MonetHelper.getColor(param, monetAmoled);
                                     boolean isDark = (assetName != null && assetName.toLowerCase().contains("dark")) || (file != null && file.getName().toLowerCase().contains("dark"));
+                                    boolean isMonetTheme = (assetName != null && assetName.toLowerCase().contains("monet")) || (file != null && file.getName().toLowerCase().contains("monet"));
+
                                     // Black Edition Contrast Boost
-                                    if ("actionBarDefaultTitle".equals(key) || "windowBackgroundWhiteBlueHeader".equals(key) || "windowBackgroundWhiteBlackText".equals(key) || "actionBarDefaultSubmenuItem".equals(key) || "windowBackgroundWhiteValueText".equals(key) || "chat_messagePanelText".equals(key) || "chat_messagePanelHint".equals(key)) {
+                                    if (isMonetTheme && ("actionBarDefaultTitle".equals(key) || "windowBackgroundWhiteBlueHeader".equals(key) || "windowBackgroundWhiteBlackText".equals(key) || "actionBarDefaultSubmenuItem".equals(key) || "windowBackgroundWhiteValueText".equals(key) || "chat_messagePanelText".equals(key) || "chat_messagePanelHint".equals(key))) {
                                         value = isDark ? 0xFFFFFFFF : 0xFF000000;
-                                    } else if ("actionBarDefaultSubmenuItemIcon".equals(key) || "windowBackgroundWhiteGrayIcon".equals(key) || "windowBackgroundWhiteBlueIcon".equals(key)) {
+                                    } else if (isMonetTheme && ("actionBarDefaultSubmenuItemIcon".equals(key) || "windowBackgroundWhiteGrayIcon".equals(key) || "windowBackgroundWhiteBlueIcon".equals(key))) {
                                         value = isDark ? 0xFFFFFFFF : 0xFF000000;
-                                    } else if ("chat_messagePanelSend".equals(key) || "chat_messagePanelVoiceBackground".equals(key) || "chat_messagePanelVideo".equals(key) || "chat_goDownButtonIcon".equals(key) || "profile_actionBackground".equals(key) || "featuredStickers_addButton".equals(key)) {
+                                    } else if (isMonetTheme && ("chat_messagePanelSend".equals(key) || "chat_messagePanelVoiceBackground".equals(key) || "chat_messagePanelVideo".equals(key) || "chat_goDownButtonIcon".equals(key) || "profile_actionBackground".equals(key) || "featuredStickers_addButton".equals(key))) {
                                         // Gomin: White circle/background for dark mode
                                         value = isDark ? 0xFFFFFFFF : 0xFF121212;
-                                    } else if ("chat_messagePanelSendIcon".equals(key) || "chat_messagePanelVoiceLock".equals(key) || "profile_actionIcon".equals(key) || "featuredStickers_buttonText".equals(key)) {
+                                    } else if (isMonetTheme && ("chat_messagePanelSendIcon".equals(key) || "chat_messagePanelVoiceLock".equals(key) || "profile_actionIcon".equals(key) || "featuredStickers_buttonText".equals(key))) {
                                         // Gomin: Dark icon for dark mode to contrast with white circle
                                         value = isDark ? 0xFF121212 : 0xFFFFFFFF;
-                                    } else if ("windowBackgroundWhite".equals(key) || "actionBarDefault".equals(key) || "chat_messagePanelBackground".equals(key)) {
+                                    } else if (isMonetTheme && ("windowBackgroundWhite".equals(key) || "actionBarDefault".equals(key) || "chat_messagePanelBackground".equals(key))) {
                                         // Card background: #1A1A1A for Dark, #FFFFFF for light
                                         value = isDark ? (monetAmoled ? 0xFF1A1A1A : 0xFF222222) : 0xFFFFFFFF;
-                                    } else if ("windowBackgroundGray".equals(key) || "dialogBackgroundGray".equals(key) || "graySection".equals(key)) {
+                                    } else if (isMonetTheme && ("windowBackgroundGray".equals(key) || "dialogBackgroundGray".equals(key) || "graySection".equals(key))) {
                                         // Background behind cards: #000000 for AMOLED, #0F0F0F for Dark, #F0F0F0 for light
                                         value = isDark ? (monetAmoled ? 0xFF000000 : 0xFF0F0F0F) : 0xFFF0F0F0;
-                                    } else if ("chat_outBubble".equals(key)) {
-                                        value = isDark ? 0xFF222222 : value;
+                                    } else if (isMonetTheme && "chat_outBubble".equals(key)) {
+                                        value = isDark ? (monetAmoled ? 0xFF1A1A1A : 0xFF222222) : value;
+                                    } else if (isMonetTheme && ("text_RedBold".equals(key) || "text_RedRegular".equals(key) || "fill_RedNormal".equals(key) || "fill_RedDark".equals(key) || "chat_sentError".equals(key) || "chat_sentErrorIcon".equals(key) || "calls_callReceivedRedIcon".equals(key) || "featuredStickers_removeButtonText".equals(key) || "dialogSwipeRemove".equals(key) || key.startsWith("voipgroup_leaveButton"))) {
+                                        // Gomin Black Edition: Pure Red for alerts and end calls
+                                        value = 0xFFFF453A;
                                     }
                                     // Gomin Black Edition: Chat list text — pure black/white
                                     else if (key.startsWith("chats_name") || "chats_draft".equals(key) || "chats_date".equals(key) || "chats_date_bold".equals(key) || "chats_message".equals(key) || "chats_messageArchived".equals(key) || "chats_message_threeLines".equals(key) || "chats_secretName".equals(key)) {
@@ -8396,10 +8401,15 @@ public class Theme {
                                     }
                                 } else {
                                     value = Utilities.parseInt(param);
-                                    // Gomin Black Edition: Fix outgoing message text on dark bubbles (raw int in monet_dark)
+                                    // Gomin Black Edition: Fix outgoing message text and bubbles on dark bubbles (raw int in monet_dark)
                                     boolean isDark = (assetName != null && assetName.toLowerCase().contains("dark")) || (file != null && file.getName().toLowerCase().contains("dark"));
-                                    if ("chat_messageTextOut".equals(key)) {
+                                    boolean isMonetTheme = (assetName != null && assetName.toLowerCase().contains("monet")) || (file != null && file.getName().toLowerCase().contains("monet"));
+                                    if (isMonetTheme && "chat_messageTextOut".equals(key)) {
                                         value = isDark ? 0xFFFFFFFF : 0xFF000000;
+                                    } else if (isMonetTheme && "chat_outBubble".equals(key)) {
+                                        value = isDark ? (monetAmoled ? 0xFF1A1A1A : 0xFF222222) : value;
+                                    } else if (isMonetTheme && ("text_RedBold".equals(key) || "text_RedRegular".equals(key) || "fill_RedNormal".equals(key) || "fill_RedDark".equals(key) || "chat_sentError".equals(key) || "chat_sentErrorIcon".equals(key) || "calls_callReceivedRedIcon".equals(key) || "featuredStickers_removeButtonText".equals(key) || "dialogSwipeRemove".equals(key) || key.startsWith("voipgroup_leaveButton"))) {
+                                        value = 0xFFFF453A;
                                     }
                                 }
                                 int keyFromString = ThemeColors.stringKeyToInt(key);

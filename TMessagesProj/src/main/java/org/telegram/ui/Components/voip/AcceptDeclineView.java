@@ -109,7 +109,7 @@ public class AcceptDeclineView extends View {
         acceptDrawable.setColor(0xFF40C749);
 
         declineDrawable = new FabBackgroundDrawable();
-        declineDrawable.setColor(0xFFF01D2C);
+        declineDrawable.setColor(Theme.getColor(Theme.key_calls_callReceivedRedIcon));
 
         declineDrawable.setBounds(0, 0, buttonWidth, buttonWidth);
         acceptDrawable.setBounds(0, 0, buttonWidth, buttonWidth);
@@ -374,7 +374,7 @@ public class AcceptDeclineView extends View {
         } else {
             acceptVoiceDrawable.start();
             avatarWavesDrawable.setShowWaves(true, this);
-            declineDrawable.setColor(0xFFF01D2C);
+            declineDrawable.setColor(Theme.getColor(Theme.key_calls_callReceivedRedIcon));
 
             callAnimator = ValueAnimator.ofInt(0, 60, 0, 0, 60, 0, 0, 0, 0);
             callAnimator.addUpdateListener(a -> {

@@ -1313,7 +1313,7 @@ public class VoIPFragment implements
         acceptDeclineView.getLocationOnScreen(loc);
         acceptDeclineView.stopAnimations();
         //callingUserPhotoView.switchToCallConnected(loc[0] + AndroidUtilities.dp(82), loc[1] + AndroidUtilities.dp(74));
-        bottomEndCallBtn.setData(R.drawable.calls_decline, Color.WHITE, 0xFFF01D2C, LocaleController.getString(R.string.VoipEndCall2), false, false);
+        bottomEndCallBtn.setData(R.drawable.calls_decline, Color.WHITE, Theme.getColor(Theme.key_calls_callReceivedRedIcon), LocaleController.getString(R.string.VoipEndCall2), false, false);
         bottomSpeakerBtn.setType(VoIpSwitchLayout.Type.SPEAKER, false);
         bottomMuteBtn.setType(VoIpSwitchLayout.Type.MICRO, false);
         bottomVideoBtn.setType(VoIpSwitchLayout.Type.VIDEO, true);
