@@ -69,6 +69,7 @@ class GominLiveManager(
 
     private var recordThread: Thread? = null
     private var playThread: Thread? = null
+    @Volatile
     private var isSessionActive = false
 
     private val audioPlayQueue = LinkedBlockingQueue<ByteArray>()
@@ -92,7 +93,7 @@ class GominLiveManager(
         synchronized(audioLock) {
             try {
                 val record = AudioRecord(
-                    MediaRecorder.AudioSource.MIC,
+                    MediaRecorder.AudioSource.VOICE_COMMUNICATION,
                     sampleRateIn,
                     AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT,
@@ -139,6 +140,9 @@ class GominLiveManager(
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {
+                if (text.length < 500) {
+                    FileLog.d("GominLiveManager: Received message: $text")
+                }
                 parseServerMessage(text)
             }
 
@@ -161,17 +165,14 @@ class GominLiveManager(
             val setupJson = JSONObject().apply {
                 put("setup", JSONObject().apply {
                     put("model", targetModel)
-                    put("inputAudioTranscription", JSONObject())
-                    if (!isTranscriptionMode) {
-                        put("outputAudioTranscription", JSONObject())
-                    }
-                    put("generationConfig", JSONObject().apply {
-                        put("responseModalities", JSONArray().put("AUDIO"))
+                    put("input_audio_transcription", JSONObject())
+                    put("generation_config", JSONObject().apply {
+                        put("response_modalities", JSONArray().put("audio"))
                         if (!isTranscriptionMode) {
-                            put("speechConfig", JSONObject().apply {
-                                put("voiceConfig", JSONObject().apply {
-                                    put("prebuiltVoiceConfig", JSONObject().apply {
-                                        put("voiceName", "Puck")
+                            put("speech_config", JSONObject().apply {
+                                put("voice_config", JSONObject().apply {
+                                    put("prebuilt_voice_config", JSONObject().apply {
+                                        put("voice_name", "Puck")
                                     })
                                 })
                             })
@@ -179,7 +180,9 @@ class GominLiveManager(
                     })
                 })
             }
-            ws.send(setupJson.toString())
+            val setupStr = setupJson.toString()
+            FileLog.d("GominLiveManager: Sending setup: $setupStr")
+            ws.send(setupStr)
         } catch (e: Exception) {
             FileLog.e(e)
         }
@@ -284,17 +287,19 @@ class GominLiveManager(
 
                             val base64Data = Base64.encodeToString(chunkToSend, Base64.NO_WRAP)
                             val inputJson = JSONObject().apply {
-                                put("realtimeInput", JSONObject().apply {
+                                put("realtime_input", JSONObject().apply {
                                     val chunk = JSONObject().apply {
-                                        put("mimeType", "audio/pcm;rate=16000")
+                                        put("mime_type", "audio/pcm;rate=16000")
                                         put("data", base64Data)
                                     }
-                                    put("mediaChunks", JSONArray().put(chunk))
+                                    put("media_chunks", JSONArray().put(chunk))
                                 })
                             }
                             
                             if (isWebSocketOpen && isSetupComplete) {
-                                webSocket?.send(inputJson.toString())
+                                val inputStr = inputJson.toString()
+                                // FileLog.d("GominLiveManager: Sending audio chunk") // Too spammy
+                                webSocket?.send(inputStr)
                             }
                         }
                     }
@@ -336,12 +341,14 @@ class GominLiveManager(
 
         try {
             val interruptJson = JSONObject().apply {
-                put("clientContent", JSONObject().apply {
+                put("client_content", JSONObject().apply {
                     put("turns", JSONArray())
-                    put("turnComplete", false)
+                    put("turn_complete", false)
                 })
             }
-            webSocket?.send(interruptJson.toString())
+            val interruptStr = interruptJson.toString()
+            FileLog.d("GominLiveManager: Sending interruption: $interruptStr")
+            webSocket?.send(interruptStr)
         } catch (e: Exception) {
             FileLog.e(e)
         }
@@ -429,12 +436,14 @@ class GominLiveManager(
                                 }
                                 
                                 val responseJson = JSONObject().apply {
-                                    put("toolResponse", JSONObject().apply {
-                                        put("functionResponses", JSONArray().put(fResp))
+                                    put("tool_response", JSONObject().apply {
+                                        put("function_responses", JSONArray().put(fResp))
                                     })
                                 }
                                 if (isWebSocketOpen && isSetupComplete) {
-                                    webSocket?.send(responseJson.toString())
+                                    val respStr = responseJson.toString()
+                                    FileLog.d("GominLiveManager: Sending tool response: $respStr")
+                                    webSocket?.send(respStr)
                                 }
                             }
                             
@@ -469,14 +478,30 @@ class GominLiveManager(
         isSetupComplete = false
         
         try { webSocket?.close(1000, "Session ended") } catch (e: Exception) { }
+        
+        // Defensive: interrupt threads first
         recordThread?.interrupt()
         playThread?.interrupt()
 
         synchronized(audioLock) {
             try { echoCanceler?.enabled = false; echoCanceler?.release() } catch (e: Exception) { }
             try { noiseSuppressor?.enabled = false; noiseSuppressor?.release() } catch (e: Exception) { }
-            try { audioRecord?.stop(); audioRecord?.release() } catch (e: Exception) { }
-            try { audioTrack?.stop(); audioTrack?.release() } catch (e: Exception) { }
+            
+            try { 
+                if (audioRecord?.state == AudioRecord.STATE_INITIALIZED) {
+                    audioRecord?.stop() 
+                }
+                audioRecord?.release() 
+            } catch (e: Exception) { }
+            
+            try { 
+                if (audioTrack?.state == AudioTrack.STATE_INITIALIZED) {
+                    audioTrack?.pause()
+                    audioTrack?.flush()
+                    audioTrack?.stop() 
+                }
+                audioTrack?.release() 
+            } catch (e: Exception) { }
 
             echoCanceler = null
             noiseSuppressor = null
