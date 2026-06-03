@@ -7,6 +7,7 @@
 6. Rebrand "Black Edition" to a premium, stylish Ukrainian name (e.g., "Гомін: Пітьма") and rewrite its manifesto. [IN PROGRESS]
 7. Design and implement a premium "Про Гомін" (About Gomin) custom settings screen containing the emotional story and philosophy of the solo developer. [PENDING STORY]
 8. Plan the premium bidirectional Jarvis features (Google Search web retrieval and Reading target Telegram channels/chats to summarize updates). [PLANNED]
+9. Fix bubble design contrast, decline call button hardcoded color, and player null safety. [COMPLETED]
 
 
 
@@ -43,8 +44,10 @@
 - Audited `GominBlackEditionActivity.kt` and retrieved the original "Black Edition" manifesto text.
 - Drafted the final Ukrainian concept "Гомін: Пітьма" with the subtitle "Філософія нашого стилю" and a revamped, readable manifesto with emojis.
 - Redesigned the manifesto with a respectful, non-commercial, and deeply convincing tone, emphasizing personal vision and mental health benefit over Wikipedia-like dry facts.
-
-
+- Scanned the newly pulled files (`Theme.java`, `VoIPFragment.java`, `AcceptDeclineView.java`) after git pull.
+- Fixed the second occurrence of hardcoded decline call background color (`0xFFF01D2C`) in `VoIPFragment.java` (line 2694) to use themed `calls_callReceivedRedIcon`.
+- Removed overrides for `chat_outBubble` and `chat_messageTextOut` in `Theme.java` for Monet themes, allowing `monet_dark.attheme` to apply its native white bubbles and black text.
+- Added null safety checks for `MediaPlayer.create` in `AirAlertController.kt` to prevent NPE when device audio subsystems are unavailable.
 
 
 
@@ -52,7 +55,11 @@
 None.
 
 
+
 # MODIFIED FILES
+- `TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java` -> Replaced hardcoded red decline color with themed `calls_callReceivedRedIcon`.
+- `TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java` -> Removed `chat_outBubble` and `chat_messageTextOut` overrides for Monet themes.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/alerts/AirAlertController.kt` -> Added null-safety checks to `playSound`.
 - `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/core/configs/CherrygramChatsConfig.kt` -> Added NOTIF_SOUND_GOMIN = 3 constant, set default to Gomin.
 - `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/preferences/ChatsPreferencesEntry.java` -> Updated UI selector, added Gomin option, added preview player with safe MediaPlayer release callbacks.
 - `TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java` -> Embedded Gomin sound resource mapping for active in-app alerts.

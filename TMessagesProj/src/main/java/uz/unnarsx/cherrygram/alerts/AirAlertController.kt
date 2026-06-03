@@ -130,34 +130,39 @@ object AirAlertController {
             if (isStart) {
                 val soundRes = org.telegram.messenger.R.raw.gomin_siren
                 val player = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, soundRes)
-                mediaPlayer = player
-                player.start()
+                if (player != null) {
+                    mediaPlayer = player
+                    player.start()
 
-                if (!isTesting) {
-                    sirenStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
-                    val stopRunnable = Runnable {
-                        stopSirenOnly()
-                        sirenStopRunnable = null
+                    if (!isTesting) {
+                        sirenStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+                        val stopRunnable = Runnable {
+                            stopSirenOnly()
+                            sirenStopRunnable = null
+                        }
+                        sirenStopRunnable = stopRunnable
+                        AndroidUtilities.runOnUIThread(stopRunnable, SIREN_DURATION_MS)
                     }
-                    sirenStopRunnable = stopRunnable
-                    AndroidUtilities.runOnUIThread(stopRunnable, SIREN_DURATION_MS)
                 }
             } else {
                 val soundRes = org.telegram.messenger.R.raw.gomin_cancel
                 val player = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, soundRes)
-                mediaPlayer = player
-                player.setOnCompletionListener {
-                    if (mediaPlayer === player) {
-                        mediaPlayer?.release()
-                        mediaPlayer = null
-                    } else {
-                        player.release()
+                if (player != null) {
+                    mediaPlayer = player
+                    player.setOnCompletionListener {
+                        if (mediaPlayer === player) {
+                            mediaPlayer?.release()
+                            mediaPlayer = null
+                        } else {
+                            player.release()
+                        }
                     }
+                    player.start()
                 }
-                player.start()
             }
         } catch (e: Exception) {
             FileLog.e(e)
+            mediaPlayer?.release()
             mediaPlayer = null
         }
     }

@@ -8361,8 +8361,6 @@ public class Theme {
                                     } else if (isMonetTheme && ("windowBackgroundGray".equals(key) || "dialogBackgroundGray".equals(key) || "graySection".equals(key))) {
                                         // Background behind cards: #000000 for AMOLED, #0F0F0F for Dark, #F0F0F0 for light
                                         value = isDark ? (monetAmoled ? 0xFF000000 : 0xFF0F0F0F) : 0xFFF0F0F0;
-                                    } else if (isMonetTheme && "chat_outBubble".equals(key)) {
-                                        value = isDark ? (monetAmoled ? 0xFF1A1A1A : 0xFF222222) : value;
                                     } else if (isMonetTheme && ("text_RedBold".equals(key) || "text_RedRegular".equals(key) || "fill_RedNormal".equals(key) || "fill_RedDark".equals(key) || "chat_sentError".equals(key) || "chat_sentErrorIcon".equals(key) || "calls_callReceivedRedIcon".equals(key) || "featuredStickers_removeButtonText".equals(key) || "dialogSwipeRemove".equals(key) || key.startsWith("voipgroup_leaveButton"))) {
                                         // Gomin Black Edition: Pure Red for alerts and end calls
                                         value = 0xFFFF453A;
@@ -8404,11 +8402,7 @@ public class Theme {
                                     // Gomin Black Edition: Fix outgoing message text and bubbles on dark bubbles (raw int in monet_dark)
                                     boolean isDark = (assetName != null && assetName.toLowerCase().contains("dark")) || (file != null && file.getName().toLowerCase().contains("dark"));
                                     boolean isMonetTheme = (assetName != null && assetName.toLowerCase().contains("monet")) || (file != null && file.getName().toLowerCase().contains("monet"));
-                                    if (isMonetTheme && "chat_messageTextOut".equals(key)) {
-                                        value = isDark ? 0xFFFFFFFF : 0xFF000000;
-                                    } else if (isMonetTheme && "chat_outBubble".equals(key)) {
-                                        value = isDark ? (monetAmoled ? 0xFF1A1A1A : 0xFF222222) : value;
-                                    } else if (isMonetTheme && ("text_RedBold".equals(key) || "text_RedRegular".equals(key) || "fill_RedNormal".equals(key) || "fill_RedDark".equals(key) || "chat_sentError".equals(key) || "chat_sentErrorIcon".equals(key) || "calls_callReceivedRedIcon".equals(key) || "featuredStickers_removeButtonText".equals(key) || "dialogSwipeRemove".equals(key) || key.startsWith("voipgroup_leaveButton"))) {
+                                    if (isMonetTheme && ("text_RedBold".equals(key) || "text_RedRegular".equals(key) || "fill_RedNormal".equals(key) || "fill_RedDark".equals(key) || "chat_sentError".equals(key) || "chat_sentErrorIcon".equals(key) || "calls_callReceivedRedIcon".equals(key) || "featuredStickers_removeButtonText".equals(key) || "dialogSwipeRemove".equals(key) || key.startsWith("voipgroup_leaveButton"))) {
                                         value = 0xFFFF453A;
                                     }
                                 }
