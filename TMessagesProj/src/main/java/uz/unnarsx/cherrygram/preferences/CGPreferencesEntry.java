@@ -12,12 +12,16 @@ package uz.unnarsx.cherrygram.preferences;
 import static org.telegram.messenger.LocaleController.getString;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.DialogObject;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
@@ -35,9 +39,14 @@ import org.telegram.ui.Components.UniversalAdapter;
 import org.telegram.ui.Components.UniversalFragment;
 import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.LaunchActivity;
+import org.telegram.ui.UsersSelectActivity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import androidx.biometric.BiometricPrompt;
 
 import kotlin.Pair;
 import kotlin.Unit;
@@ -49,7 +58,9 @@ import uz.unnarsx.cherrygram.core.configs.CherrygramMessagesConfig;
 import uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig;
 import uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig;
 import uz.unnarsx.cherrygram.core.configs.CherrygramCameraConfig;
+import uz.unnarsx.cherrygram.core.CGBiometricPrompt;
 import uz.unnarsx.cherrygram.core.crashlytics.FirebaseAnalyticsHelper;
+import uz.unnarsx.cherrygram.core.helpers.AppRestartHelper;
 import uz.unnarsx.cherrygram.core.helpers.DeeplinkHelper;
 import uz.unnarsx.cherrygram.core.ui.CGBulletinCreator;
 import uz.unnarsx.cherrygram.helpers.ui.PopupHelper;
@@ -67,9 +78,7 @@ public class CGPreferencesEntry extends UniversalFragment {
     private final int ghostModeHideOnlineRow = 13;
 
     // Speed & Network (Killer Feature)
-    private final int downloadSpeedBoostRow = 20;
-    private final int uploadSpeedBoostRow = 21;
-    private final int slowNetworkModeRow = 22;
+    private final int speedEngineCardRow = 23;
 
     // Camera
     private final int cameraDualRow = 32;
@@ -96,6 +105,16 @@ public class CGPreferencesEntry extends UniversalFragment {
 
     // Misc
     private final int springAnimationRow = 60;
+
+    // 🔒 Security
+    private final int securityAskBioRow = 90;
+    private final int securityLockedChatsRow = 91;
+    private final int securityBioEncryptedRow = 92;
+    private final int securityBioArchiveRow = 93;
+    private final int securityBioDeleteRow = 94;
+    private final int securitySystemPinRow = 95;
+    private final int securityTestFingerprintRow = 96;
+    private final int securityDeleteAccountRow = 97;
 
     // Air Alert
     private final int airAlertEnabledRow = 70;
@@ -124,12 +143,12 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(UItem.asShadow(null));
 
         // 🤖 GOMIN.ai (Gemini.ai)
-        items.add(UItem.asHeader(getString(R.string.CP_SystemAI)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.settings_features, getString(R.string.CP_SystemAI)));
         items.add(UItem.asButton(geminiSettingsRow, R.drawable.msg_bot, getString(R.string.CP_GeminiAI_Settings)));
         items.add(UItem.asShadow(null));
 
         // 👻 Gomin Ghost (Privace Sub-Engine)
-        items.add(UItem.asHeader(getString(R.string.SP_GhostMode_Header)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.ghost_solar, getString(R.string.SP_GhostMode_Header)));
         items.add(SettingsHelper.asSwitchCG(ghostModeReadMessagesRow, getString(R.string.SP_GhostMode_ReadMessages), getString(R.string.SP_GhostMode_ReadMessages_Desc))
                 .setChecked(CherrygramPrivacyConfig.INSTANCE.getGhostModeReadMessages())
         );
@@ -145,7 +164,7 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(UItem.asShadow(null));
 
         // 🚨 Повітряна тривога (Air Alert) - ТЕПЕР ОДНА КАРТКА!
-        items.add(UItem.asHeader(getString(R.string.CP_AirAlert_Header)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.msg_bell_mute_solar, getString(R.string.CP_AirAlert_Header)));
         items.add(SettingsHelper.asSwitchCG(airAlertEnabledRow, getString(R.string.CP_AirAlert_Enabled), null)
                 .setChecked(CherrygramCoreConfig.INSTANCE.getAirAlertEnabled())
         );
@@ -158,31 +177,24 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(UItem.asShadow(null));
 
         // Звук сповіщень
-        items.add(UItem.asHeader("Звук сповіщень"));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.settings_sounds, "Звук сповіщень"));
         items.add(UItem.asButton(notificationSoundRow, "Вибір звуку сповіщень", getNotificationSoundValue()));
         items.add(UItem.asShadow(null));
 
         // ⚡ Speed Engine
-        items.add(UItem.asHeader(getString(R.string.EP_SpeedEngine)));
-        items.add(UItem.asButton(downloadSpeedBoostRow, getString(R.string.EP_DownloadSpeedBoost), getDownloadSpeedBoostValue()));
-        items.add(UItem.asShadow(getString(R.string.EP_DownloadSpeedBoost_Shadow)));
-        items.add(SettingsHelper.asSwitchCG(uploadSpeedBoostRow, getString(R.string.EP_UploadloadSpeedBoost), getString(R.string.EP_UploadloadSpeedBoost_Desc))
-                .setChecked(CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost())
-        );
-        items.add(SettingsHelper.asSwitchCG(slowNetworkModeRow, getString(R.string.EP_SlowNetworkMode), getString(R.string.EP_SlowNetworkMode_Desc))
-                .setChecked(CherrygramCoreConfig.INSTANCE.getSlowNetworkMode())
-        );
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.settings_power, getString(R.string.EP_SpeedEngine)));
+        items.add(SettingsHelper.asCustomWithBackground(speedEngineCardRow, createSpeedEngineCard()));
         items.add(UItem.asShadow(null));
 
         // 📷 Камера
-        items.add(UItem.asHeader(getString(R.string.CP_Category_Camera)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.camera_icon_cherrygram, getString(R.string.CP_Category_Camera)));
         items.add(SettingsHelper.asSwitchCG(cameraDualRow, getString(R.string.CP_CameraDualCamera), getString(R.string.CP_CameraDualCamera_Desc))
                 .setChecked(CherrygramCameraConfig.INSTANCE.getUseDualCamera())
         );
         items.add(UItem.asShadow(null));
 
         // 💬 Поведінка
-        items.add(UItem.asHeader(getString(R.string.CP_ChatSettings)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.settings_chat, getString(R.string.CP_ChatSettings)));
         items.add(SettingsHelper.asSwitchCG(autoQuoteRow, getString(R.string.CP_AutoQuoteReplies), getString(R.string.CP_AutoQuote_Desc))
                 .setChecked(CherrygramChatsConfig.INSTANCE.getAutoQuoteReplies())
         );
@@ -198,7 +210,7 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(UItem.asShadow(null));
 
         // 🎨 Інтерфейс
-        items.add(UItem.asHeader(getString(R.string.EP_Header_Interface)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.settings_devices, getString(R.string.EP_Header_Interface)));
         items.add(SettingsHelper.asSwitchCG(hideSearchBarRow, getString(R.string.AP_HideSearchBar), getString(R.string.AP_HideSearchBar_Desc))
                 .setChecked(CherrygramAppearanceConfig.INSTANCE.getHideSearchFiled())
         );
@@ -208,12 +220,35 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(UItem.asShadow(null));
 
         // 🛠️ Інше
-        items.add(UItem.asHeader(getString(R.string.Theme)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.msg_settings_solar, getString(R.string.Theme)));
         items.add(SettingsHelper.asSwitchCG(springAnimationRow, getString(R.string.CP_SpringAnimation), getString(R.string.CP_SpringAnimation_Desc_New))
                 .setChecked(CherrygramCoreConfig.INSTANCE.getSpringAnimation() == CherrygramCoreConfig.ANIMATION_SPRING)
         );
         items.add(UItem.asButton(doubleTapRow, getString(R.string.CP_DoubleTapAction), getDoubleTapActionValue()));
         items.add(UItem.asButton(slideActionRow, getString(R.string.CG_MsgSlideAction), getSlideActionValue()));
+        items.add(UItem.asShadow(null));
+
+        // 🔒 Безпека
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.settings_security, "Безпека"));
+        if (getChatsPasswordHelper().checkBiometricAvailable()) {
+            items.add(SettingsHelper.asSwitchCG(securityAskBioRow, getString(R.string.SP_AskBioToOpenChats), getString(R.string.SP_AskBioToOpenChats_Desc))
+                    .setChecked(CherrygramPrivacyConfig.INSTANCE.getAskBiometricsToOpenChat()));
+            if (CherrygramPrivacyConfig.INSTANCE.getAskBiometricsToOpenChat()) {
+                items.add(UItem.asButton(securityLockedChatsRow, R.drawable.msg_discussion, getString(R.string.SP_LockedChats), String.valueOf(getChatsPasswordHelper().getLockedChatsCount())));
+            }
+            items.add(SettingsHelper.asSwitchCG(securityBioEncryptedRow, getString(R.string.SP_BiometricForEncrypted), getString(R.string.SP_BiometricForEncrypted_Desc))
+                    .setChecked(CherrygramPrivacyConfig.INSTANCE.getAskBiometricsToOpenEncrypted()));
+            items.add(SettingsHelper.asSwitchCG(securityBioArchiveRow, getString(R.string.SP_BiometricForArchive), getString(R.string.SP_BiometricForArchive_Desc))
+                    .setChecked(CherrygramPrivacyConfig.INSTANCE.getAskBiometricsToOpenArchive()));
+            items.add(SettingsHelper.asSwitchCG(securityBioDeleteRow, getString(R.string.SP_AskPinBeforeDelete), getString(R.string.SP_AskPinBeforeDelete_Desc))
+                    .setChecked(CherrygramPrivacyConfig.INSTANCE.getAskPasscodeBeforeDelete()));
+            items.add(SettingsHelper.asSwitchCG(securitySystemPinRow, getString(R.string.SP_AllowUseSystemPasscode), getString(R.string.SP_AllowUseSystemPasscode_Desc))
+                    .setChecked(CherrygramPrivacyConfig.INSTANCE.getAllowSystemPasscode()));
+            items.add(UItem.asButton(securityTestFingerprintRow, R.drawable.fingerprint, getString(R.string.SP_TestFingerprint), getString(R.string.SP_TestFingerprint_Desc)));
+        } else {
+            items.add(UItem.asShadow(getString(R.string.SP_Biometric_NotAvailable)));
+        }
+        items.add(UItem.asButton(securityDeleteAccountRow, R.drawable.msg_delete, getString(R.string.SP_DeleteAccount), null));
         items.add(UItem.asShadow(null));
     }
 
@@ -245,6 +280,118 @@ public class CGPreferencesEntry extends UniversalFragment {
         desc.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 15);
         desc.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
         card.addView(desc, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 0, 10, 0, 0));
+
+        return card;
+    }
+
+    private View createSpeedEngineCard() {
+        android.widget.LinearLayout card = new android.widget.LinearLayout(getContext());
+        card.setOrientation(android.widget.LinearLayout.VERTICAL);
+
+        // ======== Рядок 1: Download speed boost ========
+        android.widget.LinearLayout downloadRow = new android.widget.LinearLayout(getContext());
+        downloadRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        downloadRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        downloadRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(10), AndroidUtilities.dp(21), AndroidUtilities.dp(10));
+        downloadRow.setBackground(Theme.getSelectorDrawable(false));
+        downloadRow.setOnClickListener(v -> showDownloadSpeedBoostSelector(() -> {
+            if (listView != null && listView.adapter != null) {
+                listView.adapter.update(true);
+            }
+        }));
+
+        android.widget.TextView downloadTitle = new android.widget.TextView(getContext());
+        downloadTitle.setText(getString(R.string.EP_DownloadSpeedBoost));
+        downloadTitle.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16);
+        downloadTitle.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        downloadRow.addView(downloadTitle, org.telegram.ui.Components.LayoutHelper.createLinear(0, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 1f));
+
+        android.widget.TextView downloadValue = new android.widget.TextView(getContext());
+        downloadValue.setText(getDownloadSpeedBoostValue());
+        downloadValue.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16);
+        downloadValue.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        downloadRow.addView(downloadValue, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
+        card.addView(downloadRow);
+
+        // ======== Опис ========
+        android.widget.TextView desc = new android.widget.TextView(getContext());
+        desc.setText(getString(R.string.EP_DownloadSpeedBoost_Shadow));
+        desc.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 13);
+        desc.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        desc.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), AndroidUtilities.dp(12));
+        card.addView(desc, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
+
+        // ======== Роздільник 1 ========
+        android.view.View divider1 = new android.view.View(getContext());
+        divider1.setBackgroundColor(Theme.getColor(Theme.key_divider));
+        card.addView(divider1, new android.widget.LinearLayout.LayoutParams(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, 1));
+
+        // ======== Рядок 2: Upload speed boost ========
+        android.widget.LinearLayout uploadRow = new android.widget.LinearLayout(getContext());
+        uploadRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        uploadRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        uploadRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(10), AndroidUtilities.dp(21), AndroidUtilities.dp(10));
+        uploadRow.setBackground(Theme.getSelectorDrawable(false));
+        uploadRow.setOnClickListener(v -> {
+            CherrygramCoreConfig.INSTANCE.setUploadSpeedBoost(!CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost());
+            org.telegram.ui.Components.Switch sw = uploadRow.findViewWithTag("uploadSwitch");
+            if (sw != null) {
+                sw.setChecked(CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost(), true);
+            }
+            if (listView != null && listView.adapter != null) {
+                listView.adapter.update(true);
+            }
+        });
+
+        android.widget.TextView uploadTitle = new android.widget.TextView(getContext());
+        uploadTitle.setText(getString(R.string.EP_UploadloadSpeedBoost));
+        uploadTitle.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16);
+        uploadTitle.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        uploadRow.addView(uploadTitle, org.telegram.ui.Components.LayoutHelper.createLinear(0, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 1f));
+
+        org.telegram.ui.Components.Switch uploadSwitch = new org.telegram.ui.Components.Switch(getContext());
+        uploadSwitch.setTag("uploadSwitch");
+        uploadSwitch.setChecked(CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost(), false);
+        uploadSwitch.setClickable(false);
+        uploadSwitch.setFocusable(false);
+        uploadRow.addView(uploadSwitch, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
+        card.addView(uploadRow);
+
+        // ======== Роздільник 2 ========
+        android.view.View divider2 = new android.view.View(getContext());
+        divider2.setBackgroundColor(Theme.getColor(Theme.key_divider));
+        card.addView(divider2, new android.widget.LinearLayout.LayoutParams(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, 1));
+
+        // ======== Рядок 3: Slow network mode ========
+        android.widget.LinearLayout slowRow = new android.widget.LinearLayout(getContext());
+        slowRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        slowRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        slowRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(10), AndroidUtilities.dp(21), AndroidUtilities.dp(10));
+        slowRow.setBackground(Theme.getSelectorDrawable(false));
+        slowRow.setOnClickListener(v -> {
+            CherrygramCoreConfig.INSTANCE.setSlowNetworkMode(!CherrygramCoreConfig.INSTANCE.getSlowNetworkMode());
+            org.telegram.ui.Components.Switch sw = slowRow.findViewWithTag("slowSwitch");
+            if (sw != null) {
+                sw.setChecked(CherrygramCoreConfig.INSTANCE.getSlowNetworkMode(), true);
+            }
+            if (listView != null && listView.adapter != null) {
+                listView.adapter.update(true);
+            }
+        });
+
+        android.widget.TextView slowTitle = new android.widget.TextView(getContext());
+        slowTitle.setText(getString(R.string.EP_SlowNetworkMode));
+        slowTitle.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16);
+        slowTitle.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        slowRow.addView(slowTitle, org.telegram.ui.Components.LayoutHelper.createLinear(0, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 1f));
+
+        org.telegram.ui.Components.Switch slowSwitch = new org.telegram.ui.Components.Switch(getContext());
+        slowSwitch.setTag("slowSwitch");
+        slowSwitch.setChecked(CherrygramCoreConfig.INSTANCE.getSlowNetworkMode(), false);
+        slowSwitch.setClickable(false);
+        slowSwitch.setFocusable(false);
+        slowRow.addView(slowSwitch, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
+        card.addView(slowRow);
 
         return card;
     }
@@ -316,14 +463,6 @@ public class CGPreferencesEntry extends UniversalFragment {
                 BulletinFactory.of(this).createSimpleBulletin(active ? R.raw.error : R.raw.contact_check, message).show();
                 return Unit.INSTANCE;
             });
-        } else if (item.id == downloadSpeedBoostRow) {
-            showDownloadSpeedBoostSelector(() -> SettingsHelper.updateButtonValue(view, getDownloadSpeedBoostValue()));
-        } else if (item.id == uploadSpeedBoostRow) {
-            CherrygramCoreConfig.INSTANCE.setUploadSpeedBoost(!CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost());
-            SettingsHelper.updateCheckState(view, CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost());
-        } else if (item.id == slowNetworkModeRow) {
-            CherrygramCoreConfig.INSTANCE.setSlowNetworkMode(!CherrygramCoreConfig.INSTANCE.getSlowNetworkMode());
-            SettingsHelper.updateCheckState(view, CherrygramCoreConfig.INSTANCE.getSlowNetworkMode());
         } else if (item.id == hideSearchBarRow) {
             CherrygramAppearanceConfig.INSTANCE.setHideSearchFiled(!CherrygramAppearanceConfig.INSTANCE.getHideSearchFiled());
             SettingsHelper.updateCheckState(view, CherrygramAppearanceConfig.INSTANCE.getHideSearchFiled());
@@ -397,6 +536,38 @@ public class CGPreferencesEntry extends UniversalFragment {
                 org.telegram.messenger.NotificationsController.getInstance(currentAccount).resetInChatSound();
                 org.telegram.messenger.NotificationsController.getInstance(currentAccount).deleteAllNotificationChannels();
             });
+        } else if (item.id == securityAskBioRow) {
+            CGBiometricPrompt.prompt(getParentActivity(), () -> {
+                CherrygramPrivacyConfig.INSTANCE.setAskBiometricsToOpenChat(!CherrygramPrivacyConfig.INSTANCE.getAskBiometricsToOpenChat());
+                SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getAskBiometricsToOpenChat());
+                listView.adapter.update(true);
+            });
+        } else if (item.id == securityLockedChatsRow) {
+            CGBiometricPrompt.prompt(getParentActivity(), () -> createSecurityUsersSelectActivity(view));
+        } else if (item.id == securityBioEncryptedRow) {
+            CGBiometricPrompt.prompt(getParentActivity(), () -> {
+                CherrygramPrivacyConfig.INSTANCE.setAskBiometricsToOpenEncrypted(!CherrygramPrivacyConfig.INSTANCE.getAskBiometricsToOpenEncrypted());
+                SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getAskBiometricsToOpenEncrypted());
+            });
+        } else if (item.id == securityBioArchiveRow) {
+            CGBiometricPrompt.prompt(getParentActivity(), () -> {
+                CherrygramPrivacyConfig.INSTANCE.setAskBiometricsToOpenArchive(!CherrygramPrivacyConfig.INSTANCE.getAskBiometricsToOpenArchive());
+                SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getAskBiometricsToOpenArchive());
+            });
+        } else if (item.id == securityBioDeleteRow) {
+            CherrygramPrivacyConfig.INSTANCE.setAskPasscodeBeforeDelete(!CherrygramPrivacyConfig.INSTANCE.getAskPasscodeBeforeDelete());
+            SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getAskPasscodeBeforeDelete());
+        } else if (item.id == securitySystemPinRow) {
+            CherrygramPrivacyConfig.INSTANCE.setAllowSystemPasscode(!CherrygramPrivacyConfig.INSTANCE.getAllowSystemPasscode());
+            SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getAllowSystemPasscode());
+        } else if (item.id == securityTestFingerprintRow) {
+            testFingerprint();
+        } else if (item.id == securityDeleteAccountRow) {
+            if (getChatsPasswordHelper().checkBiometricAvailable()) {
+                CGBiometricPrompt.prompt(getParentActivity(), () -> DeleteAccountDialog.showDeleteAccountDialog(this));
+            } else {
+                DeleteAccountDialog.showDeleteAccountDialog(this);
+            }
         }
     }
 
@@ -663,6 +834,126 @@ public class CGPreferencesEntry extends UniversalFragment {
         PopupHelper.show(configStringKeys, "Звук сповіщень", configValues.indexOf(CherrygramChatsConfig.INSTANCE.getNotificationSound()), getContext(), i -> {
             CherrygramChatsConfig.INSTANCE.setNotificationSound(configValues.get(i));
             if (runnable != null) runnable.run();
+        });
+    }
+
+    // ======== Security helper methods ========
+
+    private void createSecurityUsersSelectActivity(View view) {
+        AndroidUtilities.runOnUIThread(() -> {
+            UsersSelectActivity activity = getSecurityUsersSelectActivity();
+            activity.setDelegate((ids, type) -> {
+                Set<Long> chatIds = new HashSet<>(ids);
+                Set<String> lockedChats = new HashSet<>(getChatsPasswordHelper().getArrayList(getChatsPasswordHelper().getPasscodeArray()));
+
+                lockedChats.clear();
+                if (!chatIds.isEmpty()) {
+                    for (Long id : chatIds) {
+                        if (DialogObject.isUserDialog(id) || DialogObject.isChatDialog(id)) {
+                            lockedChats.add(String.valueOf(id));
+                        }
+                    }
+                }
+
+                getChatsPasswordHelper().saveArrayList(
+                        new ArrayList<>(lockedChats),
+                        getChatsPasswordHelper().getPasscodeArray()
+                );
+
+                SettingsHelper.updateButtonValue(view, String.valueOf(getChatsPasswordHelper().getLockedChatsCount()));
+            });
+
+            presentFragment(activity);
+        }, 300);
+    }
+
+    private UsersSelectActivity getSecurityUsersSelectActivity() {
+        ArrayList<Long> chatsList = new ArrayList<>();
+        ArrayList<String> lockedChatIds = getChatsPasswordHelper().getArrayList(getChatsPasswordHelper().getPasscodeArray());
+
+        for (String chatIdStr : lockedChatIds) {
+            long chatId = Long.parseLong(chatIdStr);
+            TLRPC.User user = getMessagesController().getUser(chatId);
+            TLRPC.Chat chat = getMessagesController().getChat(-chatId);
+            if (user != null) {
+                chatsList.add(user.id);
+            } else if (chat != null) {
+                chatsList.add(-chat.id);
+            }
+        }
+
+        UsersSelectActivity activity = new UsersSelectActivity(true, chatsList, 0);
+        activity.asLockedChats();
+        return activity;
+    }
+
+    private void testFingerprint() {
+        CGBiometricPrompt.fixFingerprint(getParentActivity(), new CGBiometricPrompt.CGBiometricListener() {
+            @Override
+            public void onSuccess(BiometricPrompt.AuthenticationResult result) {
+                handle();
+            }
+
+            @Override
+            public void onFailed() {}
+
+            @Override
+            public void onError(int error, CharSequence msg) {
+                showError(error);
+            }
+
+            private void handle() {
+                CGBiometricPrompt.cancelPendingAuthentications();
+                CGBiometricPrompt.reloadFingerprintState();
+                if (listView != null && listView.adapter != null) listView.adapter.update(true);
+
+                if (CGBiometricPrompt.hasFingerprintCached()) {
+                    AndroidUtilities.runOnUIThread(() ->
+                                    BulletinFactory.of(CGPreferencesEntry.this)
+                                            .createSimpleBulletin(
+                                                    R.raw.chats_infotip,
+                                                    getString(R.string.SP_BiometricUnavailable_Test_Fixed),
+                                                    getString(R.string.CG_RestartToApply),
+                                                    getString(R.string.OK),
+                                                    () -> AppRestartHelper.restartApp(getContext())
+                                            ).show(),
+                            300
+                    );
+                } else {
+                    showError(0);
+                }
+            }
+
+            private void showError(int error) {
+                String title = getString(R.string.CG_AppCrashed) + (error == 0 ? "" : " (e" + error + ")");
+                BulletinFactory.of(CGPreferencesEntry.this).createSimpleBulletin(
+                        R.raw.chats_infotip,
+                        title,
+                        getString(R.string.SP_BiometricUnavailable_Test_Wrong_Desc),
+                        getString(R.string.Settings),
+                        () -> openFingerprintSettings(getContext())
+                ).show();
+            }
+
+            private void openFingerprintSettings(Context context) {
+                Intent fallbackIntent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        Intent fingerprintIntent = new Intent(Settings.ACTION_FINGERPRINT_ENROLL);
+                        fingerprintIntent.setPackage("com.android.settings");
+                        if (fingerprintIntent.resolveActivity(context.getPackageManager()) != null) {
+                            context.startActivity(fingerprintIntent);
+                            return;
+                        }
+                    }
+                    context.startActivity(fallbackIntent);
+                } catch (SecurityException e) {
+                    FileLog.e(e);
+                    context.startActivity(fallbackIntent);
+                } catch (Exception e) {
+                    FileLog.e(e);
+                }
+            }
         });
     }
 

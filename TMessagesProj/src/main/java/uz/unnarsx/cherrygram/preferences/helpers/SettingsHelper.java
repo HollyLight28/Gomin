@@ -9,9 +9,20 @@
 
 package uz.unnarsx.cherrygram.preferences.helpers;
 
+import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.LocaleController;
+import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.NotificationsCheckCell;
 import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Cells.TextCheckCell;
@@ -79,6 +90,42 @@ public class SettingsHelper {
         i.text = text;
         i.subtext = subtext;
         return i;
+    }
+
+    /**
+     * Створює заголовок секції з мінімалістичною іконкою.
+     * Стиль — як у стандартного HeaderCell (синій жирний текст 15sp), але з іконкою 18dp ліворуч.
+     */
+    public static UItem asHeaderWithIcon(Context context, int iconResId, CharSequence text) {
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setGravity(Gravity.CENTER_VERTICAL);
+
+        int headerColor = Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader);
+
+        ImageView iconView = new ImageView(context);
+        iconView.setImageResource(iconResId);
+        iconView.setColorFilter(new PorterDuffColorFilter(headerColor, PorterDuff.Mode.SRC_IN));
+        iconView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        layout.addView(iconView, LayoutHelper.createLinear(18, 18, 0, 0, 0, 0));
+
+        TextView textView = new TextView(context);
+        textView.setText(text);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+        textView.setTypeface(AndroidUtilities.bold());
+        textView.setTextColor(headerColor);
+        textView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
+        textView.setMinHeight(AndroidUtilities.dp(34));
+        layout.addView(textView, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT,
+                LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT,
+                10, 0, 0, 0
+        ));
+
+        int paddingH = AndroidUtilities.dp(20);
+        layout.setPadding(paddingH, AndroidUtilities.dp(6), paddingH, AndroidUtilities.dp(6));
+
+        return UItem.asCustom(layout);
     }
 
     public static void updateCheckState(View view, boolean isChecked) {
