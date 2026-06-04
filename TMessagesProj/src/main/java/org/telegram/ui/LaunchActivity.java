@@ -9080,6 +9080,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     }
 
     private void processFeats() {
+        uz.unnarsx.cherrygram.alerts.AirAlertNotificationHelper.INSTANCE.createNotificationChannels(this);
         CherrygramCoreConfig.INSTANCE.setUpdateAvailable(false);
         if (CherrygramCoreConfig.INSTANCE.getAutoOTA()) {
             checkCgUpdates(getSafeLastFragment(), null, false);

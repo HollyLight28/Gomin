@@ -14,6 +14,7 @@ object AirAlertController {
 
     @Volatile
     private var isAlertActive = false
+    private var sirenPlayedForCurrentAlert = false
     private var timer: Timer? = null
     private var mediaPlayer: MediaPlayer? = null
     private var testStopRunnable: Runnable? = null
@@ -24,10 +25,14 @@ object AirAlertController {
     private var savedAlertState = false
     @Volatile
     private var pendingAlertStatus: Boolean? = null
-    private const val SAFETY_TIMEOUT_MS = 900000L
+    private const val SAFETY_TIMEOUT_MS = 43200000L // 12 годин замість 15 хвилин
     private const val SIREN_DURATION_MS = 15000L
 
     fun init() {
+        val prefs = CherrygramCoreConfig.sharedPreferences
+        isAlertActive = prefs.getBoolean("CP_AirAlert_LastActiveState", false)
+        sirenPlayedForCurrentAlert = isAlertActive // Якщо вже була активна, вважаємо що сирена вже грала
+
         if (CherrygramCoreConfig.airAlertEnabled) {
             startMonitoring()
             val regionId = CherrygramCoreConfig.airAlertRegionId
@@ -96,23 +101,46 @@ object AirAlertController {
             pendingAlertStatus = active
             return
         }
-        if (isAlertActive != active) {
+        
+        val changed = isAlertActive != active
+        if (changed) {
             isAlertActive = active
+            // Зберігаємо стан
+            CherrygramCoreConfig.sharedPreferences.edit().putBoolean("CP_AirAlert_LastActiveState", active).apply()
+            
             if (isAlertActive) {
-                playSound(true)
+                if (!sirenPlayedForCurrentAlert) {
+                    playSound(true)
+                    sirenPlayedForCurrentAlert = true
+                }
+                
+                // Показуємо сповіщення
+                val regionName = CherrygramCoreConfig.airAlertRegionName.ifEmpty { "Ваша область" }
+                AirAlertNotificationHelper.showStartNotification(
+                    org.telegram.messenger.ApplicationLoader.applicationContext,
+                    "🚨 ПОВІТРЯНА ТРИВОГА",
+                    regionName
+                )
+                
                 safetyStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
                 val runnable = Runnable {
-                    playSound(false)
-                    isAlertActive = false
-                    safetyStopRunnable = null
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
+                    setAlertStatus(false) // Авто-відбій через 12 годин (на всяк випадок)
                 }
                 safetyStopRunnable = runnable
                 AndroidUtilities.runOnUIThread(runnable, SAFETY_TIMEOUT_MS)
             } else {
+                sirenPlayedForCurrentAlert = false
                 safetyStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
                 safetyStopRunnable = null
                 playSound(false)
+                
+                // Показуємо сповіщення про відбій
+                val regionName = CherrygramCoreConfig.airAlertRegionName.ifEmpty { "Ваша область" }
+                AirAlertNotificationHelper.showEndNotification(
+                    org.telegram.messenger.ApplicationLoader.applicationContext,
+                    "✅ ВІДБІЙ ТРИВОГИ",
+                    regionName
+                )
             }
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
         }

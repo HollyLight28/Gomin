@@ -2361,19 +2361,18 @@ public class AlertsCreator {
             cell[0].setBackground(Theme.getSelectorDrawable(false));
             final boolean deleteChatForAllFinal = deleteChatForAll;
             if (deleteChatForAll) {
+                deleteForAll[0] = CherrygramMessagesConfig.INSTANCE.getDeleteForAll();
                 if (ChatObject.isChannel(chat) && !chat.megagroup) {
-                    cell[0].setText(getString(R.string.DeleteChannelForAll), "", false, false);
+                    cell[0].setText(getString(R.string.DeleteChannelForAll), "", deleteForAll[0], false);
                 } else {
-                    cell[0].setText(getString(R.string.DeleteGroupForAll), "", false, false);
+                    cell[0].setText(getString(R.string.DeleteGroupForAll), "", deleteForAll[0], false);
                 }
             } else if (clear) {
-                cell[0].setText(LocaleController.formatString(R.string.ClearHistoryOptionAlso, UserObject.getFirstName(user)), "", false, false);
-//                deleteForAll[0] = CherrygramMessagesConfig.INSTANCE.getDeleteForAll(); //Clear history
-//                cell[0].setText(LocaleController.formatString("ClearHistoryOptionAlso", R.string.ClearHistoryOptionAlso, UserObject.getFirstName(user)), "", CherrygramMessagesConfig.INSTANCE.getDeleteForAll(), false);
+                deleteForAll[0] = CherrygramMessagesConfig.INSTANCE.getDeleteForAll(); //Clear history
+                cell[0].setText(LocaleController.formatString(R.string.ClearHistoryOptionAlso, UserObject.getFirstName(user)), "", deleteForAll[0], false);
             } else {
-                cell[0].setText(LocaleController.formatString("DeleteMessagesOptionAlso", R.string.DeleteMessagesOptionAlso, UserObject.getFirstName(user)), "", false, false);
-//                deleteForAll[0] = CherrygramMessagesConfig.INSTANCE.getDeleteForAll(); //Delete chat
-//                cell[0].setText(LocaleController.formatString("DeleteMessagesOptionAlso", R.string.DeleteMessagesOptionAlso, UserObject.getFirstName(user)), "", CherrygramMessagesConfig.INSTANCE.getDeleteForAll(), false);
+                deleteForAll[0] = CherrygramMessagesConfig.INSTANCE.getDeleteForAll(); //Delete chat
+                cell[0].setText(LocaleController.formatString("DeleteMessagesOptionAlso", R.string.DeleteMessagesOptionAlso, UserObject.getFirstName(user)), "", deleteForAll[0], false);
             }
             cell[0].setMultiline(true);
             cell[0].setPadding(LocaleController.isRTL ? dp(16) : dp(8), dp(10), LocaleController.isRTL ? dp(8) : dp(16), dp(10));
@@ -7397,9 +7396,9 @@ public class AlertsCreator {
                 CheckBoxCell cell = new CheckBoxCell(activity, 1, resourcesProvider);
                 cell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
                 if (chat != null && hasNotOut) {
-                    cell.setText(LocaleController.getString(R.string.DeleteForAll), "", false, false);
+                    cell.setText(LocaleController.getString(R.string.DeleteForAll), "", deleteForAll[0], false);
                 } else {
-                    cell.setText(LocaleController.getString(R.string.DeleteMessagesOption), "", false, false);
+                    cell.setText(LocaleController.getString(R.string.DeleteMessagesOption), "", deleteForAll[0], false);
                 }
                 cell.setPadding(LocaleController.isRTL ? dp(16) : dp(8), 0, LocaleController.isRTL ? dp(8) : dp(16), 0);
                 frameLayout.addView(cell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
@@ -7454,12 +7453,12 @@ public class AlertsCreator {
                 CheckBoxCell cell = new CheckBoxCell(activity, 1, resourcesProvider);
                 cell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
                 if (canDeleteInbox) {
-//                    deleteForAll[0] = CherrygramMessagesConfig.INSTANCE.getDeleteForAll();
-                    cell.setText(LocaleController.formatString("DeleteMessagesOptionAlso", R.string.DeleteMessagesOptionAlso, UserObject.getFirstName(user)), "", CherrygramMessagesConfig.INSTANCE.getDeleteForAll(), false); //Personal messages
+                    cell.setText(LocaleController.formatString("DeleteMessagesOptionAlso", R.string.DeleteMessagesOptionAlso, UserObject.getFirstName(user)), "", deleteForAll[0], false); //Personal messages
                 } else if (chat != null && (hasNotOut || myMessagesCount == count)) {
-                    cell.setText(LocaleController.getString(R.string.DeleteForAll), "", CherrygramMessagesConfig.INSTANCE.getDeleteForAll(), false); //legacy groups
+                    cell.setText(LocaleController.getString(R.string.DeleteForAll), "", deleteForAll[0], false); //legacy groups
                 } else {
-                    cell.setText(LocaleController.getString(R.string.DeleteMessagesOption), "", false, false);
+                    deleteForAll[0] = false;
+                    cell.setText(LocaleController.getString(R.string.DeleteMessagesOption), "", deleteForAll[0], false);
                 }
                 cell.setPadding(LocaleController.isRTL ? dp(16) : dp(8), 0, LocaleController.isRTL ? dp(8) : dp(16), 0);
                 frameLayout.addView(cell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
