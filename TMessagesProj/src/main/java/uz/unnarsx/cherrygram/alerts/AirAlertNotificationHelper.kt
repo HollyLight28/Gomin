@@ -1,5 +1,6 @@
 package uz.unnarsx.cherrygram.alerts
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -82,7 +83,7 @@ object AirAlertNotificationHelper {
             .setFullScreenIntent(contentIntent, true) // Допомагає розбудити телефон
 
         val notification = builder.build()
-        notification.flags = notification.flags or NotificationCompat.FLAG_INSISTENT // Повторювати звук
+        notification.flags = notification.flags or Notification.FLAG_INSISTENT // Повторювати звук
 
         notificationManager.notify(NOTIFICATION_ID, notification)
     }

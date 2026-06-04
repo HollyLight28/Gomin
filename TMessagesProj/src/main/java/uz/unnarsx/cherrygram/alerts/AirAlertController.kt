@@ -14,6 +14,7 @@ object AirAlertController {
 
     @Volatile
     private var isAlertActive = false
+    @Volatile
     private var sirenPlayedForCurrentAlert = false
     private var timer: Timer? = null
     private var mediaPlayer: MediaPlayer? = null
@@ -29,8 +30,7 @@ object AirAlertController {
     private const val SIREN_DURATION_MS = 15000L
 
     fun init() {
-        val prefs = CherrygramCoreConfig.sharedPreferences
-        isAlertActive = prefs.getBoolean("CP_AirAlert_LastActiveState", false)
+        isAlertActive = CherrygramCoreConfig.airAlertLastActive
         sirenPlayedForCurrentAlert = isAlertActive // Якщо вже була активна, вважаємо що сирена вже грала
 
         if (CherrygramCoreConfig.airAlertEnabled) {
@@ -105,8 +105,7 @@ object AirAlertController {
         val changed = isAlertActive != active
         if (changed) {
             isAlertActive = active
-            // Зберігаємо стан
-            CherrygramCoreConfig.sharedPreferences.edit().putBoolean("CP_AirAlert_LastActiveState", active).apply()
+            CherrygramCoreConfig.airAlertLastActive = active
             
             if (isAlertActive) {
                 if (!sirenPlayedForCurrentAlert) {
@@ -196,10 +195,15 @@ object AirAlertController {
     }
 
     private fun stopSirenOnly() {
-        mediaPlayer?.setOnCompletionListener(null)
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
+        try {
+            mediaPlayer?.setOnCompletionListener(null)
+            mediaPlayer?.stop()
+            mediaPlayer?.release()
+        } catch (e: Exception) {
+            FileLog.e("AirAlertController stopSirenOnly error: ${e.message}")
+        } finally {
+            mediaPlayer = null
+        }
     }
 
     fun stopSiren() {
@@ -248,6 +252,7 @@ object AirAlertController {
         }
 
         isAlertActive = savedAlertState
+        CherrygramCoreConfig.airAlertLastActive = isAlertActive
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
         if (savedAlertState) {
             safetyStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
@@ -255,6 +260,7 @@ object AirAlertController {
             val runnable = Runnable {
                 playSound(false)
                 isAlertActive = false
+                CherrygramCoreConfig.airAlertLastActive = false
                 safetyStopRunnable = null
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
             }
