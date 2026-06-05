@@ -218,7 +218,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
                 glassPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 glassPaint.setStyle(Paint.Style.STROKE);
                 glassPaint.setStrokeWidth(dp(1));
-                glassPaint.setColor(0x26FFFFFF); // 15% white
+                glassPaint.setColor(0x3DFFFFFF); // 24% white
             }
             rect.set(glassBorderInset + dp(0.5f), glassBorderInset + dp(0.5f), viewWidth - glassBorderInset - dp(0.5f), getHeight() - glassBorderInset - dp(0.5f));
             float r = glassBorderRadius >= 0 ? glassBorderRadius : Math.min(rect.width(), rect.height()) / 2f;

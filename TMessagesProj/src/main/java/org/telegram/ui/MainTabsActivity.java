@@ -276,7 +276,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
                         strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
                         strokePaint.setStyle(Paint.Style.STROKE);
                         strokePaint.setStrokeWidth(dp(1));
-                        strokePaint.setColor(0x26FFFFFF);
+                        strokePaint.setColor(0x3DFFFFFF);
                     }
                     float inset = dp(DialogsActivity.MAIN_TABS_MARGIN);
                     rect.set(inset + dp(0.5f), inset + dp(0.5f), getMeasuredWidth() - inset - dp(0.5f), getMeasuredHeight() - inset - dp(0.5f));
@@ -357,7 +357,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         if (CherrygramAppearanceConfig.INSTANCE.getShowSearchInTabs()) {
             tabsContainer = new LinearLayout(context);
             tabsContainer.setOrientation(LinearLayout.HORIZONTAL);
-            tabsContainer.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+            tabsContainer.setGravity(Gravity.CENTER_VERTICAL);
 
             LinearLayout.LayoutParams tabsParams = LayoutHelper.createLinear(0, DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS, 1.0f);
             tabsContainer.addView(tabsView, tabsParams);
