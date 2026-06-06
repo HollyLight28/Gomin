@@ -278,7 +278,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
                         strokePaint.setStrokeWidth(dp(1));
                         strokePaint.setColor(0x3DFFFFFF);
                     }
-                    float inset = DialogsActivity.MAIN_TABS_MARGIN;
+                    float inset = dp(DialogsActivity.MAIN_TABS_MARGIN);
                     rect.set(inset + dp(0.5f), inset + dp(0.5f), getMeasuredWidth() - inset - dp(0.5f), getMeasuredHeight() - inset - dp(0.5f));
                     float rad = dp(DialogsActivity.MAIN_TABS_HEIGHT / 2f);
                     canvas.drawRoundRect(rect, rad, rad, strokePaint);
@@ -355,7 +355,17 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
         contentView.addView(fadeView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 0, Gravity.BOTTOM));
 
         if (CherrygramAppearanceConfig.INSTANCE.getShowSearchInTabs()) {
-            tabsContainer = new LinearLayout(context);
+            tabsContainer = new LinearLayout(context) {
+                @Override
+                protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                    int width = View.MeasureSpec.getSize(widthMeasureSpec);
+                    int maxWidth = dp(328 + DialogsActivity.MAIN_TABS_MARGIN * 2 + DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS) - dp(10);
+                    if (width > maxWidth) {
+                        widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(maxWidth, View.MeasureSpec.EXACTLY);
+                    }
+                    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                }
+            };
             tabsContainer.setOrientation(LinearLayout.HORIZONTAL);
             tabsContainer.setGravity(Gravity.CENTER_VERTICAL);
 
@@ -371,7 +381,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             );
             searchButton.setDrawGlassBorder(true);
             searchButton.setGlassBorderRadius(dp(DialogsActivity.MAIN_TABS_HEIGHT / 2f));
-            searchButton.setGlassBorderInset(DialogsActivity.MAIN_TABS_MARGIN);
+            searchButton.setGlassBorderInset(dp(DialogsActivity.MAIN_TABS_MARGIN));
             searchButton.setOnClickListener(v -> onSearchButtonClick());
             searchButton.setOnLongClickListener(v -> {
                 CGChatMenuInjector.INSTANCE.openArchivedChats(this);
@@ -383,9 +393,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
             searchButton.setBackground(searchButtonBackground);
 
             int searchSize = DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS;
-            tabsContainer.addView(searchButton, LayoutHelper.createLinear(searchSize, searchSize, -dp(10), 0, 0, 0));
+            tabsContainer.addView(searchButton, LayoutHelper.createLinear(searchSize, searchSize, -dp(2), 0, 0, 0));
 
-            contentView.addView(tabsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS, Gravity.BOTTOM));
+            contentView.addView(tabsContainer, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
             tabsContainer.setPadding(dp(2), dp(2), dp(2), dp(2));
         } else {
             contentView.addView(tabsView, LayoutHelper.createFrame(328 + DialogsActivity.MAIN_TABS_MARGIN * 2, DialogsActivity.MAIN_TABS_HEIGHT_WITH_MARGINS, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
