@@ -348,6 +348,7 @@
     <string name="EP_DownloadSpeedBoost">Збільшення швидкості завантаження</string>
     <string name="EP_DownloadSpeedBoostExtreme">Екстра</string>
     <string name="EP_UploadloadSpeedBoost">Збільшення швидкості вивантаження</string>
+    <string name="EP_UploadSpeedBoost">Збільшення швидкості вивантаження</string>
     <string name="EP_SlowNetworkMode">Режим повільної мережі</string>
     <!--Experimental Preferences-->
     <!--Security Preferences-->

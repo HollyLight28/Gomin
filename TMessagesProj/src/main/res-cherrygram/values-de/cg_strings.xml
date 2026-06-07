@@ -230,6 +230,7 @@
     <string name="EP_DownloadSpeedBoost">Download-Speed-Boost</string>
     <string name="EP_DownloadSpeedBoostExtreme">Extrem</string>
     <string name="EP_UploadloadSpeedBoost">Upload-Speed-Boost</string>
+    <string name="EP_UploadSpeedBoost">Upload-Speed-Boost</string>
     <string name="EP_SlowNetworkMode">Langsamer Netzmodus</string>
     <!--Experimental Preferences-->
     <!--Security Preferences-->

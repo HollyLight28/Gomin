@@ -62,6 +62,14 @@ public class SettingsHelper {
         return i;
     }
 
+    public static UItem asCustomWithBackgroundWrapContent(int id, View view) {
+        UItem i = new UItem(UniversalAdapter.VIEW_TYPE_CUSTOM_WITH_BACKGROUND, false);
+        i.id = id;
+        i.view = view;
+        i.intValue = LayoutHelper.WRAP_CONTENT;
+        return i;
+    }
+
     public static UItem asTextDetail(int id, int iconResId, CharSequence text, CharSequence value) {
         UItem i = new UItem(UniversalAdapter.VIEW_TYPE_TEXT_DETAIL_SETTINGS, false);
         i.id = id;

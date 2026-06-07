@@ -334,6 +334,7 @@ Si se encuentra una coincidencia dentro del enlace, el mensaje completo se ocult
     <string name="EP_DownloadSpeedBoost">Aumento de velocidad de descarga</string>
     <string name="EP_DownloadSpeedBoostExtreme">Extrema</string>
     <string name="EP_UploadloadSpeedBoost">Aumento de velocidad de subida</string>
+    <string name="EP_UploadSpeedBoost">Aumento de velocidad de subida</string>
     <string name="EP_SlowNetworkMode">Modo de red lenta</string>
     <!--Experimental Preferences-->
     <!--Security Preferences-->

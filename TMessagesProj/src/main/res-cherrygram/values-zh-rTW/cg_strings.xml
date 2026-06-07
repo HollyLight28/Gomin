@@ -352,6 +352,7 @@
     <string name="EP_DownloadSpeedBoost">下載加速</string>
     <string name="EP_DownloadSpeedBoostExtreme">最快</string>
     <string name="EP_UploadloadSpeedBoost">上載加速</string>
+    <string name="EP_UploadSpeedBoost">上載加速</string>
     <string name="EP_SlowNetworkMode">緩慢網路模式</string>
     <!--Experimental Preferences-->
     <!--Security Preferences-->

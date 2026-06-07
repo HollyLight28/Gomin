@@ -338,6 +338,7 @@
     <string name="EP_DownloadSpeedBoost">ダウンロード速度の高速化</string>
     <string name="EP_DownloadSpeedBoostExtreme">エクストリーム</string>
     <string name="EP_UploadloadSpeedBoost">アップロード速度の高速化</string>
+    <string name="EP_UploadSpeedBoost">アップロード速度の高速化</string>
     <string name="EP_SlowNetworkMode">低速ネットワークモード</string>
     <!--Experimental Preferences-->
     <!--Security Preferences-->

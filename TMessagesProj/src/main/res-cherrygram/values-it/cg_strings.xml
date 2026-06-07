@@ -341,6 +341,7 @@
     <string name="EP_DownloadSpeedBoost">Aumenta velocità di download</string>
     <string name="EP_DownloadSpeedBoostExtreme">Estremo</string>
     <string name="EP_UploadloadSpeedBoost">Aumenta velocità di upload</string>
+    <string name="EP_UploadSpeedBoost">Aumenta velocità di upload</string>
     <string name="EP_SlowNetworkMode">Modalità rete lenta</string>
     <!--Experimental Preferences-->
     <!--Security Preferences-->
