@@ -95,7 +95,6 @@ object CherrygramCoreConfig: CoroutineScope by CoroutineScope(
 
     /** Air Alert start */
     var airAlertEnabled by sharedPreferences.boolean("CP_AirAlert_Enabled", false)
-    var airAlertApiKey by sharedPreferences.string("CP_AirAlert_ApiKey", "")
     var airAlertRegionId by sharedPreferences.string("CP_AirAlert_RegionId", "")
     var airAlertRegionName by sharedPreferences.string("CP_AirAlert_RegionName", "")
     var airAlertLastActive by sharedPreferences.boolean("CP_AirAlert_LastActiveState", false)

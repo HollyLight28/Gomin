@@ -1,0 +1,145 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 79338191432,
+      "run_id": 26896865065,
+      "workflow_name": "Android CI/CD",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/HollyLight28/Gomin-UA-Telegram/actions/runs/26896865065",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOSZbTms8AAAASeOy6SA",
+      "head_sha": "99cdf85bf48611466927e18b8a22c57ab28e1499",
+      "url": "https://api.github.com/repos/HollyLight28/Gomin-UA-Telegram/actions/jobs/79338191432",
+      "html_url": "https://github.com/HollyLight28/Gomin-UA-Telegram/actions/runs/26896865065/job/79338191432",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-06-03T15:59:50Z",
+      "started_at": "2026-06-03T15:59:53Z",
+      "completed_at": "2026-06-03T16:03:43Z",
+      "name": "Build APK",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-06-03T15:59:54Z",
+          "completed_at": "2026-06-03T15:59:57Z"
+        },
+        {
+          "name": "Checkout Code",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-06-03T15:59:57Z",
+          "completed_at": "2026-06-03T16:00:15Z"
+        },
+        {
+          "name": "Set up Swap Space",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-06-03T16:00:15Z",
+          "completed_at": "2026-06-03T16:00:15Z"
+        },
+        {
+          "name": "set up JDK 17",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-06-03T16:00:15Z",
+          "completed_at": "2026-06-03T16:00:15Z"
+        },
+        {
+          "name": "Setup Android SDK",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-06-03T16:00:15Z",
+          "completed_at": "2026-06-03T16:00:59Z"
+        },
+        {
+          "name": "Grant execute permission for gradlew",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-06-03T16:00:59Z",
+          "completed_at": "2026-06-03T16:00:59Z"
+        },
+        {
+          "name": "Build Gomin (Universal APK + Release)",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-06-03T16:00:59Z",
+          "completed_at": "2026-06-03T16:03:39Z"
+        },
+        {
+          "name": "Find and Prepare APK",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-06-03T16:03:39Z",
+          "completed_at": "2026-06-03T16:03:39Z"
+        },
+        {
+          "name": "Create Rolling Release",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-06-03T16:03:39Z",
+          "completed_at": "2026-06-03T16:03:39Z"
+        },
+        {
+          "name": "Send Success Notification",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-06-03T16:03:39Z",
+          "completed_at": "2026-06-03T16:03:39Z"
+        },
+        {
+          "name": "Send Failure Notification",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-06-03T16:03:39Z",
+          "completed_at": "2026-06-03T16:03:39Z"
+        },
+        {
+          "name": "Post set up JDK 17",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-06-03T16:03:39Z",
+          "completed_at": "2026-06-03T16:03:39Z"
+        },
+        {
+          "name": "Post Checkout Code",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-06-03T16:03:39Z",
+          "completed_at": "2026-06-03T16:03:39Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-06-03T16:03:39Z",
+          "completed_at": "2026-06-03T16:03:40Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/HollyLight28/Gomin-UA-Telegram/check-runs/79338191432",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000000772,
+      "runner_name": "GitHub Actions 1000000772",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

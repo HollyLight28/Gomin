@@ -1,209 +1,484 @@
-# Air Alert System — Bug Report & Refactor Plan
+# Gomin UA — Детальний покроковий план рефакторингу
 
-## Контекст
+Цей документ містить вичерпний покроковий план рефакторингу системи **Gomin Shield (Ментальний щит)** та **Gomin Air Alert (Повітряна тривога)**. 
 
-Система тривоги в Gomin UA Telegram отримує пуши від Firebase (FCM) від бекенда (`alert_backend/main.py`), який використовує `api.alerts.in.ua`.
-
-Коли приходить тривога:
-1. FCM push → `GcmPushListenerService`
-2. Показується системна нотифікація з `gomin_siren.mp3`
-3. Через 15с звук нотифікації закінчується
-4. В шторці висить сповіщення "🚨 ПОВІТРЯНА ТРИВОГА"
-5. В додатку заголовок стає **червоним**
-
-Коли відбій:
-1. FCM push → нотифікація оновлюється на "✅ ВІДБІЙ ТРИВОГИ" з `gomin_cancel.mp3`
-2. Червоний заголовок зникає
+Кожен крок розписаний максимально детально, з конкретними назвами файлів, імпортами, структурами коду «ДО» та «ПІСЛЯ» та інструкціями для інтеграції. Це дозволить впроваджувати зміни поступово, крок за кроком, без ризику зламати стабільність проекту.
 
 ---
 
-## Головна проблема: MediaPlayer дублює системну нотифікацію
-
-**Файл:** `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/alerts/AirAlertController.kt`
-
-Зараз при тривозі звук сирени грає одночасно з **двох джерел**:
-1. **Системна нотифікація** (NotificationChannel) — грає `gomin_siren.mp3`
-2. **MediaPlayer** в коді — грає той самий `gomin_siren.mp3`
-
-MediaPlayer — це **непотрібний дубль**, який створює всі критичні баги.
-
-### Що видалити з `AirAlertController.kt`:
-
-| Що | Змінна/метод | Рядки |
-|----|--------------|-------|
-| Програвач | `mediaPlayer` | 20 |
-| Флаг "сирена вже грала" | `sirenPlayedForCurrentAlert` | 18, 34, 111, 131 |
-| Runnable автостопа | `sirenStopRunnable` | 22, 164-171, 211-212 |
-| Runnable безпеки (12г) | `safetyStopRunnable` | 23, 124-129, 132-133, 229, 258-268 |
-| Флаг тесту | `isTesting` | 25, 100-103, 213-215, 221-271 |
-| Збережений стан тесту | `savedAlertState` | 26 |
-| Відкладений статус | `pendingAlertStatus` | 28, 101, 249-252, 290 |
-| Весь метод | `playSound()` | 150-195 |
-| Весь метод | `stopSiren()` | 209-219 |
-| Весь метод | `stopSirenOnly()` | 197-207 |
-| Весь метод | `testAlert()` | 221-240 |
-| Весь метод | `stopTest()` | 242-271 |
-| Всі виклики `playSound()` | в `setAlertStatus()` | 112, 134 |
-| Всі виклики `NotificationCenter` | тестові | 233, 256, 265 |
-
-### Що залишити в `AirAlertController.kt`:
-
-| Що | Для чого |
-|----|----------|
-| `isAlertActive` | Стан тривоги (true/false) |
-| `handlePushStatus()` | Прийом FCM пушів |
-| `checkAlertStatus()` | Polling як fallback (кожні 60с) |
-| `setAlertStatus()` | Логіка зміни стану (без звуку) |
-| `postNotificationName(cgAirAlertStatusChanged)` | Оновлення червоного заголовку |
-| `startMonitoring()` / `stopMonitoring()` | Запуск/зупинка polling |
-| `init()` | Ініціалізація при старті |
-| `fetchRegions()` | Список областей для налаштувань |
-
-### Як зміниться `setAlertStatus()`:
-
-**До:**
-```
-при зміні стану:
-  якщо тривога:
-    playSound(true)              ← MediaPlayer + нотифікація
-    showStartNotification()      ← нотифікація
-  якщо відбій:
-    playSound(false)             ← MediaPlayer
-    showEndNotification()        ← нотифікація
-```
-
-**Після:**
-```
-при зміні стану:
-  якщо тривога:
-    showStartNotification()      ← тільки нотифікація (вона сама грає звук)
-  якщо відбій:
-    showEndNotification()         ← тільки нотифікація (вона сама грає звук)
-```
+## Зміст кроків
+- [Крок 1: Ментальний щит — Виправлення скролу в Bottom Sheet](#крок-1-ментальний-щит--виправлення-скролу-в-bottom-sheet)
+- [Крок 2: Air Alert — Створення тихого каналу та системного звуку відбою](#крок-2-air-alert--створення-тихого-каналу-та-системного-звуку-відбою)
+- [Крок 3: Air Alert — Рання ініціалізація каналів сповіщень](#крок-3-air-alert--рання-ініціалізація-каналів-сповіщень)
+- [Крок 4: Air Alert — Спрощення контролера та ізоляція MediaPlayer](#крок-4-air-alert--спрощення-контролера-та-ізоляція-mediaplayer)
+- [Крок 5: Air Alert — Оновлення ресивера зупинки сирени](#крок-5-air-alert--оновлення-ресивера-зупинки-сирени)
+- [Крок 6: Air Alert — Усунення дублювання сповіщень у FCM Listener](#крок-6-air-alert--усунення-дублювання-сповіщень-у-fcm-listener)
+- [Крок 7: Air Alert — Виправлення поведінки при вимкненні екрана](#крок-7-air-alert--виправлення-поведінки-при-вимкненні-екрана)
+- [Крок 8: Air Alert — Очищення невикористовуваного налаштування API Key](#крок-8-air-alert--очищення-невикористовуваного-налаштування-api-key)
+- [Крок 9: Чистка проекту — Видалення застарілих серверних скриптів](#крок-9-чистка-проекту--видалення-застарілих-серверних-скриптів)
 
 ---
 
-## Похідні баги, які зникнуть після видалення MediaPlayer
+### Крок 1: Ментальний щит — Виправлення скролу в Bottom Sheet
 
-| Баг | Файл | Чому зникне |
-|-----|------|-------------|
-| Подвійна сирена | `AirAlertController.kt` | Нотифікація грає один раз |
-| Бокова кнопка не вимикає звук | `ScreenReceiver.java` | Нема MediaPlayer, нотифікація грає ~15с і стихає |
-| Сирена глохне при вимкненому екрані | — | Нотифікація системна, не залежить від сну CPU |
-| Потрібен WakeLock | — | Не потрібен для системної нотифікації |
-| Потрібен AudioFocus | — | Не потрібен для системної нотифікації |
-| Сирена 15с і все | — | Нотифікація грає один раз ~15с, це нормально |
-| Перезапуск додатку = сирена не грає | `init()` | Не грає — і правильно, нотифікація висить в шторці |
+**Мета**: Замінити стандартний `ScrollView` на `NestedScrollView` та зв'язати його з `nestedScrollChild` класу `BottomSheet`. Це змусить жест свайпу вниз для закриття шторки спрацьовувати лише тоді, коли користувач прокрутив весь текст аналізу до самого верху.
+
+* **Файл**: `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/chats/gemini/GominShieldBottomSheet.kt`
+
+#### Що конкретно зробити:
+
+1. **Імпорти**:
+   Замінити рядок:
+   ```kotlin
+   import android.widget.ScrollView
+   ```
+   На рядок:
+   ```kotlin
+   import androidx.core.widget.NestedScrollView
+   ```
+
+2. **Оголошення поля класу**:
+   Змінити тип змінної `scrollView` з:
+   ```kotlin
+   private val scrollView: ScrollView
+   ```
+   На:
+   ```kotlin
+   private val scrollView: NestedScrollView
+   ```
+
+3. **Ініціалізація у блоці `init`**:
+   Замінити створення об'єкта (лінії 123-126):
+   ```kotlin
+   scrollView = ScrollView(context).apply {
+       overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS
+       isVerticalScrollBarEnabled = true
+   }
+   ```
+   На:
+   ```kotlin
+   scrollView = NestedScrollView(context).apply {
+       overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS
+       isVerticalScrollBarEnabled = true
+   }
+   ```
+
+4. **Параметр Dismiss**:
+   Залишити `setCanDismissWithSwipe(true)` на лінії 67, але оскільки тепер `nestedScrollChild = scrollView` вказує на `NestedScrollView`, шторка більше не буде закриватися при звичайному скролі тексту вгору/назад.
 
 ---
 
-## Side button behavior (за бажанням)
+### Крок 2: Air Alert — Створення тихого каналу та системного звуку відбою
 
-**Поточний код:** `ScreenReceiver.java:27` викликає `stopSiren()` при `ACTION_SCREEN_OFF`. Після видалення MediaPlayer цей рядок не має сенсу. Можна:
-1. **Просто прибрати** — нотифікація грає ~15с сама і стихає
-2. **Додати логіку** — при `ACTION_SCREEN_OFF` скасовувати нотифікацію тривоги і показувати її ж, але без звуку:
+**Мета**: 
+1. Створити тихий канал (`air_alert_silent`) з низьким пріоритетом (без звуку та вібрації) для перепостингу сповіщення під час натискання кнопки «Зупинити сирену».
+2. Перевести відбій тривоги на системний рівень, прописавши звук `gomin_cancel.mp3` безпосередньо в канал відбою (`air_alert_info`).
 
-```java
-// ScreenReceiver.java — опціонально
-if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-    // Переностимо нотифікацію без звуку, щоб не глушити
-    AirAlertController.INSTANCE.silenceNotificationOnScreenOff();
+* **Файл**: `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/alerts/AirAlertNotificationHelper.kt`
+
+#### Що конкретно зробити:
+
+1. **Додати константу тихого каналу**:
+   ```kotlin
+   private const val CHANNEL_SILENT_ID = "air_alert_silent"
+   ```
+
+2. **Оновити метод `createNotificationChannels`**:
+   Додати звук до каналу відбою та створити третій тихий канал.
+   
+   *Код ДО:*
+   ```kotlin
+   // Канал для ВІДБОЮ (Звичайний)
+   val infoChannel = NotificationChannel(
+       CHANNEL_INFO_ID,
+       "Повітряна тривога (Інфо)",
+       NotificationManager.IMPORTANCE_DEFAULT
+   ).apply {
+       description = "Сповіщення про відбій тривоги"
+       enableVibration(true)
+   }
+   ```
+   
+   *Код ПІСЛЯ:*
+   ```kotlin
+   // Канал для ВІДБОЮ (Звичайний зі звуком відбою)
+   val cancelUri = Uri.parse("android.resource://${context.packageName}/${R.raw.gomin_cancel}")
+   val infoChannel = NotificationChannel(
+       CHANNEL_INFO_ID,
+       "Повітряна тривога (Інфо)",
+       NotificationManager.IMPORTANCE_HIGH // Піднімаємо пріоритет для відтворення звуку
+   ).apply {
+       description = "Сповіщення про відбій тривоги"
+       setSound(cancelUri, AudioAttributes.Builder()
+           .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+           .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+           .build())
+       enableVibration(true)
+       lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
+   }
+
+   // Канал для ТИХОЇ ТРИВОГИ (Коли сирену зупинили, але статус висить)
+   val silentChannel = NotificationChannel(
+       CHANNEL_SILENT_ID,
+       "Повітряна тривога (Без звуку)",
+       NotificationManager.IMPORTANCE_LOW
+   ).apply {
+       description = "Активна тривога з вимкненим звуком сирени"
+       setSound(null, null)
+       enableVibration(false)
+       lockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
+   }
+   
+   notificationManager.createNotificationChannel(criticalChannel)
+   notificationManager.createNotificationChannel(infoChannel)
+   notificationManager.createNotificationChannel(silentChannel) // Не забути зареєструвати!
+   ```
+
+3. **Створити метод `showSilentNotification`**:
+   Додати новий метод до об'єкта `AirAlertNotificationHelper`:
+   ```kotlin
+   fun showSilentNotification(context: Context, title: String, body: String) {
+       val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+       
+       val contentIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.let {
+           PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
+       }
+
+       val builder = NotificationCompat.Builder(context, CHANNEL_SILENT_ID)
+           .setSmallIcon(R.mipmap.icon_launcher_cherry)
+           .setContentTitle(title)
+           .setContentText(body)
+           .setPriority(NotificationCompat.PRIORITY_LOW) // Низький пріоритет
+           .setAutoCancel(false)
+           .setOngoing(true)
+           .setContentIntent(contentIntent)
+           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+
+       notificationManager.notify(NOTIFICATION_ID, builder.build()) // Перезаписує старе сповіщення 1001
+   }
+   ```
+
+---
+
+### Крок 3: Air Alert — Рання ініціалізація каналів сповіщень
+
+**Мета**: Перенести ініціалізацію каналів сповіщень у `ApplicationLoader.java` для того, щоб канали були створені в системі до обробки першого FCM пуша (коли додаток запущений «холодним» способом у фоні).
+
+* **Файли**: 
+  1. `TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java`
+  2. `TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java`
+
+#### Що конкретно зробити:
+
+1. **В `ApplicationLoader.java`**:
+   Додати імпорт:
+   ```java
+   import uz.unnarsx.cherrygram.alerts.AirAlertNotificationHelper;
+   ```
+   Вставити виклик створення каналів всередину методу `onCreate()` після ініціалізації `applicationContext` (наприклад, перед `LauncherIconController.tryFixLauncherIconIfNeeded()`):
+   ```java
+   AirAlertNotificationHelper.INSTANCE.createNotificationChannels(applicationContext);
+   ```
+
+2. **В `LaunchActivity.java`**:
+   Видалити старий виклик (орієнтовно лінія 9083):
+   ```java
+   uz.unnarsx.cherrygram.alerts.AirAlertNotificationHelper.INSTANCE.createNotificationChannels(this);
+   ```
+
+---
+
+### Крок 4: Air Alert — Спрощення контролера та ізоляція MediaPlayer
+
+**Мета**: Видалити ручний `MediaPlayer` для реальних тривог. Зберегти `MediaPlayer` **виключно** для тестового режиму в налаштуваннях. Додати підтримку динамічних текстів пуша (`title`/`body`) у контролер.
+
+* **Файл**: `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/alerts/AirAlertController.kt`
+
+#### Що конкретно зробити:
+
+1. **Додати змінні збереження стану останнього пуша**:
+   ```kotlin
+   @Volatile
+   private var lastAlertTitle: String? = null
+   @Volatile
+   private var lastAlertBody: String? = null
+   ```
+
+2. **Модифікувати `handlePushStatus` та `setAlertStatus`**:
+   Додати параметри `title` та `body` та передавати їх у сповіщення.
+   
+   *Код ДО:*
+   ```kotlin
+   fun handlePushStatus(alert: Boolean) { ... }
+   private fun setAlertStatus(active: Boolean) { ... }
+   ```
+   
+   *Код ПІСЛЯ:*
+   ```kotlin
+   fun handlePushStatus(alert: Boolean, title: String? = null, body: String? = null) {
+       AndroidUtilities.runOnUIThread {
+           if (isTesting) {
+               pendingAlertStatus = alert
+           } else {
+               setAlertStatus(alert, title, body)
+           }
+       }
+   }
+
+   private fun setAlertStatus(active: Boolean, title: String? = null, body: String? = null) {
+       if (isTesting) {
+           pendingAlertStatus = active
+           return
+       }
+       
+       val changed = isAlertActive != active
+       if (changed) {
+           isAlertActive = active
+           CherrygramCoreConfig.airAlertLastActive = active
+           
+           val context = org.telegram.messenger.ApplicationLoader.applicationContext
+           val regionName = CherrygramCoreConfig.airAlertRegionName.ifEmpty { "Ваша область" }
+           
+           if (isAlertActive) {
+               // Зберігаємо останній текст тривоги
+               lastAlertTitle = title ?: "🚨 ПОВІТРЯНА ТРИВОГА"
+               lastAlertBody = body ?: regionName
+               
+               AirAlertNotificationHelper.showStartNotification(
+                   context,
+                   lastAlertTitle!!,
+                   lastAlertBody!!
+               )
+               
+               safetyStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+               val runnable = Runnable {
+                   setAlertStatus(false) // Авто-відбій через 12 годин
+               }
+               safetyStopRunnable = runnable
+               AndroidUtilities.runOnUIThread(runnable, SAFETY_TIMEOUT_MS)
+           } else {
+               safetyStopRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+               safetyStopRunnable = null
+               
+               // Прибираємо сирену тривоги та показуємо відбій
+               val endTitle = title ?: "✅ ВІДБІЙ ТРИВОГИ"
+               val endBody = body ?: regionName
+               AirAlertNotificationHelper.showEndNotification(
+                   context,
+                   endTitle,
+                   endBody
+               )
+           }
+           NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.cgAirAlertStatusChanged)
+       }
+   }
+   ```
+
+3. **Модифікувати `playSound`**:
+   Повністю відключити `playSound` для реальних тривог, залишаючи запуск плеєра тільки під час тестування (`isTesting == true`).
+   
+   *Код ПІСЛЯ:*
+   ```kotlin
+   private fun playSound(isStart: Boolean) {
+       // ДЛЯ РЕАЛЬНИХ ТРИВОГ ЗВУК ГРАЄ СИСТЕМА ЧЕРЕЗ КАНАЛ СПОВІЩЕНЬ!
+       if (!isTesting) {
+           return
+       }
+       
+       try {
+           mediaPlayer?.setOnCompletionListener(null)
+           mediaPlayer?.stop()
+           mediaPlayer?.release()
+           mediaPlayer = null
+
+           if (isStart) {
+               val soundRes = org.telegram.messenger.R.raw.gomin_siren
+               val player = MediaPlayer.create(org.telegram.messenger.ApplicationLoader.applicationContext, soundRes)
+               if (player != null) {
+                   mediaPlayer = player
+                   player.start()
+               }
+           }
+       } catch (e: Exception) {
+           FileLog.e(e)
+           mediaPlayer?.release()
+           mediaPlayer = null
+       }
+   }
+   ```
+
+4. **Оновити метод `stopSiren`**:
+   Цей метод викликається кнопкою «Зупинити сирену» в шторці. Замість зупинки плеєра він має перевести активну нотифікацію в тихий канал.
+   
+   *Код ПІСЛЯ:*
+   ```kotlin
+   fun stopSiren() {
+       AndroidUtilities.runOnUIThread {
+           if (isTesting) {
+               stopTest()
+               return@runOnUIThread
+           }
+           
+           // Якщо тривога активна — переводимо сповіщення на тихий канал
+           if (isAlertActive) {
+               val context = org.telegram.messenger.ApplicationLoader.applicationContext
+               val title = lastAlertTitle ?: "🚨 ПОВІТРЯНА ТРИВОГА"
+               val body = lastAlertBody ?: "Звук сирени вимкнено"
+               AirAlertNotificationHelper.showSilentNotification(context, title, body)
+           } else {
+               // Якщо відбій або тривога неактивна — прибираємо все
+               val context = org.telegram.messenger.ApplicationLoader.applicationContext
+               AirAlertNotificationHelper.cancelAll(context)
+           }
+       }
+   }
+   ```
+
+---
+
+### Крок 5: Air Alert — Оновлення ресивера зупинки сирени
+
+**Мета**: Переконатися, що ресивер коректно перенаправляє подію натискання кнопки в шторці до `AirAlertController.stopSiren()`.
+
+* **Файл**: `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/alerts/AirAlertStopReceiver.kt`
+
+#### Що конкретно зробити:
+
+Перевірити та за потреби спростити метод `onReceive`:
+```kotlin
+class AirAlertStopReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == "STOP_SIREN") {
+            AirAlertController.stopSiren() // Перенаправляємо в контролер
+        }
+    }
 }
 ```
 
-Рішення за тобою. Найпростіше — просто прибрати виклик `stopSiren()` з `ScreenReceiver`.
+---
+
+### Крок 6: Air Alert — Усунення дублювання сповіщень у FCM Listener
+
+**Мета**: Запобігти створенню сповіщень напряму з `GcmPushListenerService.java`. Тепер сервіс лише передає дані пуша (зокрема, тексти `title` та `body`) до `AirAlertController`, який самостійно створює одне правильне сповіщення.
+
+* **Файл**: `TMessagesProj/src/main/java/org/telegram/messenger/GcmPushListenerService.java`
+
+#### Що конкретно зробити:
+
+*Код ДО:*
+```java
+if (data.containsKey("action")) {
+    String action = data.get("action");
+    String title = data.get("title");
+    String body = data.get("body");
+    boolean isAlert = "alert_on".equals(action);
+
+    if (title != null && body != null) {
+        if (isAlert) {
+            uz.unnarsx.cherrygram.alerts.AirAlertNotificationHelper.INSTANCE.showStartNotification(getApplicationContext(), title, body);
+        } else {
+            uz.unnarsx.cherrygram.alerts.AirAlertNotificationHelper.INSTANCE.showEndNotification(getApplicationContext(), title, body);
+        }
+    }
+
+    if ("alert_on".equals(action)) {
+        uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.handlePushStatus(true);
+    } else if ("alert_off".equals(action)) {
+        uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.handlePushStatus(false);
+    }
+}
+```
+
+*Код ПІСЛЯ:*
+```java
+if (data.containsKey("action")) {
+    String action = data.get("action");
+    String title = data.get("title");
+    String body = data.get("body");
+
+    // Видалено прямий виклик AirAlertNotificationHelper.
+    // Передаємо параметри у AirAlertController для централізованої обробки.
+    if ("alert_on".equals(action)) {
+        uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.handlePushStatus(true, title, body);
+    } else if ("alert_off".equals(action)) {
+        uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.handlePushStatus(false, title, body);
+    }
+}
+```
 
 ---
 
-## Другорядні баги та покращення
+### Крок 7: Air Alert — Виправлення поведінки при вимкненні екрана
 
-### 1. `FLAG_INSISTENT` — прибрати
+**Мета**: Прибрати застаріле вимкнення сирени при переході екрана у сплячий режим (`ACTION_SCREEN_OFF`). Сирена має грати свій час, навіть якщо телефон лежить у кишені з вимкненим екраном.
 
-**Файл:** `AirAlertNotificationHelper.kt:86`
+* **Файл**: `TMessagesProj/src/main/java/org/telegram/messenger/ScreenReceiver.java`
 
-```kotlin
-notification.flags = notification.flags or Notification.FLAG_INSISTENT
+#### Що конкретно зробити:
+
+*Код ДО:*
+```java
+if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+    if (BuildVars.LOGS_ENABLED) {
+        FileLog.d("screen off");
+    }
+    ConnectionsManager.getInstance(UserConfig.selectedAccount).setAppPaused(true, true);
+    ApplicationLoader.isScreenOn = false;
+    uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.stopSiren(); // << ЦЕЙ РЯДОК ГЛУШИВ ТРИВОГУ В КИШЕНІ
+}
 ```
 
-Deprecated з Android 8 (API 26). Не впливає на поведінку на сучасних версіях. Просто видалити.
-
-### 2. HTTP → HTTPS в polling URL
-
-**Файл:** `AirAlertController.kt:74`
-
-```kotlin
-val url = URL("http://204.168.201.148:5000/status?region_id=$regionId")
+*Код ПІСЛЯ:*
+```java
+if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+    if (BuildVars.LOGS_ENABLED) {
+        FileLog.d("screen off");
+    }
+    ConnectionsManager.getInstance(UserConfig.selectedAccount).setAppPaused(true, true);
+    ApplicationLoader.isScreenOn = false;
+    // Виклик stopSiren() видалено. Сирена більше не затихає при згасанні екрана.
+}
 ```
-
-Потрібен HTTPS на сервері, потім змінити в коді додатка.
-
-### 3. `airAlertApiKey` — прибрати з налаштувань
-
-**Файли:** `CherrygramCoreConfig.kt:98`, `CGPreferencesEntry.java`
-
-Поле `airAlertApiKey` зберігається але НІДЕ не використовується. Додаток отримує тривоги через FCM push, який приходить від сервера — сервер має свій токен `alerts.in.ua`. Користувачу не потрібен ніякий API ключ.
-
-**Зробити:**
-- Видалити `airAlertApiKey` з `CherrygramCoreConfig.kt`
-- Прибрати поле вводу API ключа з `CGPreferencesEntry.java`
-
-### 4. Notification channel creation — перенести раніше
-
-**Файл:** `LaunchActivity.java` → перенести в `ApplicationLoader.java`
-
-`AirAlertNotificationHelper.createNotificationChannels()` викликається в `LaunchActivity.onCreate()`. Якщо додаток запущений FCM push-ом (а не через іконку), канали можуть не існувати.
-
-**Зробити:** викликати `createNotificationChannels()` в `ApplicationLoader.onCreate()` або в `CherrygramCoreConfig.init()`.
-
-### 5. `alert_server_main_*.py` — видалити
-
-**Файли:** `alert_server_main_utf8.py`, `alert_server_main_fixed.py` в корені проекту
-
-Це старі копії серверного парсера Telegram каналу. Не використовуються (сервер працює через `alerts.in.ua` API). Видалити.
 
 ---
 
-## Що НЕ треба чіпати
+### Крок 8: Air Alert — Очищення невикористовуваного налаштування API Key
 
-### Huawei Push Listener
-HuaweiListener не підтримує тривоги — **не виправляти**, нашо ціль тільки Google Play / GCM.
+**Мета**: Оскільки система працює через FCM пуші від нашого власного бекенда, користувачеві не потрібно вводити API-ключ від `alerts.in.ua`. Видаляємо це поле з конфігурації та коду налаштувань для чистоти інтерфейсу.
 
-### ActionBar / червоний заголовок
-Робить те що треба: 
-- Стежить за `isAlertActive`
-- Оновлюється через `NotificationCenter.cgAirAlertStatusChanged`
-- Синхронізується при `onAttachedToWindow`
-- Багів не знайдено
+* **Файли**:
+  1. `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/core/configs/CherrygramCoreConfig.kt`
+  2. `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/preferences/CGPreferencesEntry.java`
 
-### Polling (60с)
-Працює як fallback. Можна залишити.
+#### Що конкретно зробити:
+
+1. **В `CherrygramCoreConfig.kt`**:
+   Видалити рядок 98:
+   ```kotlin
+   var airAlertApiKey by sharedPreferences.string("CP_AirAlert_ApiKey", "")
+   ```
+
+2. **В `CGPreferencesEntry.java`**:
+   * Видалити оголошення константи (лінія 121):
+     ```java
+     private final int airAlertApiKeyRow = 71;
+     ```
+   * Видалити метод `showAirAlertApiKeyDialog()` (лінії 607-627).
+   * Видалити обробник зміни у методі `onInputDone` (лінії 629-633):
+     ```java
+     protected void onInputDone(int id, String text) {
+         if (id == airAlertApiKeyRow) {
+             CherrygramCoreConfig.INSTANCE.setAirAlertApiKey(text);
+         }
+     }
+     ```
 
 ---
 
-## Фічі на майбутнє (НЕ в цьому рефакторингу)
+### Крок 9: Чистка проекту — Видалення застарілих серверних скриптів
 
-### Карта/список тривог в меню (три крапки)
-На головному екрані, в меню з трьома крапками — список всіх областей з кольоровою індикацією:
-- 🟢 спокійно
-- 🔴 тривога
-- Список з підписами областей
+**Мета**: Видалити непотрібні копії скриптів парсингу з кореня проекту, які не використовуються клієнтським додатком.
 
-### Зміна звуку сирени
-Додати в налаштування AI Alert вибір звуку. Але це дрочня — `gomin_siren.mp3` норм.
-
----
-
-## Порядок дій (що робити)
-
-```
-1. AirAlertController.kt — видалити весь MediaPlayer код
-2. AirAlertNotificationHelper.kt — прибрати FLAG_INSISTENT
-3. ScreenReceiver.java — прибрати виклик stopSiren() 
-4. CherrygramCoreConfig.kt — прибрати airAlertApiKey
-5. CGPreferencesEntry.java — прибрати поле API ключа
-6. ApplicationLoader.java — перенести createNotificationChannels()
-7. AlertController.kt — змінити http на https (коли буде HTTPS на сервері)
-8. Видалити alert_server_main_*.py з кореня
-```
-
-Після цих змін тривога грає тільки через системну нотифікацію. Жодних багів з подвійним звуком, боковою кнопкою, сном і т.д.
+* **Дія**: Повністю видалити такі файли з кореневого каталогу проекту:
+  - `alert_server_main_utf8.py`
+  - `alert_server_main_fixed.py`

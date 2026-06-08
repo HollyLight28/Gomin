@@ -1,18 +1,30 @@
 # CURRENT MISSION
-1. Fix bottom tabs misalignment and layout wrapping when search button is enabled in main tabs. [IN PROGRESS]
-2. Fix glass border (white outline) drawing on dark theme (resolving double dp() scaling which caused outline to draw 5mm outside the background capsule). [IN PROGRESS]
-3. Compile and verify the local build. [PENDING]
+1. Audit and resolve all critical bugs in Gomin Air Alert before commit and push. [COMPLETED]
 
 # COMPLETED ATOMIC STEPS
-- Analyzed git history and identified that the recent commit 77944c08c reverted MAIN_TABS_MARGIN to dp(6) which introduced double-scaling dp(dp(6)) bugs.
-- Found that tabsContainer width MATCH_PARENT with weight 1.0f on tabsView caused tabsView to expand but tabs inside stayed left-aligned.
-- Formulated layout fix using wrap_content for tabsContainer and fixed dimensions for tabsView within it.
+- Replaced ScrollView with NestedScrollView in `GominShieldBottomSheet.kt` to fix dismiss swipe issues.
+- Created `air_alert_silent` notification channel, added cancel sound to `air_alert_info` channel, implemented self-healing channel recreation logic.
+- Moved channel initialization to `ApplicationLoader.java` and removed duplicate call from `LaunchActivity.java`.
+- Isolated MediaPlayer in `AirAlertController.kt` to test alerts, implemented silent notifications, and added global switch safety check.
+- Removed siren shutdown call in `ScreenReceiver.java` on screen off.
+- Deleted obsolete `airAlertApiKey` settings from `CherrygramCoreConfig.kt` and `CGPreferencesEntry.java`.
+- Removed duplicate notifications trigger from `GcmPushListenerService.java`.
+- Cleaned up obsolete python server scripts from root directory.
+- Compiled project successfully.
+- Built release standalone version using `assembleAfatStandalone` task.
+- Copied APK outputs to User's Desktop at `C:\Users\VovA\Desktop\Cherry\Stable`.
+- Audited modified files and resolved 5 critical bugs in Gomin Air Alert (unstable raw sound URIs, notification channel cached settings, test-to-real alert transitions, background setting leaks, and pre-Oreo compatibility).
 
 # OPEN PROBLEMS
-- Bottom tabs bar and search button overlapping and misaligned (currently left-aligned and distorted).
-- Dark theme glass border drawing outside the tab capsule due to MAIN_TABS_MARGIN being set to dp(6) static variable causing double dp() scale calculations.
+- None.
 
 # MODIFIED FILES
-- `TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java` -> Modified MAIN_TABS_MARGIN to raw value 6 to prevent double dp() calculations.
-- `TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java` -> Wrapped MAIN_TABS_MARGIN in dp() in drawing functions, added maxWidth constraint in anonymous LinearLayout tabsContainer, and updated layouts to WRAP_CONTENT and center gravity.
-
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/chats/gemini/GominShieldBottomSheet.kt` -> Replaced ScrollView with NestedScrollView.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/alerts/AirAlertNotificationHelper.kt` -> Added channels, sound recreate logic, and showSilentNotification.
+- `TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java` -> Initialized channels early.
+- `TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java` -> Removed redundant channels setup.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/alerts/AirAlertController.kt` -> Simplified alerts lifecycle, isolated player, and added enable check.
+- `TMessagesProj/src/main/java/org/telegram/messenger/GcmPushListenerService.java` -> Delegated notifications setup to controller.
+- `TMessagesProj/src/main/java/org/telegram/messenger/ScreenReceiver.java` -> Removed screen-off stopSiren call.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/core/configs/CherrygramCoreConfig.kt` -> Removed airAlertApiKey field.
+- `TMessagesProj/src/main/java/uz/unnarsx/cherrygram/preferences/CGPreferencesEntry.java` -> Removed airAlertApiKey settings row.

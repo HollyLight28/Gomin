@@ -31,20 +31,12 @@ public class GcmPushListenerService extends FirebaseMessagingService {
             String action = data.get("action");
             String title = data.get("title");
             String body = data.get("body");
-            boolean isAlert = "alert_on".equals(action);
-
-            if (title != null && body != null) {
-                if (isAlert) {
-                    uz.unnarsx.cherrygram.alerts.AirAlertNotificationHelper.INSTANCE.showStartNotification(getApplicationContext(), title, body);
-                } else {
-                    uz.unnarsx.cherrygram.alerts.AirAlertNotificationHelper.INSTANCE.showEndNotification(getApplicationContext(), title, body);
-                }
-            }
+            String regionId = data.get("region_id");
 
             if ("alert_on".equals(action)) {
-                uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.handlePushStatus(true);
+                uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.handlePushStatus(true, title, body, regionId);
             } else if ("alert_off".equals(action)) {
-                uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.handlePushStatus(false);
+                uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.handlePushStatus(false, title, body, regionId);
             }
         }
 

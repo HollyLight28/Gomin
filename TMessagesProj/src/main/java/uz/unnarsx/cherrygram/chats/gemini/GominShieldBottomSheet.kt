@@ -16,7 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.ScrollView
+import androidx.core.widget.NestedScrollView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import android.text.TextUtils
@@ -50,7 +50,7 @@ class GominShieldBottomSheet(
 ) : BottomSheet(chatActivity.parentActivity, false, chatActivity.resourceProvider) {
 
     private val rootLayout: LinearLayout
-    private val scrollView: ScrollView
+    private val scrollView: NestedScrollView
     private val textView: TextView
     private val counterTextView: TextView
     private val loadingText: TextView
@@ -120,7 +120,7 @@ class GominShieldBottomSheet(
         rootLayout.addView(divider, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 1, 0f, 0f, 0f, 8f))
 
         // Скрол для результату аналізу
-        scrollView = ScrollView(context).apply {
+        scrollView = NestedScrollView(context).apply {
             overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS
             isVerticalScrollBarEnabled = true
         }

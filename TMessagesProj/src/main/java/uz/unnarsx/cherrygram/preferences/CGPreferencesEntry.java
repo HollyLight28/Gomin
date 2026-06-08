@@ -118,7 +118,6 @@ public class CGPreferencesEntry extends UniversalFragment {
 
     // Air Alert
     private final int airAlertEnabledRow = 70;
-    private final int airAlertApiKeyRow = 71;
     private final int airAlertRegionRow = 72;
     private final int airAlertTestRow = 73;
     private final int airAlertCheckStatusRow = 74;
@@ -604,33 +603,7 @@ public class CGPreferencesEntry extends UniversalFragment {
         }
     }
 
-    private void showAirAlertApiKeyDialog() {
-        org.telegram.ui.ActionBar.AlertDialog.Builder builder = new org.telegram.ui.ActionBar.AlertDialog.Builder(getParentActivity(), getResourceProvider());
-        builder.setTitle(getString(R.string.CP_AirAlert_APIKey));
 
-        android.widget.EditText editText = new android.widget.EditText(getParentActivity());
-        editText.setText(CherrygramCoreConfig.INSTANCE.getAirAlertApiKey());
-        editText.setSelection(editText.length());
-
-        android.widget.FrameLayout frameLayout = new android.widget.FrameLayout(getParentActivity());
-        frameLayout.setPadding(AndroidUtilities.dp(24), AndroidUtilities.dp(10), AndroidUtilities.dp(24), AndroidUtilities.dp(10));
-        frameLayout.addView(editText);
-        builder.setView(frameLayout);
-
-        builder.setPositiveButton(getString("Save", R.string.Save), (dialog, which) -> {
-            String key = editText.getText().toString().trim();
-            CherrygramCoreConfig.INSTANCE.setAirAlertApiKey(key);
-            listView.adapter.update(true);
-        });
-        builder.setNegativeButton(getString("Cancel", R.string.Cancel), null);
-        builder.show();
-    }
-
-    protected void onInputDone(int id, String text) {
-        if (id == airAlertApiKeyRow) {
-            CherrygramCoreConfig.INSTANCE.setAirAlertApiKey(text);
-        }
-    }
 
     @Override
     protected boolean onLongClick(UItem item, View view, int position, float x, float y) {

@@ -56,6 +56,7 @@ import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import uz.unnarsx.cherrygram.camera.CameraXUtils;
 import uz.unnarsx.cherrygram.core.configs.CherrygramCoreConfig;
+import uz.unnarsx.cherrygram.alerts.AirAlertNotificationHelper;
 
 public class ApplicationLoader extends Application {
 
@@ -370,6 +371,7 @@ public class ApplicationLoader extends Application {
 
         AndroidUtilities.runOnUIThread(ApplicationLoader::startPushService);
 
+        AirAlertNotificationHelper.INSTANCE.createNotificationChannels(applicationContext);
         LauncherIconController.tryFixLauncherIconIfNeeded();
         ProxyRotationController.init();
     }

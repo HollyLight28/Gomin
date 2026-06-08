@@ -24,7 +24,6 @@ public class ScreenReceiver extends BroadcastReceiver {
             }
             ConnectionsManager.getInstance(UserConfig.selectedAccount).setAppPaused(true, true);
             ApplicationLoader.isScreenOn = false;
-            uz.unnarsx.cherrygram.alerts.AirAlertController.INSTANCE.stopSiren();
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
             if (BuildVars.LOGS_ENABLED) {
                 FileLog.d("screen on");
