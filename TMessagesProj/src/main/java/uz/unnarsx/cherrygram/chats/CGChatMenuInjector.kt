@@ -37,6 +37,7 @@ import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.DialogsActivity
 import org.telegram.ui.Gifts.GiftSheet
 import org.telegram.ui.LaunchActivity
+import uz.unnarsx.cherrygram.alerts.AirAlertStatsActivity
 import uz.unnarsx.cherrygram.chats.helpers.ChatActivityHelper
 import uz.unnarsx.cherrygram.core.configs.CherrygramChatsConfig
 import uz.unnarsx.cherrygram.core.configs.CherrygramPrivacyConfig
@@ -318,6 +319,15 @@ object CGChatMenuInjector {
                     activity.rightActionBarLayout.rebuildFragments(INavigationLayout.REBUILD_FLAG_REBUILD_LAST)
                 }
             }
+        }
+    }
+
+    fun injectAirAlertStats(io: ItemOptions, fragment: BaseFragment) {
+        io.add(
+            R.drawable.msg_bell_mute_solar,
+            getString(R.string.CG_AirAlertStats)
+        ) {
+            fragment.presentFragment(AirAlertStatsActivity())
         }
     }
 

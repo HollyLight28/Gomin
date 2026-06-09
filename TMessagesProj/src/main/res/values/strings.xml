@@ -10529,6 +10529,8 @@
     <string name="SharingOfferEnableConfirmText">Are you sure you want to enable sharing?</string>
     <string name="SharingOfferCancelYes">Yes</string>
 
+    <string name="CG_AirAlertStats">Статистика тривог</string>
+
     <string name="RelativeDateFormatterWeek2">%1$s, %2$s</string>
     <string name="RelativeDateAddDate">Add Date</string>
     <string name="RelativeDateMenuCopy">Copy Date</string>

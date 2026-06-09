@@ -70,6 +70,8 @@ import uz.unnarsx.cherrygram.preferences.helpers.AlertDialogSwitchers;
 public class CGPreferencesEntry extends UniversalFragment {
 
     private final int monobankRow = 100;
+    private final int cgAboutRow = 101;
+
 
     // Ghost Mode
     private final int ghostModeReadMessagesRow = 10;
@@ -139,9 +141,11 @@ public class CGPreferencesEntry extends UniversalFragment {
     protected void fillItems(ArrayList<UItem> items, UniversalAdapter adapter) {
         // ❤️ Підтримка проекту (Брендована карточка)
         items.add(SettingsHelper.asCustomWithBackground(monobankRow, createSupportCard()));
+        items.add(UItem.asButton(cgAboutRow, R.drawable.msg_info_solar, getString(R.string.CGP_Header_About)));
         items.add(UItem.asShadow(null));
 
         // 🤖 GOMIN.ai (Gemini.ai)
+
         items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.settings_features, getString(R.string.CP_SystemAI)));
         items.add(UItem.asButton(geminiSettingsRow, R.drawable.msg_bot, getString(R.string.CP_GeminiAI_Settings)));
         items.add(UItem.asShadow(null));
@@ -432,8 +436,11 @@ public class CGPreferencesEntry extends UniversalFragment {
     protected void onClick(UItem item, View view, int position, float x, float y) {
         if (item.id == monobankRow) {
             Browser.openUrl(getContext(), "https://send.monobank.ua/jar/4ecLBi7WaZ");
+        } else if (item.id == cgAboutRow) {
+            CherrygramPreferencesNavigator.INSTANCE.createAbout(this);
         } else if (item.id == ghostModeReadMessagesRow) {
             CherrygramPrivacyConfig.INSTANCE.setGhostModeReadMessages(!CherrygramPrivacyConfig.INSTANCE.getGhostModeReadMessages());
+
             SettingsHelper.updateCheckState(view, CherrygramPrivacyConfig.INSTANCE.getGhostModeReadMessages());
         } else if (item.id == ghostModeHideTypingRow) {
             CherrygramPrivacyConfig.INSTANCE.setGhostModeHideTyping(!CherrygramPrivacyConfig.INSTANCE.getGhostModeHideTyping());

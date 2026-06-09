@@ -98,7 +98,9 @@ import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.AnimationNotificationsLocker;
 import org.telegram.messenger.ApplicationLoader;
+import uz.unnarsx.cherrygram.chats.CGChatMenuInjector;
 import org.telegram.messenger.AutoBackupUserAgent;
+
 import org.telegram.messenger.BirthdayController;
 import org.telegram.messenger.BotWebViewVibrationEffect;
 import org.telegram.messenger.BuildVars;
@@ -13484,6 +13486,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             CGChatMenuInjector.INSTANCE.injectArchived(io, this);
             CGChatMenuInjector.INSTANCE.injectSaved(io, this);
             CGChatMenuInjector.INSTANCE.injectCalls(io, this);
+            CGChatMenuInjector.INSTANCE.injectAirAlertStats(io, this);
 
             /*io.add(R.drawable.outline_saved_24, getString(R.string.SavedMessages), () -> {
                 Bundle args = new Bundle();
