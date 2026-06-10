@@ -90,7 +90,7 @@ public class UpdateLayout extends IUpdateLayout {
                 return;
             }
             if (updateLayoutIcon.getIcon() == MediaActionDrawable.ICON_DOWNLOAD) {
-                UpdaterUtils.downloadApk(updateLayout.getContext(), UpdaterUtils.downloadURL, "Cherrygram " + UpdaterUtils.version, null);
+                UpdaterUtils.downloadApk(updateLayout.getContext(), UpdaterUtils.downloadURL, uz.unnarsx.cherrygram.core.helpers.CGResourcesHelper.getAppName() + " " + UpdaterUtils.version, null);
                 updateAppUpdateViews(currentAccount,  true);
             } else if (updateLayoutIcon.getIcon() == MediaActionDrawable.ICON_CANCEL) {
                 UpdaterUtils.cancelDownload(updateLayout.getContext(), UpdaterUtils.id);

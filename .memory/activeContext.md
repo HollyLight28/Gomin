@@ -3,6 +3,8 @@
 2. Implement Air Alert Statistics Screen in DialogsActivity options menu. [COMPLETED]
 3. Re-route "About Gomin" preference button to the second slot in Gomin Settings. [COMPLETED]
 4. Fix Gemini Live API mic initialization, request code permissions collision, payload serialization casing, and implement automatic voice greetings. [COMPLETED]
+5. Verify OTA Auto-Updater flow (simulate downgrade version and test updater integration). [IN PROGRESS]
+
 
 # COMPLETED ATOMIC STEPS
 - Replaced ScrollView with NestedScrollView in `GominShieldBottomSheet.kt` to fix dismiss swipe issues.

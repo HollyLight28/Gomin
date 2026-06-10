@@ -252,11 +252,7 @@ public class UpdaterUtils {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
             intentFilter.addAction(DownloadManager.ACTION_NOTIFICATION_CLICKED);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                ContextCompat.registerReceiver(context, downloadBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_EXPORTED);
-            } else  {
-                Util.registerReceiverNotExported(context, downloadBroadcastReceiver, intentFilter, Util.createHandlerForCurrentOrMainLooper());
-            }
+            ContextCompat.registerReceiver(context, downloadBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_EXPORTED);
             CherrygramCoreConfig.INSTANCE.setUpdateIsDownloading(true);
             trackDownloadProgress(context, progressTextView, null, null);
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateLoading);

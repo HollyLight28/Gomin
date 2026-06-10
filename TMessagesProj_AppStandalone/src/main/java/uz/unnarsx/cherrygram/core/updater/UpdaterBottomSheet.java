@@ -154,7 +154,7 @@ public class UpdaterBottomSheet extends BottomSheet {
                 if (!downloadButtonClicked) {
                     downloadButtonClicked = true;
                     downloadButton.setClickable(false);
-                    UpdaterUtils.downloadApk(getContext(), update.downloadURL, "Cherrygram " + update.version, downloadButton);
+                    UpdaterUtils.downloadApk(getContext(), update.downloadURL, CGResourcesHelper.getAppName() + " " + update.version, downloadButton);
                     dismiss();
                 }
             });
