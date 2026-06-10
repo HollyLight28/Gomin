@@ -1,0 +1,14 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "DEVELOPMENT_GUIDELINES.md"
+  ],
+  "agent": {
+    "plan": {
+      "prompt": "Ти — Сеньйор Архітектор. Твоя мета — ідеальне планування з урахуванням ризиків. Використовуй ФАЗУ 1 з DEVELOPMENT_GUIDELINES.md."
+    },
+    "build": {
+      "prompt": "Ти — Елітний Кодер та Аудитор. Твоя мета — чистий код та безжальне рев'ю. Використовуй ФАЗУ 2 та ФАЗУ 3 з DEVELOPMENT_GUIDELINES.md. ПІСЛЯ кожної зміни роби `git diff` та самокритичний звіт."
+    }
+  }
+}

@@ -146,8 +146,8 @@ public class CGPreferencesEntry extends UniversalFragment {
 
         // 🤖 GOMIN.ai (Gemini.ai)
 
-        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.settings_features, getString(R.string.CP_SystemAI)));
-        items.add(UItem.asButton(geminiSettingsRow, R.drawable.msg_bot, getString(R.string.CP_GeminiAI_Settings)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.msg_bot, getString(R.string.CP_SystemAI)));
+        items.add(UItem.asButton(geminiSettingsRow, getString(R.string.CP_GeminiAI_Settings)));
         items.add(UItem.asShadow(null));
 
         // 👻 Gomin Ghost (Privace Sub-Engine)
@@ -190,7 +190,7 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(UItem.asShadow(null));
 
         // 📷 Камера
-        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.camera_icon_cherrygram, getString(R.string.CP_Category_Camera)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.camera_icon_telegram, getString(R.string.CP_Category_Camera)));
         items.add(SettingsHelper.asSwitchCG(cameraDualRow, getString(R.string.CP_CameraDualCamera), getString(R.string.CP_CameraDualCamera_Desc))
                 .setChecked(CherrygramCameraConfig.INSTANCE.getUseDualCamera())
         );
@@ -223,7 +223,7 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(UItem.asShadow(null));
 
         // 🛠️ Інше
-        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.msg_settings_solar, getString(R.string.Theme)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.msg_settings, "Інше"));
         items.add(SettingsHelper.asSwitchCG(springAnimationRow, getString(R.string.CP_SpringAnimation), getString(R.string.CP_SpringAnimation_Desc_New))
                 .setChecked(CherrygramCoreConfig.INSTANCE.getSpringAnimation() == CherrygramCoreConfig.ANIMATION_SPRING)
         );
@@ -358,7 +358,7 @@ public class CGPreferencesEntry extends UniversalFragment {
             uploadSwitch.setChecked(CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost(), false);
             uploadSwitch.setClickable(false);
             uploadSwitch.setFocusable(false);
-            uploadRow.addView(uploadSwitch, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
+            uploadRow.addView(uploadSwitch, org.telegram.ui.Components.LayoutHelper.createLinear(39, 40));
             card.addView(uploadRow);
 
             // ======== Опис Upload ========
@@ -402,7 +402,7 @@ public class CGPreferencesEntry extends UniversalFragment {
             slowSwitch.setChecked(CherrygramCoreConfig.INSTANCE.getSlowNetworkMode(), false);
             slowSwitch.setClickable(false);
             slowSwitch.setFocusable(false);
-            slowRow.addView(slowSwitch, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
+            slowRow.addView(slowSwitch, org.telegram.ui.Components.LayoutHelper.createLinear(39, 40));
             card.addView(slowRow);
 
             // ======== Опис Slow Network ========

@@ -474,7 +474,7 @@
     <string name="EP_DownloadSpeedBoost_Shadow">Технічний прискорювач: збільшує кількість потоків з 4 до 12 та розмір пакетів зі 128 КБ до 1 МБ для максимальної швидкості завантаження.</string>
     <string name="CP_PremiumWallpapers">Фони преміум-користувачів</string>
     <string name="CP_PremiumWallpapers_Desc">Дозволяє бачити кастомні шпалери, встановлені іншими користувачами в чатах.</string>
-    <string name="CP_SystemAI">Gomin AI</string>
+    <string name="CP_SystemAI">Гомін AI</string>
     <string name="CP_SpringAnimation_Desc_New">Замінює стандартні анімації на фірмові м\'які переходи Гомону.</string>
     <string name="CGP_SupportGominTitle">Підтримай Гомін ❤️</string>
     <string name="CGP_SupportGominDesc">Твоя підтримка — це серце нашого проєкту. Допоможи автору оплатити сервери та продовжувати робити Гомін кращим!</string>
