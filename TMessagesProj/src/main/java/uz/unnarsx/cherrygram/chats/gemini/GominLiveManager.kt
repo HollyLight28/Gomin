@@ -116,7 +116,7 @@ class GominLiveManager(
                 }
 
                 audioTrack = AudioTrack(
-                    AudioManager.STREAM_MUSIC,
+                    AudioManager.STREAM_VOICE_CALL,
                     sampleRateOut,
                     AudioFormat.CHANNEL_OUT_MONO,
                     AudioFormat.ENCODING_PCM_16BIT,
@@ -165,14 +165,14 @@ class GominLiveManager(
             val setupJson = JSONObject().apply {
                 put("setup", JSONObject().apply {
                     put("model", targetModel)
-                    put("input_audio_transcription", JSONObject())
-                    put("generation_config", JSONObject().apply {
-                        put("response_modalities", JSONArray().put("audio"))
+                    put("inputAudioTranscription", JSONObject())
+                    put("generationConfig", JSONObject().apply {
+                        put("responseModalities", JSONArray().put(if (isTranscriptionMode) "TEXT" else "AUDIO"))
                         if (!isTranscriptionMode) {
-                            put("speech_config", JSONObject().apply {
-                                put("voice_config", JSONObject().apply {
-                                    put("prebuilt_voice_config", JSONObject().apply {
-                                        put("voice_name", "Puck")
+                            put("speechConfig", JSONObject().apply {
+                                put("voiceConfig", JSONObject().apply {
+                                    put("prebuiltVoiceConfig", JSONObject().apply {
+                                        put("voiceName", "Puck")
                                     })
                                 })
                             })
@@ -287,12 +287,12 @@ class GominLiveManager(
 
                             val base64Data = Base64.encodeToString(chunkToSend, Base64.NO_WRAP)
                             val inputJson = JSONObject().apply {
-                                put("realtime_input", JSONObject().apply {
+                                put("realtimeInput", JSONObject().apply {
                                     val chunk = JSONObject().apply {
-                                        put("mime_type", "audio/pcm;rate=16000")
+                                        put("mimeType", "audio/pcm;rate=16000")
                                         put("data", base64Data)
                                     }
-                                    put("media_chunks", JSONArray().put(chunk))
+                                    put("mediaChunks", JSONArray().put(chunk))
                                 })
                             }
                             
@@ -338,20 +338,6 @@ class GominLiveManager(
                 FileLog.e(e)
             }
         }
-
-        try {
-            val interruptJson = JSONObject().apply {
-                put("client_content", JSONObject().apply {
-                    put("turns", JSONArray())
-                    put("turn_complete", false)
-                })
-            }
-            val interruptStr = interruptJson.toString()
-            FileLog.d("GominLiveManager: Sending interruption: $interruptStr")
-            webSocket?.send(interruptStr)
-        } catch (e: Exception) {
-            FileLog.e(e)
-        }
     }
 
     private fun parseServerMessage(text: String) {
@@ -368,22 +354,23 @@ class GominLiveManager(
             if (obj.has("setupComplete")) {
                 isSetupComplete = true
                 startAudioThreads()
+                sendInitialGreetingTrigger()
+            }
+
+            if (obj.has("inputTranscription")) {
+                val inputTranscription = obj.getJSONObject("inputTranscription")
+                val transcriptionText = inputTranscription.optString("text", "")
+                val isPartial = inputTranscription.optBoolean("partial", true)
+                if (transcriptionText.isNotEmpty()) {
+                    onTextReceived?.invoke(transcriptionText)
+                    if (!isPartial) {
+                        onTurnComplete?.invoke()
+                    }
+                }
             }
 
             if (obj.has("serverContent")) {
                 val serverContent = obj.getJSONObject("serverContent")
-
-                if (serverContent.has("inputTranscription")) {
-                    val inputTranscription = serverContent.getJSONObject("inputTranscription")
-                    val transcriptionText = inputTranscription.optString("text", "")
-                    val isPartial = inputTranscription.optBoolean("partial", true)
-                    if (transcriptionText.isNotEmpty()) {
-                        onTextReceived?.invoke(transcriptionText)
-                        if (!isPartial) {
-                            onTurnComplete?.invoke()
-                        }
-                    }
-                }
                 
                 if (serverContent.optBoolean("interrupted", false)) {
                     isAiSpeaking = false
@@ -436,8 +423,8 @@ class GominLiveManager(
                                 }
                                 
                                 val responseJson = JSONObject().apply {
-                                    put("tool_response", JSONObject().apply {
-                                        put("function_responses", JSONArray().put(fResp))
+                                    put("toolResponse", JSONObject().apply {
+                                        put("functionResponses", JSONArray().put(fResp))
                                     })
                                 }
                                 if (isWebSocketOpen && isSetupComplete) {
@@ -482,6 +469,8 @@ class GominLiveManager(
         // Defensive: interrupt threads first
         recordThread?.interrupt()
         playThread?.interrupt()
+        try { recordThread?.join(500) } catch (e: Exception) {}
+        try { playThread?.join(500) } catch (e: Exception) {}
 
         synchronized(audioLock) {
             try { echoCanceler?.enabled = false; echoCanceler?.release() } catch (e: Exception) { }
@@ -510,5 +499,27 @@ class GominLiveManager(
         }
         webSocket = null
         AndroidUtilities.runOnUIThread { onConnectionClosed() }
+    }
+
+    private fun sendInitialGreetingTrigger() {
+        if (isTranscriptionMode) return
+        try {
+            val greetingJson = JSONObject().apply {
+                put("clientContent", JSONObject().apply {
+                    put("turns", JSONArray().put(JSONObject().apply {
+                        put("role", "user")
+                        put("parts", JSONArray().put(JSONObject().apply {
+                            put("text", "Привіт! Будь ласка, привітайся зі мною голосом коротко та дружелюбно українською мовою та запитай, про що поспілкуємося сьогодні.")
+                        }))
+                    }))
+                    put("turnComplete", true)
+                })
+            }
+            val greetingStr = greetingJson.toString()
+            FileLog.d("GominLiveManager: Sending greeting trigger: $greetingStr")
+            webSocket?.send(greetingStr)
+        } catch (e: Exception) {
+            FileLog.e(e)
+        }
     }
 }

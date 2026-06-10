@@ -112,8 +112,8 @@ When adding custom action items or floating buttons for custom feature sets (e.g
 
 ### Gemini WebSocket Live API Casing & Synchronization Pattern
 When building custom real-time audio/video communication features with Gemini Multimodal Live API via raw WebSockets:
-1. **Input Payloads (Casing)**: Outgoing messages (sent by the client), such as the initial `setup` or the interruption `client_content`, MUST use strict **snake_case** keys (`generation_config`, `response_modalities`, `speech_config`, `voice_config`, `prebuilt_voice_config`, `voice_name`, `google_search`, `function_declarations`, `client_content`, `turn_complete`).
-2. **Output Payloads (Casing)**: Incoming messages (sent by the server), such as server content or tool calls, arrive in **camelCase** (`serverContent`, `toolCall`, `functionCalls`).
+1. **Input Payloads (Casing)**: Outgoing messages (sent by the client), such as the initial `setup` config, the streaming inputs `realtimeInput`, tool responses `toolResponse`, or the interruption `clientContent`, MUST use strict **camelCase** keys (`generationConfig`, `responseModalities`, `speechConfig`, `voiceConfig`, `prebuiltVoiceConfig`, `voiceName`, `googleSearch`, `functionDeclarations`, `clientContent`, `turnComplete`, `realtimeInput`, `mediaChunks`, `mimeType`, `toolResponse`, `functionResponses`).
+2. **Output Payloads (Casing)**: Incoming messages (sent by the server), such as server content or tool calls, also arrive in **camelCase** (`serverContent`, `toolCall`, `functionCalls`).
 3. **Teardown Mutex**: Always wrap session termination sequence in a thread-safe `synchronized` lock check (`if (!isSessionActive) return; isSessionActive = false`) to ensure system audio resources (`AudioRecord`, `AudioTrack`) and callback handlers are released exactly once, avoiding duplicate postings to the UI main thread and race crashes.
 4. **Playback Loop CPU Protection**: Before polling or feeding PCM blocks to `AudioTrack`, always explicitly assert that the track initialized successfully (`AudioTrack.STATE_INITIALIZED`). If initialization fails, terminate the playback thread and set active flags to false to prevent infinite loops and 100% CPU drain.
 
@@ -139,4 +139,17 @@ When defining layout constants (e.g. padding, margins) shared between LayoutMana
 1. **Raw Integer Declaration**: Always store the constant as a raw density-independent integer value in class static fields, rather than executing runtime DPI scaling methods like `AndroidUtilities.dp()` during class static initialization. Static initialization calls to Android runtime stubs cause unit tests in `src/test/` to crash immediately with a `NullPointerException` or stub exception during class loading.
 2. **Explicit Scaling at Call Site**: Call the scaling method (e.g., `dp()`) explicitly at the call sites where the value is used (e.g., in `dispatchDraw` or layout padding assignment).
 3. **Double Scaling Prevention**: Layout configuration utilities (such as `LayoutHelper.createFrame`) perform DP-to-pixel scaling internally. Ensure the raw constant is passed to layout managers, and the scaled `dp()` version is ONLY passed to pure pixel rendering methods (like `canvas.drawRect`).
+
+### Native GitHub OTA Auto-Updater Pattern
+For standalone builds, Gomin implements a native background engine that fetches updates directly from GitHub Releases API:
+1. **Check Updates**: `UpdaterUtils.checkUpdates(...)` performs a JSON GET request to `https://api.github.com/repos/HollyLight28/Gomin/releases/latest` to fetch the metadata of the latest release.
+2. **Version Comparison**: The fetched version string is parsed and compared with `CGResourcesHelper.getCherryVersion()` using `compareVersions()`.
+3. **Download Manager Integration**: If an update is available, `DownloadManager` is used to fetch the APK file to `ota/{version}/update.apk`. A `DownloadReceiver` listens for completion and triggers `installApk` via `Intent.ACTION_VIEW` with FileProvider URI constraints.
+
+### Gomin Air Alert Centralized Controller Pattern
+To manage regional civil defense warnings consistently and avoid redundant alert streams:
+1. **Centralized Pusher Delegate**: Avoid triggering notification alerts directly from `GcmPushListenerService`. Delegate the parsed push payload (`action`, `title`, `body`, `regionId`) to `AirAlertController.handlePushStatus()`.
+2. **Siren Resource Safety**: Run siren playback through a local `MediaPlayer` strictly for setting test purposes. Real alarm triggers must register a system sound via the `NotificationChannel` (`air_alert_info`) config to allow the OS to manage audio focus and ducking properly.
+3. **Silence Action**: The "Stop Siren" notification action triggers `stopSiren()`, which moves the ongoing alert to a low-priority silent channel (`air_alert_silent`) instead of canceling the status color change.
+
 

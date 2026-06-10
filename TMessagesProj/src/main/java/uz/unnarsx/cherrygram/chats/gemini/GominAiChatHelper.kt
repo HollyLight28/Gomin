@@ -893,23 +893,18 @@ If є аб’юз — не пом’якшуй.
     }
 
     fun toggleTranscriptionSession(activity: ChatActivity) {
-        val context = activity.parentActivity ?: ApplicationLoader.applicationContext
-        
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            if (activity.parentActivity != null) {
-                ActivityCompat.requestPermissions(
-                    activity.parentActivity,
-                    arrayOf(Manifest.permission.RECORD_AUDIO),
-                    101
-                )
+        org.telegram.ui.Components.PermissionRequest.requestPermission(Manifest.permission.RECORD_AUDIO) { granted ->
+            AndroidUtilities.runOnUIThread {
+                if (granted) {
+                    if (liveManager != null) {
+                        stopLiveSession()
+                    } else {
+                        startTranscriptionSession(activity)
+                    }
+                } else {
+                    stopLiveSession()
+                }
             }
-            return
-        }
-
-        if (liveManager != null) {
-            stopLiveSession()
-        } else {
-            startTranscriptionSession(activity)
         }
     }
 
@@ -935,7 +930,7 @@ If є аб’юз — не пом’якшуй.
                     val newText = dedupTranscriptionChunk(currentText, lastInterimText, text)
                     if (newText != currentText) {
                         field.setText(newText)
-                        // Курсор у кінець (типова поведінка для dictation)
+                        // Курсор у кінець (типова поведінка для диктанту)
                         field.setSelection(newText.length)
                     }
                     lastInterimText = text
@@ -962,23 +957,18 @@ If є аб’юз — не пом’якшуй.
     }
 
     fun toggleLiveSession(fragment: org.telegram.ui.ActionBar.BaseFragment) {
-        val context = fragment.parentActivity ?: ApplicationLoader.applicationContext
-        
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            if (fragment.parentActivity != null) {
-                ActivityCompat.requestPermissions(
-                    fragment.parentActivity,
-                    arrayOf(Manifest.permission.RECORD_AUDIO),
-                    101
-                )
+        org.telegram.ui.Components.PermissionRequest.requestPermission(Manifest.permission.RECORD_AUDIO) { granted ->
+            AndroidUtilities.runOnUIThread {
+                if (granted) {
+                    if (liveManager != null) {
+                        stopLiveSession()
+                    } else {
+                        startLiveSession(fragment)
+                    }
+                } else {
+                    stopLiveSession()
+                }
             }
-            return
-        }
-
-        if (liveManager != null) {
-            stopLiveSession()
-        } else {
-            startLiveSession(fragment)
         }
     }
 
