@@ -3,8 +3,7 @@
 2. Implement Air Alert Statistics Screen in DialogsActivity options menu. [COMPLETED]
 3. Re-route "About Gomin" preference button to the second slot in Gomin Settings. [COMPLETED]
 4. Fix Gemini Live API mic initialization, request code permissions collision, payload serialization casing, and implement automatic voice greetings. [COMPLETED]
-5. Verify OTA Auto-Updater flow (simulate downgrade version and test updater integration). [IN PROGRESS]
-
+5. Verify OTA Auto-Updater flow (simulate downgrade version and test updater integration). [COMPLETED]
 
 # COMPLETED ATOMIC STEPS
 - Replaced ScrollView with NestedScrollView in `GominShieldBottomSheet.kt` to fix dismiss swipe issues.
@@ -30,6 +29,9 @@
 - Added `sendInitialGreetingTrigger()` in `GominLiveManager.kt` to send a conversational greeting prompt to the model voice-first upon `"setupComplete"`.
 - Fixed `tool_response` / `function_responses` keys to `toolResponse` / `functionResponses` to make function calling over WebSockets function properly.
 - Updated memory pattern definitions in `systemPatterns.md` to prevent future casing regressions.
+- Fixed `DownloadReceiver` registration in `UpdaterUtils.java` using `ContextCompat.RECEIVER_EXPORTED` to enable OTA notifications for system `DownloadManager`.
+- Replaced hardcoded "Cherrygram" title strings with dynamic `CGResourcesHelper.getAppName()` in `UpdateLayout.java` and `UpdaterBottomSheet.java` to support native Gomin branding.
+- Pushed updater fixes to main repository.
 
 # OPEN PROBLEMS
 - None.
@@ -42,4 +44,7 @@
 - `uz/unnarsx/cherrygram/chats/gemini/GominAiChatHelper.kt` -> [MODIFY] Use collision-free `PermissionRequest` wrapper for requesting RECORD_AUDIO permission.
 - `uz/unnarsx/cherrygram/chats/gemini/GominLiveManager.kt` -> [MODIFY] Fixed outgoing JSON casing to camelCase and implemented automated voice greeting trigger.
 - `.memory/systemPatterns.md` -> [MODIFY] Updated memory rules to enforce camelCase for the Gemini WebSocket Live API.
+- `uz/unnarsx/cherrygram/core/updater/UpdaterUtils.java` -> [MODIFY] Fixed broadcast registration flags (`RECEIVER_EXPORTED`) for systemic `DownloadManager` callbacks.
+- `org/telegram/ui/Components/UpdateLayout.java` -> [MODIFY] Refactored hardcoded app titles to dynamic brand names from resource helper.
+- `uz/unnarsx/cherrygram/core/updater/UpdaterBottomSheet.java` -> [MODIFY] Replaced hardcoded brand names with helper calls.
 - `.memory/activeContext.md` -> [MODIFY] Updated progress state and mission status.
