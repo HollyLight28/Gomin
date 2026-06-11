@@ -296,7 +296,7 @@ public class CGPreferencesEntry extends UniversalFragment {
             android.widget.LinearLayout downloadRow = new android.widget.LinearLayout(getContext());
             downloadRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
             downloadRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            downloadRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(10), AndroidUtilities.dp(21), AndroidUtilities.dp(10));
+            downloadRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(12), AndroidUtilities.dp(21), AndroidUtilities.dp(4));
             downloadRow.setBackground(Theme.getSelectorDrawable(false));
             downloadRow.setOnClickListener(v -> showDownloadSpeedBoostSelector(() -> {
                 if (listView != null && listView.adapter != null) {
@@ -314,27 +314,27 @@ public class CGPreferencesEntry extends UniversalFragment {
             downloadValue.setText(getDownloadSpeedBoostValue());
             downloadValue.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16);
             downloadValue.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-            downloadRow.addView(downloadValue, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
-            card.addView(downloadRow);
+            downloadRow.addView(downloadValue, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 0, 0, 0, 0));
+            card.addView(downloadRow, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
 
             // ======== Опис Download ========
             android.widget.TextView desc = new android.widget.TextView(getContext());
             desc.setText(getString(R.string.EP_DownloadSpeedBoost_Shadow));
             desc.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 13);
             desc.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-            desc.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), AndroidUtilities.dp(12));
+            desc.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), AndroidUtilities.dp(10));
             card.addView(desc, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
 
             // ======== Роздільник 1 ========
             android.view.View divider1 = new android.view.View(getContext());
             divider1.setBackgroundColor(Theme.getColor(Theme.key_divider));
-            card.addView(divider1, new android.widget.LinearLayout.LayoutParams(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, 1));
+            card.addView(divider1, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, 1, 21, 0, 0, 0));
 
             // ======== Рядок 2: Upload speed boost ========
             android.widget.LinearLayout uploadRow = new android.widget.LinearLayout(getContext());
             uploadRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
             uploadRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            uploadRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(10), AndroidUtilities.dp(21), AndroidUtilities.dp(10));
+            uploadRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(12), AndroidUtilities.dp(21), AndroidUtilities.dp(4));
             uploadRow.setBackground(Theme.getSelectorDrawable(false));
             uploadRow.setOnClickListener(v -> {
                 CherrygramCoreConfig.INSTANCE.setUploadSpeedBoost(!CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost());
@@ -358,27 +358,27 @@ public class CGPreferencesEntry extends UniversalFragment {
             uploadSwitch.setChecked(CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost(), false);
             uploadSwitch.setClickable(false);
             uploadSwitch.setFocusable(false);
-            uploadRow.addView(uploadSwitch, org.telegram.ui.Components.LayoutHelper.createLinear(39, 40));
-            card.addView(uploadRow);
+            uploadRow.addView(uploadSwitch, org.telegram.ui.Components.LayoutHelper.createLinear(37, 20, android.view.Gravity.CENTER_VERTICAL, 0, 0, 0, 0));
+            card.addView(uploadRow, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
 
             // ======== Опис Upload ========
             android.widget.TextView uploadDesc = new android.widget.TextView(getContext());
             uploadDesc.setText(getString(R.string.EP_UploadloadSpeedBoost_Desc));
             uploadDesc.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 13);
             uploadDesc.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-            uploadDesc.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), AndroidUtilities.dp(12));
+            uploadDesc.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), AndroidUtilities.dp(10));
             card.addView(uploadDesc, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
 
             // ======== Роздільник 2 ========
             android.view.View divider2 = new android.view.View(getContext());
             divider2.setBackgroundColor(Theme.getColor(Theme.key_divider));
-            card.addView(divider2, new android.widget.LinearLayout.LayoutParams(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, 1));
+            card.addView(divider2, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, 1, 21, 0, 0, 0));
 
             // ======== Рядок 3: Slow network mode ========
             android.widget.LinearLayout slowRow = new android.widget.LinearLayout(getContext());
             slowRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
             slowRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            slowRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(10), AndroidUtilities.dp(21), AndroidUtilities.dp(10));
+            slowRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(12), AndroidUtilities.dp(21), AndroidUtilities.dp(4));
             slowRow.setBackground(Theme.getSelectorDrawable(false));
             slowRow.setOnClickListener(v -> {
                 CherrygramCoreConfig.INSTANCE.setSlowNetworkMode(!CherrygramCoreConfig.INSTANCE.getSlowNetworkMode());
@@ -402,8 +402,8 @@ public class CGPreferencesEntry extends UniversalFragment {
             slowSwitch.setChecked(CherrygramCoreConfig.INSTANCE.getSlowNetworkMode(), false);
             slowSwitch.setClickable(false);
             slowSwitch.setFocusable(false);
-            slowRow.addView(slowSwitch, org.telegram.ui.Components.LayoutHelper.createLinear(39, 40));
-            card.addView(slowRow);
+            slowRow.addView(slowSwitch, org.telegram.ui.Components.LayoutHelper.createLinear(37, 20, android.view.Gravity.CENTER_VERTICAL, 0, 0, 0, 0));
+            card.addView(slowRow, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
 
             // ======== Опис Slow Network ========
             android.widget.TextView slowDesc = new android.widget.TextView(getContext());
