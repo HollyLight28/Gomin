@@ -111,48 +111,42 @@ class AirAlertStatsActivity : UniversalFragment() {
     }
 
     private fun fetchAllRegions() {
-        val executor = Executors.newFixedThreadPool(6)
-        currentExecutor = executor
-
-        executor.execute {
-            val latch = CountDownLatch(26)
-            val results = ConcurrentHashMap<Int, Boolean>()
-
-            for (id in 1..26) {
-                if (isDestroyed) break
-                executor.execute {
-                    try {
-                        val url = URL("http://204.168.201.148:5000/status?region_id=$id")
-                        val connection = url.openConnection() as HttpURLConnection
-                        connection.requestMethod = "GET"
-                        connection.connectTimeout = 3000
-                        connection.readTimeout = 3000
-
-                        if (connection.responseCode == 200) {
-                            val response = connection.inputStream.bufferedReader().use { it.readText() }
-                            val json = JSONObject(response)
-                            results[id] = json.optBoolean("alert", false)
-                        }
-                    } catch (e: java.lang.Exception) {
-                        FileLog.e(e)
-                    } finally {
-                        latch.countDown()
-                    }
-                }
-            }
-
+        Utilities.globalQueue.postRunnable {
+            val results = mutableMapOf<Int, Boolean>()
+            var success = false
             try {
-                latch.await(20, TimeUnit.SECONDS)
-            } catch (e: java.lang.Exception) {
+                val url = URL("http://204.168.201.148:5000/status/all")
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                connection.connectTimeout = 5000
+                connection.readTimeout = 5000
+
+                if (connection.responseCode == 200) {
+                    val response = connection.inputStream.bufferedReader().use { it.readText() }
+                    val json = JSONObject(response)
+                    val keys = json.keys()
+                    while (keys.hasNext()) {
+                        val key = keys.next()
+                        val id = key.toIntOrNull()
+                        if (id != null) {
+                            results[id] = json.optBoolean(key, false)
+                        }
+                    }
+                    success = true
+                }
+            } catch (e: Exception) {
                 FileLog.e(e)
             } finally {
-                executor.shutdown()
                 AndroidUtilities.runOnUIThread {
                     if (isDestroyed || parentActivity == null) return@runOnUIThread
-                    cachedResults = results.toMap()
+                    if (success) {
+                        cachedResults = results.toMap()
+                        dataLoaded = true
+                    } else {
+                        dataLoaded = cachedResults.isNotEmpty()
+                    }
                     lastFetchTime = System.currentTimeMillis()
                     isLoading = false
-                    dataLoaded = true
                     swipeRefresh?.isRefreshing = false
                     listView?.adapter?.update(false)
                 }
