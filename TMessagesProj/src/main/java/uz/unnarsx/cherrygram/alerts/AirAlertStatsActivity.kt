@@ -1,14 +1,10 @@
 package uz.unnarsx.cherrygram.alerts
 
 import android.content.Context
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import org.json.JSONObject
@@ -20,16 +16,13 @@ import org.telegram.messenger.R
 import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.LayoutHelper
+import org.telegram.ui.Components.RLottieImageView
 import org.telegram.ui.Components.SizeNotifierFrameLayout
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.Components.UniversalFragment
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 class AirAlertStatsActivity : UniversalFragment() {
 
@@ -49,7 +42,6 @@ class AirAlertStatsActivity : UniversalFragment() {
     private var swipeRefresh: SwipeRefreshLayout? = null
     private var dataLoaded = false
     private var isDestroyed = false
-    private var currentExecutor: java.util.concurrent.ExecutorService? = null
 
 
     override fun getTitle(): CharSequence {
@@ -105,7 +97,6 @@ class AirAlertStatsActivity : UniversalFragment() {
         }
         isLoading = true
         dataLoaded = false
-        swipeRefresh?.isRefreshing = true
         listView?.adapter?.update(false)
         fetchAllRegions()
     }
@@ -169,17 +160,6 @@ class AirAlertStatsActivity : UniversalFragment() {
             )
         }
 
-        ImageView(context).also { icon ->
-            icon.setImageResource(
-                if (hasAlert) R.drawable.msg_notifications_solar
-                else R.drawable.msg_bell_mute_solar
-            )
-            val color = if (hasAlert) 0xFFE53935.toInt()
-            else Theme.getColor(Theme.key_windowBackgroundWhiteBlackText)
-            icon.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
-            layout.addView(icon, LayoutHelper.createLinear(24, 24, 0f, 0f, 0f, 16f))
-        }
-
         TextView(context).also { text ->
             text.text = name
             text.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
@@ -216,17 +196,11 @@ class AirAlertStatsActivity : UniversalFragment() {
             setPadding(0, AndroidUtilities.dp(48f), 0, AndroidUtilities.dp(48f))
         }
 
-        ProgressBar(ctx).also { spinner ->
-            layout.addView(spinner, LayoutHelper.createLinear(48, 48))
-        }
-
-        TextView(ctx).also { label ->
-            label.text = "Завантаження..."
-            label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
-            label.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
-            label.gravity = Gravity.CENTER
-            label.setPadding(0, AndroidUtilities.dp(16f), 0, 0)
-            layout.addView(label, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
+        RLottieImageView(ctx).also { anim ->
+            anim.setAutoRepeat(true)
+            anim.setAnimation(R.raw.statistic_preload, 64, 64)
+            anim.playAnimation()
+            layout.addView(anim, LayoutHelper.createLinear(64, 64))
         }
 
         return UItem.asCustom(layout)
@@ -265,10 +239,5 @@ class AirAlertStatsActivity : UniversalFragment() {
     override fun onFragmentDestroy() {
         super.onFragmentDestroy()
         isDestroyed = true
-        try {
-            currentExecutor?.shutdownNow()
-        } catch (e: java.lang.Exception) {
-            FileLog.e(e)
-        }
     }
 }
