@@ -31,7 +31,7 @@ class GominLiveManager(
 ) {
 
     companion object {
-        private const val MODEL_TRANSCRIPTION = "models/gemini-2.5-flash-native-audio-preview-12-2025"
+        private const val MODEL_TRANSCRIPTION = "models/gemini-3.1-flash-live-preview"
         private const val MODEL_VOICE_CALL    = "models/gemini-3.1-flash-live-preview"
 
         private object FileLog {
@@ -96,13 +96,24 @@ class GominLiveManager(
         val apiKey = CherrygramMessagesConfig.geminiApiKey
         if (apiKey.isEmpty()) {
             FileLog.e("GominLiveManager: Gemini API key is missing.")
+            showToastLong("Помилка: API-ключ Gemini порожній!")
             onConnectionClosed()
             return
         }
 
         isSessionActive = true
-        initAudioDevices()
-        connectWebSocket(apiKey)
+        showToast("🔌 Підключаюся до Gemini...")
+        Thread {
+            initAudioDevices()
+            AndroidUtilities.runOnUIThread {
+                if (isSessionActive) {
+                    connectWebSocket(apiKey)
+                }
+            }
+        }.apply {
+            name = "GominAudioInitThread"
+            start()
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -178,6 +189,7 @@ class GominLiveManager(
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 FileLog.d("GominLiveManager: WebSocket opened successfully. Status: ${response.code}")
                 isWebSocketOpen = true
+                showToast("✅ З'єднання встановлено!")
                 sendSetupMessage(webSocket)
             }
 
@@ -189,11 +201,16 @@ class GominLiveManager(
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 FileLog.d("GominLiveManager: WebSocket closed. Code: $code, Reason: $reason")
+                if (code != 1000) {
+                    showToastLong("🔌 З'єднання закрите: $reason (код $code)")
+                }
                 stopSession()
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                 FileLog.e("GominLiveManager: WebSocket Failure. Response code: ${response?.code}", t)
+                val codeStr = if (response != null) " (код ${response.code})" else ""
+                showToastLong("❌ Помилка WebSocket: ${t.message}$codeStr")
                 stopSession()
             }
         })
@@ -234,12 +251,14 @@ class GominLiveManager(
             playThread = Thread {
                 val track = synchronized(audioLock) { audioTrack }
                 if (track == null || track.state != AudioTrack.STATE_INITIALIZED) {
+                    showToast("Помилка ініціалізації динаміка 🔊")
                     AndroidUtilities.runOnUIThread { stopSession() }
                 } else {
                     try {
                         track.play()
                     } catch (e: Exception) {
                         FileLog.e(e)
+                        showToast("Не вдалося запустити динамік 🔊")
                         AndroidUtilities.runOnUIThread { stopSession() }
                     }
                 }
@@ -280,9 +299,11 @@ class GominLiveManager(
                     record.startRecording()
                 } catch (e: Exception) {
                     FileLog.e(e)
+                    showToast("Не вдалося запустити запис мікрофона: ${e.message}")
                     AndroidUtilities.runOnUIThread { stopSession() }
                 }
             } else {
+                showToast("Мікрофон не ініціалізовано 🎙️")
                 AndroidUtilities.runOnUIThread { stopSession() }
             }
 
@@ -392,13 +413,16 @@ class GominLiveManager(
             
             if (obj.has("error")) {
                 val error = obj.getJSONObject("error")
-                FileLog.e("GominLiveManager Server Error: ${error.optString("message")}")
+                val errMsg = error.optString("message", "Невідома помилка")
+                FileLog.e("GominLiveManager Server Error: $errMsg")
+                showToastLong("❌ Помилка Gemini: $errMsg")
                 AndroidUtilities.runOnUIThread { stopSession() }
                 return
             }
 
             if (obj.has("setupComplete")) {
                 isSetupComplete = true
+                showToast("🎙️ Сесія активована!")
                 startAudioThreads()
                 sendInitialGreetingTrigger()
             }
@@ -579,6 +603,26 @@ class GominLiveManager(
             webSocket?.send(greetingStr)
         } catch (e: Exception) {
             FileLog.e(e)
+        }
+    }
+
+    private fun showToast(msg: String) {
+        AndroidUtilities.runOnUIThread {
+            try {
+                android.widget.Toast.makeText(glowView.context, msg, android.widget.Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                FileLog.e(e)
+            }
+        }
+    }
+
+    private fun showToastLong(msg: String) {
+        AndroidUtilities.runOnUIThread {
+            try {
+                android.widget.Toast.makeText(glowView.context, msg, android.widget.Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                FileLog.e(e)
+            }
         }
     }
 }

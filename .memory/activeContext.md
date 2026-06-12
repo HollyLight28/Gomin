@@ -4,7 +4,8 @@
 3. Re-route "About Gomin" preference button to the second slot in Gomin Settings. [COMPLETED]
 4. Fix Gemini Live API mic initialization, request code permissions collision, payload serialization casing, and implement automatic voice greetings. [COMPLETED]
 5. Verify OTA Auto-Updater flow (simulate downgrade version and test updater integration). [COMPLETED]
-6. Install/Update the Gomin app on the connected Pixel phone, monitor logs via adb logcat, and diagnose Live API issues. [PAUSED - COMMITTED AND PUSHED]
+6. Diagnose and fix the Gemini Live API mic activation issue, migrate to active stable models, add full error UI indicators (Toasts) and move device initialization to background thread. [COMPLETED]
+7. Adjust scale of installer and notification drawer app icon. [COMPLETED by USER]
 
 # COMPLETED ATOMIC STEPS
 - Added Android Log redirects in `GominLiveManager.kt` to ensure WebSocket lifecycle events are visible in logcat.
@@ -39,7 +40,8 @@
 - Implemented `AudioManager` VoIP mode (`MODE_IN_COMMUNICATION`) routing and focus management in `GominLiveManager.kt` to ensure mic priority.
 - Added self-healing fallback to `MediaRecorder.AudioSource.MIC` in `GominLiveManager.kt` if `VOICE_COMMUNICATION` fails to initialize.
 - Added circuit-breaker check for negative error codes in `AudioRecord.read()` inside `GominLiveManager.kt` to prevent silent infinite thread loops.
-
+- Created `task.md` checkpoint for Live API debugging process.
+- Updated `ic_launcher.xml` (User manually adjusted foreground inset to 12% to scale round icon to ~68%).
 
 # OPEN PROBLEMS
 - None.
@@ -50,9 +52,10 @@
 - `org/telegram/ui/DialogsActivity.java` -> [MODIFY] Injected Air Alert Stats entry into options menu under the three-dots button.
 - `uz/unnarsx/cherrygram/preferences/CGPreferencesEntry.java` -> [MODIFY] Added `cgAboutRow` constant and registered it in `fillItems()` and `onClick()` as the second item under the Monobank support card.
 - `uz/unnarsx/cherrygram/chats/gemini/GominAiChatHelper.kt` -> [MODIFY] Use collision-free `PermissionRequest` wrapper for requesting RECORD_AUDIO permission.
-- `uz/unnarsx/cherrygram/chats/gemini/GominLiveManager.kt` -> [MODIFY] Fixed outgoing JSON casing to camelCase and implemented automated voice greeting trigger.
+- `uz/unnarsx/cherrygram/chats/gemini/GominLiveManager.kt` -> [MODIFY] Fixed outgoing JSON casing to camelCase, updated models, implemented background thread audio init, and detailed Toast logging.
 - `.memory/systemPatterns.md` -> [MODIFY] Updated memory rules to enforce camelCase for the Gemini WebSocket Live API.
 - `uz/unnarsx/cherrygram/core/updater/UpdaterUtils.java` -> [MODIFY] Fixed broadcast registration flags (`RECEIVER_EXPORTED`) for systemic `DownloadManager` callbacks.
 - `org/telegram/ui/Components/UpdateLayout.java` -> [MODIFY] Refactored hardcoded app titles to dynamic brand names from resource helper.
 - `uz/unnarsx/cherrygram/core/updater/UpdaterBottomSheet.java` -> [MODIFY] Replaced hardcoded brand names with helper calls.
+- `res-cherrygram/mipmap-anydpi-v26/ic_launcher.xml` -> [MODIFY] Adjusted foreground inset to 12% to scale the round/installer/notification icon bird to ~68%.
 - `.memory/activeContext.md` -> [MODIFY] Updated progress state and mission status.
