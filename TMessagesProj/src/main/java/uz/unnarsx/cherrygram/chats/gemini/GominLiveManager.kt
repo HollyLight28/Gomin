@@ -17,7 +17,6 @@ import okhttp3.WebSocketListener
 import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.FileLog
 import uz.unnarsx.cherrygram.core.configs.CherrygramMessagesConfig
 import uz.unnarsx.cherrygram.alerts.AirAlertController
 import java.util.concurrent.LinkedBlockingQueue
@@ -34,6 +33,24 @@ class GominLiveManager(
     companion object {
         private const val MODEL_TRANSCRIPTION = "models/gemini-2.5-flash-native-audio-preview-12-2025"
         private const val MODEL_VOICE_CALL    = "models/gemini-3.1-flash-live-preview"
+
+        private object FileLog {
+            fun d(msg: String) {
+                android.util.Log.d("GominLiveManager", msg)
+            }
+            fun e(msg: String) {
+                android.util.Log.e("GominLiveManager", msg)
+            }
+            fun e(e: Throwable) {
+                android.util.Log.e("GominLiveManager", "Exception", e)
+            }
+            fun e(msg: String, e: Throwable) {
+                android.util.Log.e("GominLiveManager", msg, e)
+            }
+            fun e(e: Exception) {
+                android.util.Log.e("GominLiveManager", "Exception", e)
+            }
+        }
     }
 
     private val client = OkHttpClient.Builder()
@@ -159,23 +176,24 @@ class GominLiveManager(
 
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
+                FileLog.d("GominLiveManager: WebSocket opened successfully. Status: ${response.code}")
                 isWebSocketOpen = true
                 sendSetupMessage(webSocket)
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {
-                if (text.length < 500) {
-                    FileLog.d("GominLiveManager: Received message: $text")
-                }
+                val preview = if (text.length > 200) text.substring(0, 200) + "..." else text
+                FileLog.d("GominLiveManager: Received message (len=${text.length}): $preview")
                 parseServerMessage(text)
             }
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                FileLog.d("GominLiveManager: WebSocket closed. Code: $code, Reason: $reason")
                 stopSession()
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                FileLog.e("GominLiveManager WebSocket Failure", t)
+                FileLog.e("GominLiveManager: WebSocket Failure. Response code: ${response?.code}", t)
                 stopSession()
             }
         })
@@ -189,7 +207,6 @@ class GominLiveManager(
             val setupJson = JSONObject().apply {
                 put("setup", JSONObject().apply {
                     put("model", targetModel)
-                    put("inputAudioTranscription", JSONObject())
                     put("generationConfig", JSONObject().apply {
                         put("responseModalities", JSONArray().put(if (isTranscriptionMode) "TEXT" else "AUDIO"))
                         if (!isTranscriptionMode) {

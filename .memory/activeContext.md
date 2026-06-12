@@ -4,8 +4,11 @@
 3. Re-route "About Gomin" preference button to the second slot in Gomin Settings. [COMPLETED]
 4. Fix Gemini Live API mic initialization, request code permissions collision, payload serialization casing, and implement automatic voice greetings. [COMPLETED]
 5. Verify OTA Auto-Updater flow (simulate downgrade version and test updater integration). [COMPLETED]
+6. Install/Update the Gomin app on the connected Pixel phone, monitor logs via adb logcat, and diagnose Live API issues. [PAUSED - COMMITTED AND PUSHED]
 
 # COMPLETED ATOMIC STEPS
+- Added Android Log redirects in `GominLiveManager.kt` to ensure WebSocket lifecycle events are visible in logcat.
+- Cleaned setup JSON payload by removing empty `inputAudioTranscription` configuration block.
 - Replaced ScrollView with NestedScrollView in `GominShieldBottomSheet.kt` to fix dismiss swipe issues.
 - Created `air_alert_silent` notification channel, added cancel sound to `air_alert_info` channel, implemented self-healing channel recreation logic.
 - Moved channel initialization to `ApplicationLoader.java` and removed duplicate call from `LaunchActivity.java`.
