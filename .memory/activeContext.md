@@ -32,6 +32,11 @@
 - Fixed `DownloadReceiver` registration in `UpdaterUtils.java` using `ContextCompat.RECEIVER_EXPORTED` to enable OTA notifications for system `DownloadManager`.
 - Replaced hardcoded "Cherrygram" title strings with dynamic `CGResourcesHelper.getAppName()` in `UpdateLayout.java` and `UpdaterBottomSheet.java` to support native Gomin branding.
 - Pushed updater fixes to main repository.
+- Checked if `Manifest.permission.RECORD_AUDIO` is already granted in `GominAiChatHelper.kt` before calling `PermissionRequest.requestPermission` to prevent callback issues on Android 14+.
+- Implemented `AudioManager` VoIP mode (`MODE_IN_COMMUNICATION`) routing and focus management in `GominLiveManager.kt` to ensure mic priority.
+- Added self-healing fallback to `MediaRecorder.AudioSource.MIC` in `GominLiveManager.kt` if `VOICE_COMMUNICATION` fails to initialize.
+- Added circuit-breaker check for negative error codes in `AudioRecord.read()` inside `GominLiveManager.kt` to prevent silent infinite thread loops.
+
 
 # OPEN PROBLEMS
 - None.

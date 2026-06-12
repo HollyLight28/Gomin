@@ -893,6 +893,16 @@ If є аб’юз — не пом’якшуй.
     }
 
     fun toggleTranscriptionSession(activity: ChatActivity) {
+        if (org.telegram.ui.Components.PermissionRequest.hasPermission(Manifest.permission.RECORD_AUDIO)) {
+            AndroidUtilities.runOnUIThread {
+                if (liveManager != null) {
+                    stopLiveSession()
+                } else {
+                    startTranscriptionSession(activity)
+                }
+            }
+            return
+        }
         org.telegram.ui.Components.PermissionRequest.requestPermission(Manifest.permission.RECORD_AUDIO) { granted ->
             AndroidUtilities.runOnUIThread {
                 if (granted) {
@@ -957,6 +967,16 @@ If є аб’юз — не пом’якшуй.
     }
 
     fun toggleLiveSession(fragment: org.telegram.ui.ActionBar.BaseFragment) {
+        if (org.telegram.ui.Components.PermissionRequest.hasPermission(Manifest.permission.RECORD_AUDIO)) {
+            AndroidUtilities.runOnUIThread {
+                if (liveManager != null) {
+                    stopLiveSession()
+                } else {
+                    startLiveSession(fragment)
+                }
+            }
+            return
+        }
         org.telegram.ui.Components.PermissionRequest.requestPermission(Manifest.permission.RECORD_AUDIO) { granted ->
             AndroidUtilities.runOnUIThread {
                 if (granted) {

@@ -92,13 +92,37 @@ class GominLiveManager(
     private fun initAudioDevices() {
         synchronized(audioLock) {
             try {
-                val record = AudioRecord(
-                    MediaRecorder.AudioSource.VOICE_COMMUNICATION,
-                    sampleRateIn,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT,
-                    bufferSizeIn
-                )
+                val context = glowView.context
+                val audioManager = context.getSystemService(android.content.Context.AUDIO_SERVICE) as? AudioManager
+                audioManager?.let {
+                    it.mode = AudioManager.MODE_IN_COMMUNICATION
+                    @Suppress("DEPRECATION")
+                    it.requestAudioFocus({ }, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                }
+
+                var record: AudioRecord? = null
+                try {
+                    record = AudioRecord(
+                        MediaRecorder.AudioSource.VOICE_COMMUNICATION,
+                        sampleRateIn,
+                        AudioFormat.CHANNEL_IN_MONO,
+                        AudioFormat.ENCODING_PCM_16BIT,
+                        bufferSizeIn
+                    )
+                } catch (e: Exception) {
+                    FileLog.e("GominLiveManager: Failed to initialize AudioRecord with VOICE_COMMUNICATION, trying MIC", e)
+                }
+
+                if (record == null || record.state != AudioRecord.STATE_INITIALIZED) {
+                    record?.release()
+                    record = AudioRecord(
+                        MediaRecorder.AudioSource.MIC,
+                        sampleRateIn,
+                        AudioFormat.CHANNEL_IN_MONO,
+                        AudioFormat.ENCODING_PCM_16BIT,
+                        bufferSizeIn
+                    )
+                }
                 audioRecord = record
 
                 if (record.state == AudioRecord.STATE_INITIALIZED) {
@@ -124,7 +148,7 @@ class GominLiveManager(
                     AudioTrack.MODE_STREAM
                 )
             } catch (e: Exception) {
-                FileLog.e(e)
+                FileLog.e("GominLiveManager: Error in initAudioDevices", e)
             }
         }
     }
@@ -256,8 +280,13 @@ class GominLiveManager(
                         continue
                     }
                     val read = activeRecord.read(buffer, 0, buffer.size)
-                    if (read <= 0) {
-                        Thread.sleep(100)
+                    if (read < 0) {
+                        FileLog.e("GominLiveManager: AudioRecord read error: $read")
+                        AndroidUtilities.runOnUIThread { stopSession() }
+                        break
+                    }
+                    if (read == 0) {
+                        Thread.sleep(50)
                         continue
                     }
                     if (isSessionActive) {
@@ -497,6 +526,19 @@ class GominLiveManager(
             audioRecord = null
             audioTrack = null
         }
+        
+        try {
+            val context = glowView.context
+            val audioManager = context.getSystemService(android.content.Context.AUDIO_SERVICE) as? AudioManager
+            audioManager?.let {
+                it.mode = AudioManager.MODE_NORMAL
+                @Suppress("DEPRECATION")
+                it.abandonAudioFocus { }
+            }
+        } catch (e: Exception) {
+            FileLog.e("GominLiveManager: Error releasing AudioManager", e)
+        }
+
         webSocket = null
         AndroidUtilities.runOnUIThread { onConnectionClosed() }
     }

@@ -152,4 +152,12 @@ To manage regional civil defense warnings consistently and avoid redundant alert
 2. **Siren Resource Safety**: Run siren playback through a local `MediaPlayer` strictly for setting test purposes. Real alarm triggers must register a system sound via the `NotificationChannel` (`air_alert_info`) config to allow the OS to manage audio focus and ducking properly.
 3. **Silence Action**: The "Stop Siren" notification action triggers `stopSiren()`, which moves the ongoing alert to a low-priority silent channel (`air_alert_silent`) instead of canceling the status color change.
 
+### Gemini Live Audio Focus & Fallback Pattern
+To guarantee robust microphone acquisition and audio session stability for real-time Gemini voice calls under Android 14 (API 34+):
+1. **Already-Granted Permission Check**: Before invoking the system permission dialog request (`PermissionRequest.requestPermission`), always check if the permission is already granted via `PermissionRequest.hasPermission(Manifest.permission.RECORD_AUDIO)`. If it is, bypass the prompt flow to prevent callback loss and request code collisions in `LaunchActivity`.
+2. **VoIP Audio Mode Configuration**: Right before constructing the `AudioRecord` or `AudioTrack` pipelines, request transient audio focus and configure `AudioManager.mode = AudioManager.MODE_IN_COMMUNICATION`. Upon session termination, always clean up by restoring the mode to `AudioManager.MODE_NORMAL` and abandoning audio focus.
+3. **Audio Record Source Fallbacks**: In `initAudioDevices()`, attempt to initialize `AudioRecord` utilizing `MediaRecorder.AudioSource.VOICE_COMMUNICATION` to enable hardware echo cancellation (AEC) and noise suppression (NS). If it fails or is uninitialized, release it and fall back to `MediaRecorder.AudioSource.MIC` to guarantee microphone access.
+4. **Recording Thread Silent-Loop Circuit Breaker**: Inside the recording thread loop, check the return value of `AudioRecord.read(...)`. If it returns a negative error code (e.g. `ERROR_INVALID_OPERATION`), immediately break the loop, log the failure, and call `stopSession()` to cleanly teardown the WebSocket and notify the UI.
+
+
 
