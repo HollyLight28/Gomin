@@ -4,5 +4,5 @@
     <foreground>
         <inset android:drawable="@drawable/icon_foreground_gomin_dark" android:inset="13%"/>
     </foreground>
-    <monochrome android:drawable="@drawable/icon_foreground_gomin_dark"/>
+    <monochrome><inset android:drawable="@drawable/icon_foreground_gomin_dark" android:inset="13%"/></monochrome>
 </adaptive-icon>

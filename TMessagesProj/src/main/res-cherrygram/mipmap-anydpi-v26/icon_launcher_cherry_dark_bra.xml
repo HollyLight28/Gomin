@@ -4,5 +4,5 @@
     <foreground>
         <inset android:drawable="@drawable/cg_logo_bird" android:inset="23%"/>
     </foreground>
-    <monochrome android:drawable="@drawable/cg_logo_bird"/>
+    <monochrome><inset android:drawable="@drawable/cg_logo_bird" android:inset="13%"/></monochrome>
 </adaptive-icon>
