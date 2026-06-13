@@ -42,6 +42,7 @@
 - Added circuit-breaker check for negative error codes in `AudioRecord.read()` inside `GominLiveManager.kt` to prevent silent infinite thread loops.
 - Created `task.md` checkpoint for Live API debugging process.
 - Updated `ic_launcher.xml` (User manually adjusted foreground inset to 12% to scale round icon to ~68%).
+- Deployed the freshly built Gomin Standalone Universal APK to the connected device `37191JEHN05531` using ADB.
 
 # OPEN PROBLEMS
 - None.
