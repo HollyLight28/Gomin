@@ -134,7 +134,7 @@ class AirAlertStatsActivity : UniversalFragment() {
                         cachedResults = results.toMap()
                         dataLoaded = true
                     } else {
-                        dataLoaded = cachedResults.isNotEmpty()
+                        dataLoaded = true
                     }
                     lastFetchTime = System.currentTimeMillis()
                     isLoading = false
