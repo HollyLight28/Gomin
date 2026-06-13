@@ -182,6 +182,7 @@
     <string name="AP_Tablet_Mode">Tablet mode</string>
     <string name="AP_ChangeIcon_Cherry_NY">New Year</string>
     <string name="AP_ChangeIcon_Dark">Night</string>
+    <string name="AP_ChangeIcon_Classic">Classic (Blue)</string>
     <string name="AP_ChangeIcon_White">Light</string>
     <string name="AP_ChangeIcon_Bra" translatable="false">Bra</string>
     <string name="AP_ChangeIcon_Laguna">Laguna</string>
