@@ -299,9 +299,7 @@ public class CGPreferencesEntry extends UniversalFragment {
             downloadRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(12), AndroidUtilities.dp(21), AndroidUtilities.dp(4));
             downloadRow.setBackground(Theme.getSelectorDrawable(false));
             downloadRow.setOnClickListener(v -> showDownloadSpeedBoostSelector(() -> {
-                if (listView != null && listView.adapter != null) {
-                    listView.adapter.update(true);
-                }
+                downloadValue.setText(getDownloadSpeedBoostValue());
             }));
 
             android.widget.TextView downloadTitle = new android.widget.TextView(getContext());
@@ -341,9 +339,6 @@ public class CGPreferencesEntry extends UniversalFragment {
                 org.telegram.ui.Components.Switch sw = uploadRow.findViewWithTag("uploadSwitch");
                 if (sw != null) {
                     sw.setChecked(CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost(), true);
-                }
-                if (listView != null && listView.adapter != null) {
-                    listView.adapter.update(true);
                 }
             });
 
@@ -385,9 +380,6 @@ public class CGPreferencesEntry extends UniversalFragment {
                 org.telegram.ui.Components.Switch sw = slowRow.findViewWithTag("slowSwitch");
                 if (sw != null) {
                     sw.setChecked(CherrygramCoreConfig.INSTANCE.getSlowNetworkMode(), true);
-                }
-                if (listView != null && listView.adapter != null) {
-                    listView.adapter.update(true);
                 }
             });
 
