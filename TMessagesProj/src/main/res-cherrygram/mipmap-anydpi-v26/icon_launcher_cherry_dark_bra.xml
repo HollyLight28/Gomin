@@ -2,7 +2,7 @@
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@drawable/icon_background_dark" />
     <foreground>
-        <inset android:drawable="@drawable/cg_logo_bird" android:inset="23%"/>
+        <inset android:drawable="@drawable/cg_logo_bird" android:inset="18%"/>
     </foreground>
-    <monochrome><inset android:drawable="@drawable/cg_logo_bird" android:inset="13%"/></monochrome>
+    <monochrome><inset android:drawable="@drawable/cg_logo_bird" android:inset="18%"/></monochrome>
 </adaptive-icon>
