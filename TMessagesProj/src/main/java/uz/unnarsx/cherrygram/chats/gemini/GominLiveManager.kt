@@ -336,7 +336,7 @@ class GominLiveManager(
                             byteBuffer[i * 2] = (sample.toInt() and 0xFF).toByte()
                             byteBuffer[i * 2 + 1] = ((sample.toInt() shr 8) and 0xFF).toByte()
                         }
-                        
+
                         val rms = Math.sqrt(sumOfSquares / read) / 32768.0
                         val rmsFloat = rms.toFloat()
 
@@ -353,19 +353,18 @@ class GominLiveManager(
                             accumulatedBytes.reset()
 
                             val base64Data = Base64.encodeToString(chunkToSend, Base64.NO_WRAP)
+                            // FIX: mediaChunks is deprecated — use top-level `audio` field instead
                             val inputJson = JSONObject().apply {
                                 put("realtimeInput", JSONObject().apply {
-                                    val chunk = JSONObject().apply {
+                                    put("audio", JSONObject().apply {
                                         put("mimeType", "audio/pcm;rate=16000")
                                         put("data", base64Data)
-                                    }
-                                    put("mediaChunks", JSONArray().put(chunk))
+                                    })
                                 })
                             }
-                            
+
                             if (isWebSocketOpen && isSetupComplete) {
                                 val inputStr = inputJson.toString()
-                                // FileLog.d("GominLiveManager: Sending audio chunk") // Too spammy
                                 webSocket?.send(inputStr)
                             }
                         }
@@ -395,7 +394,7 @@ class GominLiveManager(
     private fun triggerLocalInterruption() {
         isAiSpeaking = false
         audioPlayQueue.clear()
-        
+
         synchronized(audioLock) {
             try {
                 audioTrack?.pause()
@@ -410,7 +409,7 @@ class GominLiveManager(
     private fun parseServerMessage(text: String) {
         try {
             val obj = JSONObject(text)
-            
+
             if (obj.has("error")) {
                 val error = obj.getJSONObject("error")
                 val errMsg = error.optString("message", "Невідома помилка")
@@ -441,7 +440,7 @@ class GominLiveManager(
 
             if (obj.has("serverContent")) {
                 val serverContent = obj.getJSONObject("serverContent")
-                
+
                 if (serverContent.optBoolean("interrupted", false)) {
                     isAiSpeaking = false
                     audioPlayQueue.clear()
@@ -468,12 +467,12 @@ class GominLiveManager(
                     if (parts != null) {
                         for (i in 0 until parts.length()) {
                             val part = parts.getJSONObject(i)
-                            
+
                             if (part.has("functionCall")) {
                                 val call = part.getJSONObject("functionCall")
                                 val name = call.getString("name")
                                 val callId = call.optString("id", "")
-                                
+
                                 val responseData = JSONObject()
                                 if (name == "get_air_alerts") {
                                     val alertsStatus = if (AirAlertController.isAlertActive()) {
@@ -491,7 +490,7 @@ class GominLiveManager(
                                     put("id", callId)
                                     put("response", responseData)
                                 }
-                                
+
                                 val responseJson = JSONObject().apply {
                                     put("toolResponse", JSONObject().apply {
                                         put("functionResponses", JSONArray().put(fResp))
@@ -503,7 +502,7 @@ class GominLiveManager(
                                     webSocket?.send(respStr)
                                 }
                             }
-                            
+
                             if (part.has("inlineData")) {
                                 if (!isTranscriptionMode) {
                                     val inlineData = part.getJSONObject("inlineData")
@@ -533,10 +532,9 @@ class GominLiveManager(
         }
         isWebSocketOpen = false
         isSetupComplete = false
-        
+
         try { webSocket?.close(1000, "Session ended") } catch (e: Exception) { }
-        
-        // Defensive: interrupt threads first
+
         recordThread?.interrupt()
         playThread?.interrupt()
         try { recordThread?.join(500) } catch (e: Exception) {}
@@ -545,21 +543,21 @@ class GominLiveManager(
         synchronized(audioLock) {
             try { echoCanceler?.enabled = false; echoCanceler?.release() } catch (e: Exception) { }
             try { noiseSuppressor?.enabled = false; noiseSuppressor?.release() } catch (e: Exception) { }
-            
-            try { 
+
+            try {
                 if (audioRecord?.state == AudioRecord.STATE_INITIALIZED) {
-                    audioRecord?.stop() 
+                    audioRecord?.stop()
                 }
-                audioRecord?.release() 
+                audioRecord?.release()
             } catch (e: Exception) { }
-            
-            try { 
+
+            try {
                 if (audioTrack?.state == AudioTrack.STATE_INITIALIZED) {
                     audioTrack?.pause()
                     audioTrack?.flush()
-                    audioTrack?.stop() 
+                    audioTrack?.stop()
                 }
-                audioTrack?.release() 
+                audioTrack?.release()
             } catch (e: Exception) { }
 
             echoCanceler = null
@@ -567,7 +565,7 @@ class GominLiveManager(
             audioRecord = null
             audioTrack = null
         }
-        
+
         try {
             val context = glowView.context
             val audioManager = context.getSystemService(android.content.Context.AUDIO_SERVICE) as? AudioManager
