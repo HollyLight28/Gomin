@@ -146,6 +146,7 @@
     <string name="AP_Tablet_Mode">平板模式</string>
     <string name="AP_ChangeIcon_Cherry_NY">新年</string>
     <string name="AP_ChangeIcon_Dark">深色</string>
+    <string name="AP_ChangeIcon_Classic">Classic (Blue)</string>
     <string name="AP_ChangeIcon_White">白色</string>
     <string name="AP_ChangeIcon_Laguna">Laguna</string>
     <string name="AP_ChangeIcon_Green">绿色</string>

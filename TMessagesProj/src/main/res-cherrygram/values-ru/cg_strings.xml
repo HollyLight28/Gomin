@@ -181,6 +181,7 @@
     <string name="AP_Tablet_Mode">Режим планшета</string>
     <string name="AP_ChangeIcon_Cherry_NY">Новогодняя</string>
     <string name="AP_ChangeIcon_Dark">Тёмная</string>
+    <string name="AP_ChangeIcon_Classic">Classic (Blue)</string>
     <string name="AP_ChangeIcon_White">Светлая</string>
     <string name="AP_ChangeIcon_Laguna">Лагуна</string>
     <string name="AP_ChangeIcon_Green">Зеленая</string>
