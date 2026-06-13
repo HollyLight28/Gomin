@@ -298,20 +298,14 @@ public class CGPreferencesEntry extends UniversalFragment {
             downloadRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
             downloadRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(12), AndroidUtilities.dp(21), AndroidUtilities.dp(4));
             downloadRow.setBackground(Theme.getSelectorDrawable(false));
-            downloadRow.setOnClickListener(v -> showDownloadSpeedBoostSelector(() -> {
-                downloadValue.setText(getDownloadSpeedBoostValue());
-            }));
-
-            android.widget.TextView downloadTitle = new android.widget.TextView(getContext());
-            downloadTitle.setText(getString(R.string.EP_DownloadSpeedBoost));
-            downloadTitle.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16);
-            downloadTitle.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-            downloadRow.addView(downloadTitle, org.telegram.ui.Components.LayoutHelper.createLinear(0, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 1f));
-
             android.widget.TextView downloadValue = new android.widget.TextView(getContext());
             downloadValue.setText(getDownloadSpeedBoostValue());
             downloadValue.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16);
             downloadValue.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+
+            downloadRow.setOnClickListener(v -> showDownloadSpeedBoostSelector(() -> {
+                downloadValue.setText(getDownloadSpeedBoostValue());
+            }));
             downloadRow.addView(downloadValue, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 0, 0, 0, 0));
             card.addView(downloadRow, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
 
