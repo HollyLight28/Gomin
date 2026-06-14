@@ -221,20 +221,16 @@ class GominLiveManager(
             val targetModel = if (isTranscriptionMode) MODEL_TRANSCRIPTION else MODEL_VOICE_CALL
             FileLog.d("GominLiveManager: Using model $targetModel")
 
+            // Формат згідно з офіційним get-started-websocket прикладом (червень 2026):
+            // https://ai.google.dev/gemini-api/docs/live-api/get-started-websocket
             val setupJson = JSONObject().apply {
                 put("setup", JSONObject().apply {
                     put("model", targetModel)
-                    put("generationConfig", JSONObject().apply {
-                        put("responseModalities", JSONArray().put(if (isTranscriptionMode) "TEXT" else "AUDIO"))
-                        if (!isTranscriptionMode) {
-                            put("speechConfig", JSONObject().apply {
-                                put("voiceConfig", JSONObject().apply {
-                                    put("prebuiltVoiceConfig", JSONObject().apply {
-                                        put("voiceName", "Puck")
-                                    })
-                                })
-                            })
-                        }
+                    put("responseModalities", JSONArray().put(if (isTranscriptionMode) "TEXT" else "AUDIO"))
+                    put("systemInstruction", JSONObject().apply {
+                        put("parts", JSONArray().put(JSONObject().apply {
+                            put("text", "Ти — Гомін AI, дружній голосовий асистент. Відповідай коротко та природно українською мовою.")
+                        }))
                     })
                 })
             }
