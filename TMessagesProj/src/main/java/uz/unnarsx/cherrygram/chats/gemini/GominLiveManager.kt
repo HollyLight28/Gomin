@@ -52,6 +52,36 @@ class GominLiveManager(
                 android.util.Log.e("GominLiveManager", "Exception", e)
             }
         }
+
+        fun buildSetupPayload(isTranscriptionMode: Boolean, targetModel: String): JSONObject {
+            return JSONObject().apply {
+                put("setup", JSONObject().apply {
+                    put("model", targetModel)
+                    put("generationConfig", JSONObject().apply {
+                        put("responseModalities", JSONArray().put("AUDIO"))
+                        if (!isTranscriptionMode) {
+                            put("speechConfig", JSONObject().apply {
+                                put("voiceConfig", JSONObject().apply {
+                                    put("prebuiltVoiceConfig", JSONObject().apply {
+                                        put("voiceName", "Puck")
+                                    })
+                                })
+                            })
+                        }
+                    })
+                    if (!isTranscriptionMode) {
+                        put("systemInstruction", JSONObject().apply {
+                            put("parts", JSONArray().put(JSONObject().apply {
+                                put("text", "Ти — Гомін AI, дружній голосовий асистент. Відповідай коротко та природно українською мовою.")
+                            }))
+                        })
+                    }
+                    if (isTranscriptionMode) {
+                        put("inputAudioTranscription", JSONObject())
+                    }
+                })
+            }
+        }
     }
 
     private val client = OkHttpClient.Builder()
@@ -187,7 +217,14 @@ class GominLiveManager(
                 if (record.state != AudioRecord.STATE_INITIALIZED) {
                     FileLog.e("AudioRecord NOT initialized, state = ${record.state}")
                     updateStatus("❌ Помилка мікрофона", "Не вдалося ініціалізувати AudioRecord")
-                    audioRecord = null
+                    record.release()
+                    return@synchronized false
+                }
+
+                // Race check before setting active record reference
+                if (!isSessionActive) {
+                    FileLog.d("Session cancelled during mic init. Releasing record.")
+                    record.release()
                     return@synchronized false
                 }
 
@@ -207,7 +244,7 @@ class GominLiveManager(
                 }
 
                 val bufOut = getBufferSizeOut()
-                audioTrack = AudioTrack(
+                val track = AudioTrack(
                     AudioManager.STREAM_VOICE_CALL,
                     sampleRateOut,
                     AudioFormat.CHANNEL_OUT_MONO,
@@ -215,7 +252,39 @@ class GominLiveManager(
                     bufOut,
                     AudioTrack.MODE_STREAM
                 )
-                FileLog.d("AudioTrack initialized, state = ${audioTrack?.state}")
+                FileLog.d("AudioTrack state = ${track.state}")
+
+                if (track.state != AudioTrack.STATE_INITIALIZED) {
+                    FileLog.e("AudioTrack NOT initialized, state = ${track.state}")
+                    track.release()
+                    record.release()
+                    echoCanceler?.enabled = false
+                    echoCanceler?.release()
+                    noiseSuppressor?.enabled = false
+                    noiseSuppressor?.release()
+                    echoCanceler = null
+                    noiseSuppressor = null
+                    audioRecord = null
+                    return@synchronized false
+                }
+
+                // Final race check before committing track
+                if (!isSessionActive) {
+                    FileLog.d("Session cancelled during speaker init. Releasing resources.")
+                    track.release()
+                    record.release()
+                    echoCanceler?.enabled = false
+                    echoCanceler?.release()
+                    noiseSuppressor?.enabled = false
+                    noiseSuppressor?.release()
+                    echoCanceler = null
+                    noiseSuppressor = null
+                    audioRecord = null
+                    return@synchronized false
+                }
+
+                audioTrack = track
+                FileLog.d("AudioTrack initialized SUCCESS")
 
                 updateStatus("🎤 Мікрофон готовий", "Очікування WebSocket...")
                 true
@@ -226,6 +295,7 @@ class GominLiveManager(
             }
         }
     }
+
 
     private fun connectWebSocket(apiKey: String) {
         val url = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=$apiKey"
@@ -265,44 +335,16 @@ class GominLiveManager(
         })
     }
 
+
+
+
     private fun sendSetupMessage(ws: WebSocket) {
         try {
             val targetModel = if (isTranscriptionMode) MODEL_TRANSCRIPTION else MODEL_VOICE_CALL
             FileLog.d("Using model $targetModel")
             updateStatus("📡 Надсилання конфігурації...", targetModel)
 
-            // Формат згідно з офіційним get-started-websocket прикладом (червень 2026):
-            // https://ai.google.dev/gemini-api/docs/live-api/get-started-websocket
-            // ВАЖЛИВО: ключ має бути "config", а не "setup"!
-            val setupJson = JSONObject().apply {
-                put("config", JSONObject().apply {
-                    put("model", targetModel)
-                    // CRITICAL: Live models do NOT support ["TEXT"] modality!
-                    // Always use ["AUDIO"] and get text via inputAudioTranscription side-channel
-                    put("responseModalities", JSONArray().put("AUDIO"))
-                    put("generationConfig", JSONObject().apply {
-                        if (!isTranscriptionMode) {
-                            put("speechConfig", JSONObject().apply {
-                                put("voiceConfig", JSONObject().apply {
-                                    put("prebuiltVoiceConfig", JSONObject().apply {
-                                        put("voiceName", "Puck")
-                                    })
-                                })
-                            })
-                        }
-                    })
-                    if (!isTranscriptionMode) {
-                        put("systemInstruction", JSONObject().apply {
-                            put("parts", JSONArray().put(JSONObject().apply {
-                                put("text", "Ти — Гомін AI, дружній голосовий асистент. Відповідай коротко та природно українською мовою.")
-                            }))
-                        })
-                    }
-                    if (isTranscriptionMode) {
-                        put("inputAudioTranscription", JSONObject())
-                    }
-                })
-            }
+            val setupJson = buildSetupPayload(isTranscriptionMode, targetModel)
             val setupStr = setupJson.toString()
             FileLog.d("Setup: $setupStr")
             ws.send(setupStr)
@@ -312,27 +354,34 @@ class GominLiveManager(
         }
     }
 
+
     private fun startAudioThreads() {
         updateStatus("🎤 Запуск аудіо-потоків...", "Старт запису")
 
         if (!isTranscriptionMode) {
             playThread = Thread {
-                val track = synchronized(audioLock) { audioTrack }
-                if (track == null || track.state != AudioTrack.STATE_INITIALIZED) {
-                    updateStatus("❌ Динамік не готовий", "Помилка ініціалізації AudioTrack")
-                    showToast("Помилка ініціалізації динаміка 🔊")
-                    AndroidUtilities.runOnUIThread { stopSession() }
-                } else {
-                    try {
-                        track.play()
-                        FileLog.d("AudioTrack.play() started")
-                    } catch (e: Exception) {
-                        FileLog.e("AudioTrack.play() failed", e)
-                        updateStatus("❌ Динамік не запустився", e.message ?: "")
-                        showToast("Не вдалося запустити динамік 🔊")
+                var playStarted = false
+                synchronized(audioLock) {
+                    val track = audioTrack
+                    if (track == null || track.state != AudioTrack.STATE_INITIALIZED) {
+                        updateStatus("❌ Динамік не готовий", "Помилка ініціалізації AudioTrack")
+                        showToast("Помилка ініціалізації динаміка 🔊")
                         AndroidUtilities.runOnUIThread { stopSession() }
+                    } else if (isSessionActive) {
+                        try {
+                            track.play()
+                            playStarted = true
+                            FileLog.d("AudioTrack.play() started")
+                        } catch (e: Exception) {
+                            FileLog.e("AudioTrack.play() failed", e)
+                            updateStatus("❌ Динамік не запустився", e.message ?: "")
+                            showToast("Не вдалося запустити динамік 🔊")
+                            AndroidUtilities.runOnUIThread { stopSession() }
+                        }
                     }
                 }
+                if (!playStarted) return@Thread
+
                 while (isSessionActive) {
                     try {
                         val pcmData = audioPlayQueue.poll(500, TimeUnit.MILLISECONDS)
@@ -365,29 +414,40 @@ class GominLiveManager(
         recordThread = Thread {
             val bufSize = getBufferSizeIn()
             val buffer = ShortArray(if (bufSize > 0) bufSize / 2 else 1024)
-            val record = synchronized(audioLock) { audioRecord }
+            var recordStarted = false
 
-            if (record != null && record.state == AudioRecord.STATE_INITIALIZED) {
-                try {
-                    FileLog.d("Calling record.startRecording()...")
-                    record.startRecording()
-                    FileLog.d("record.startRecording() SUCCESS")
-                    updateStatus("🎙️ Мікрофон АКТИВОВАНО", "Зелена точка має з'явитися")
-                } catch (e: Exception) {
-                    FileLog.e("startRecording() FAILED: ${e.message}", e)
-                    updateStatus("❌ Мікрофон не запустився", e.message ?: "IllegalStateException")
-                    showToast("❌ Не вдалося запустити мікрофон: ${e.message}")
+            synchronized(audioLock) {
+                val record = audioRecord
+                if (record != null && record.state == AudioRecord.STATE_INITIALIZED) {
+                    if (isSessionActive) {
+                        try {
+                            FileLog.d("Calling record.startRecording()...")
+                            record.startRecording()
+                            recordStarted = true
+                            FileLog.d("record.startRecording() SUCCESS")
+                            updateStatus("🎙️ Мікрофон АКТИВОВАНО", "Зелена точка має з'явитися")
+                        } catch (e: Exception) {
+                            FileLog.e("startRecording() FAILED: ${e.message}", e)
+                            updateStatus("❌ Мікрофон не запустився", e.message ?: "IllegalStateException")
+                            showToast("❌ Не вдалося запустити мікрофон: ${e.message}")
+                            try { record.release() } catch (ex: Exception) {}
+                            if (audioRecord == record) audioRecord = null
+                            AndroidUtilities.runOnUIThread { stopSession() }
+                        }
+                    }
+                } else {
+                    val stateStr = record?.state?.toString() ?: "null"
+                    FileLog.e("AudioRecord not initialized. record=$record state=$stateStr")
+                    updateStatus("❌ Мікрофон не ініціалізовано", "State: $stateStr")
+                    showToast("Мікрофон не ініціалізовано 🎙️ (state=$stateStr)")
+                    if (record != null) {
+                        try { record.release() } catch (ex: Exception) {}
+                    }
+                    if (audioRecord == record) audioRecord = null
                     AndroidUtilities.runOnUIThread { stopSession() }
-                    return@Thread
                 }
-            } else {
-                val stateStr = record?.state?.toString() ?: "null"
-                FileLog.e("AudioRecord not initialized. record=$record state=$stateStr")
-                updateStatus("❌ Мікрофон не ініціалізовано", "State: $stateStr")
-                showToast("Мікрофон не ініціалізовано 🎙️ (state=$stateStr)")
-                AndroidUtilities.runOnUIThread { stopSession() }
-                return@Thread
             }
+            if (!recordStarted) return@Thread
 
             val accumulatedBytes = java.io.ByteArrayOutputStream()
             val bytesToAccumulate = 3200
@@ -403,6 +463,9 @@ class GominLiveManager(
                     if (read < 0) {
                         FileLog.e("AudioRecord read error: $read")
                         updateStatus("❌ Помилка читання мікрофона", "read() = $read")
+                        synchronized(audioLock) {
+                            try { activeRecord.stop() } catch (ex: Exception) {}
+                        }
                         AndroidUtilities.runOnUIThread { stopSession() }
                         break
                     }
@@ -624,24 +687,15 @@ class GominLiveManager(
 
         try { webSocket?.close(1000, "Session ended") } catch (e: Exception) { }
 
-        recordThread?.interrupt()
-        playThread?.interrupt()
-        try { recordThread?.join(500) } catch (e: Exception) {}
-        try { playThread?.join(500) } catch (e: Exception) {}
-
+        // Stop record and play hardware FIRST to unblock read() and allow threads to terminate instantly
         synchronized(audioLock) {
-            try { echoCanceler?.enabled = false; echoCanceler?.release() } catch (e: Exception) { }
-            try { noiseSuppressor?.enabled = false; noiseSuppressor?.release() } catch (e: Exception) { }
-
             try {
                 if (audioRecord?.state == AudioRecord.STATE_INITIALIZED) {
                     audioRecord?.stop()
                     FileLog.d("AudioRecord stopped")
                 }
-                audioRecord?.release()
-                FileLog.d("AudioRecord released")
             } catch (e: Exception) {
-                FileLog.e("Error releasing AudioRecord", e)
+                FileLog.e("Error stopping AudioRecord", e)
             }
 
             try {
@@ -649,15 +703,44 @@ class GominLiveManager(
                     audioTrack?.pause()
                     audioTrack?.flush()
                     audioTrack?.stop()
+                    FileLog.d("AudioTrack stopped")
                 }
+            } catch (e: Exception) {
+                FileLog.e("Error stopping AudioTrack", e)
+            }
+        }
+
+        // Now interrupt and join the threads - they will exit instantly
+        recordThread?.interrupt()
+        playThread?.interrupt()
+        try { recordThread?.join(500) } catch (e: Exception) {}
+        try { playThread?.join(500) } catch (e: Exception) {}
+
+        // Finally, release hardware resources
+        synchronized(audioLock) {
+            try { echoCanceler?.enabled = false; echoCanceler?.release() } catch (e: Exception) { }
+            try { noiseSuppressor?.enabled = false; noiseSuppressor?.release() } catch (e: Exception) { }
+
+            try {
+                audioRecord?.release()
+                FileLog.d("AudioRecord released")
+            } catch (e: Exception) {
+                FileLog.e("Error releasing AudioRecord", e)
+            }
+
+            try {
                 audioTrack?.release()
-            } catch (e: Exception) { }
+                FileLog.d("AudioTrack released")
+            } catch (e: Exception) {
+                FileLog.e("Error releasing AudioTrack", e)
+            }
 
             echoCanceler = null
             noiseSuppressor = null
             audioRecord = null
             audioTrack = null
         }
+
 
         try {
             val context = glowView.context

@@ -119,6 +119,7 @@ dependencies {
 
     // Unit tests (JVM only, no Android dependencies in test code)
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.json:json:20230227'
 }
 
 def isWindows = String.valueOf(DefaultNativePlatform.currentOperatingSystem.toFamilyName() == OperatingSystemFamily.WINDOWS)

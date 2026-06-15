@@ -6,6 +6,8 @@
 5. Verify OTA Auto-Updater flow (simulate downgrade version and test updater integration). [COMPLETED]
 6. Diagnose and fix the Gemini Live API mic activation issue, migrate to active stable models, add full error UI indicators (Toasts) and move device initialization to background thread. [COMPLETED]
 7. Adjust scale of installer and notification drawer app icon to clean 0.10 scale, flattening vector path coordinates to eliminate nested groups and match selector preview dimensions. [COMPLETED]
+8. Audit the Gemini Live API WebSocket connection parameters and message schemas, comparing them with the official documentation and the local implementation, and prepare a detailed explanation. [COMPLETED]
+
 
 # COMPLETED ATOMIC STEPS
 - Added Android Log redirects in `GominLiveManager.kt` to ensure WebSocket lifecycle events are visible in logcat.
@@ -52,9 +54,15 @@
 - Synchronized `foreScale` inside `AppIconsSelectorCell.java`'s `AdaptiveIconImageView` to exactly `0.64f` to align selector preview sizes with home screen launcher sizes.
 - Cleaned the Gradle build cache using `./gradlew clean` to work around resource merger caching failures.
 - Compiled standalone release build APK successfully.
+- Migrated `buildSetupPayload` in `GominLiveManager.kt` to a static, pure function inside `companion object` to enable clean unit testing on JVM without Android UI View dependencies.
+- Added `org.json` JVM test dependency in `build.gradle` to allow proper `JSONObject` and `JSONArray` behavior in JVM unit tests.
+- Fixed race conditions and resource leaks in `GominLiveManager.kt`'s audio threads by verifying `isSessionActive` under `synchronized(audioLock)` right before starting recording/playback and releasing resources immediately on errors.
+- Verified all Gemini Live WebSocket payload initialization unit tests successfully.
+
 
 # OPEN PROBLEMS
-- None.
+None
+
 
 # MODIFIED FILES
 - `uz/unnarsx/cherrygram/alerts/AirAlertStatsActivity.kt` -> [NEW] Implemented premium Statistics screen with live parallel HTTP fetching of 26 Ukrainian regions, dynamic search filter, and reactive refresh.
@@ -75,4 +83,6 @@
 - `generate_foregrounds.py` -> [MODIFY] Cleaned templates to remove nested group wrappers and support flat coordinates.
 - `TMessagesProj/src/main/res/drawable/notification.xml` -> [MODIFY] Updated notification icon scale to 1.0 (clean 0.10 scale).
 - `TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java` -> [MODIFY] Adjusted preview scale factor to 0.64f to precisely match adaptive launcher dimensions, and fixed the Drawable Mutate Bug.
+- `TMessagesProj/build.gradle` -> [MODIFY] Added JVM unit test dependency for org.json.
+- `TMessagesProj/src/test/java/uz/unnarsx/cherrygram/chats/gemini/GominLiveManagerPayloadTest.kt` -> [NEW] Implemented unit tests for voice and transcription modes Live API handshake configurations.
 - `.memory/activeContext.md` -> [MODIFY] Updated progress state and mission status.
