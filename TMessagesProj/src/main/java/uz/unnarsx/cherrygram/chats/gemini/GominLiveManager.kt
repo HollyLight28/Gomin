@@ -291,18 +291,13 @@ class GominLiveManager(
                             })
                         }
                     })
-                    put("systemInstruction", JSONObject().apply {
-                        put("parts", JSONArray().put(JSONObject().apply {
-                            put("text", "Ти — Гомін AI, дружній голосовий асистент. Відповідай коротко та природно українською мовою.")
-                        }))
-                    })
-                    if (isTranscriptionMode) {
-                        put("inputAudioTranscription", JSONObject())
+                    if (!isTranscriptionMode) {
+                        put("systemInstruction", JSONObject().apply {
+                            put("parts", JSONArray().put(JSONObject().apply {
+                                put("text", "Ти — Гомін AI, дружній голосовий асистент. Відповідай коротко та природно українською мовою.")
+                            }))
+                        })
                     }
-                })
-            }
->>>>>>> 6969a1265 (fix(gemini): live mic green dot + diagnostics + 3 critical bugfixes)
-                    })
                     if (isTranscriptionMode) {
                         put("inputAudioTranscription", JSONObject())
                     }
