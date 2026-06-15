@@ -185,12 +185,12 @@ public class CGPreferencesEntry extends UniversalFragment {
         items.add(UItem.asShadow(null));
 
         // ⚡ Speed Engine
-        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.settings_power, getString(R.string.EP_SpeedEngine)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.msg_speed, getString(R.string.EP_SpeedEngine)));
         items.add(SettingsHelper.asCustomWithBackgroundWrapContent(speedEngineCardRow, createSpeedEngineCard()));
         items.add(UItem.asShadow(null));
 
         // 📷 Камера
-        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.camera_icon_telegram, getString(R.string.CP_Category_Camera)));
+        items.add(SettingsHelper.asHeaderWithIcon(getContext(), R.drawable.msg_camera, getString(R.string.CP_Category_Camera)));
         items.add(SettingsHelper.asSwitchCG(cameraDualRow, getString(R.string.CP_CameraDualCamera), getString(R.string.CP_CameraDualCamera_Desc))
                 .setChecked(CherrygramCameraConfig.INSTANCE.getUseDualCamera())
         );
@@ -292,21 +292,31 @@ public class CGPreferencesEntry extends UniversalFragment {
         card.setOrientation(android.widget.LinearLayout.VERTICAL);
 
         try {
-            // ======== Рядок 1: Download speed boost ========
+            // ======== Рядок 1: Download speed boost (як стандартний UItem.asButton) ========
             android.widget.LinearLayout downloadRow = new android.widget.LinearLayout(getContext());
             downloadRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
             downloadRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
             downloadRow.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(12), AndroidUtilities.dp(21), AndroidUtilities.dp(4));
             downloadRow.setBackground(Theme.getSelectorDrawable(false));
+            downloadRow.setClickable(true);
+            downloadRow.setFocusable(true);
+
+            android.widget.TextView downloadTitle = new android.widget.TextView(getContext());
+            downloadTitle.setText(getString(R.string.EP_DownloadSpeedBoost));
+            downloadTitle.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16);
+            downloadTitle.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+            downloadRow.addView(downloadTitle, org.telegram.ui.Components.LayoutHelper.createLinear(0, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 1f));
+
             android.widget.TextView downloadValue = new android.widget.TextView(getContext());
             downloadValue.setText(getDownloadSpeedBoostValue());
             downloadValue.setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16);
             downloadValue.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
 
+            downloadRow.addView(downloadValue, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 0, 0, 10, 0));
+
             downloadRow.setOnClickListener(v -> showDownloadSpeedBoostSelector(() -> {
                 downloadValue.setText(getDownloadSpeedBoostValue());
             }));
-            downloadRow.addView(downloadValue, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT, 0, 0, 0, 0));
             card.addView(downloadRow, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT));
 
             // ======== Опис Download ========
@@ -332,7 +342,7 @@ public class CGPreferencesEntry extends UniversalFragment {
                 CherrygramCoreConfig.INSTANCE.setUploadSpeedBoost(!CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost());
                 org.telegram.ui.Components.Switch sw = uploadRow.findViewWithTag("uploadSwitch");
                 if (sw != null) {
-                    sw.setChecked(CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost(), true);
+                    sw.setChecked(CherrygramCoreConfig.INSTANCE.getUploadSpeedBoost(), false);
                 }
             });
 
@@ -373,7 +383,7 @@ public class CGPreferencesEntry extends UniversalFragment {
                 CherrygramCoreConfig.INSTANCE.setSlowNetworkMode(!CherrygramCoreConfig.INSTANCE.getSlowNetworkMode());
                 org.telegram.ui.Components.Switch sw = slowRow.findViewWithTag("slowSwitch");
                 if (sw != null) {
-                    sw.setChecked(CherrygramCoreConfig.INSTANCE.getSlowNetworkMode(), true);
+                    sw.setChecked(CherrygramCoreConfig.INSTANCE.getSlowNetworkMode(), false);
                 }
             });
 
