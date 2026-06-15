@@ -315,7 +315,8 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
             if (res == 0) {
                 foreground = null;
             } else {
-                foreground = ContextCompat.getDrawable(getContext(), res);
+                Drawable drawable = ContextCompat.getDrawable(getContext(), res);
+                foreground = drawable != null ? drawable.mutate() : null;
             }
             invalidate();
         }
@@ -356,10 +357,10 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
             super.onDraw(canvas);
             canvas.restore();
 
-            // Draw the bird (foreground) at its scaled size to match launcher scaling (1.5x)
+            // Draw the bird (foreground) at its scaled size to match launcher scaling (0.7x)
             if (foreground != null) {
                 canvas.save();
-                float foreScale = 1.5f;
+                float foreScale = 0.7f;
                 canvas.scale(foreScale, foreScale, getWidth() / 2f, getHeight() / 2f);
                 foreground.setBounds(0, 0, getWidth(), getHeight());
                 foreground.draw(canvas);

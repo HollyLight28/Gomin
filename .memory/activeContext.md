@@ -43,6 +43,10 @@
 - Created `task.md` checkpoint for Live API debugging process.
 - Updated `ic_launcher.xml` (User manually adjusted foreground inset to 12% to scale round icon to ~68%).
 - Deployed the freshly built Gomin Standalone Universal APK to the connected device `37191JEHN05531` using ADB.
+- Cleaned up `gomin.svg` by removing the outer black background box, setting path fill to `#ffffff` (white), and converting relative coordinates to absolute to prevent shift.
+- Created `preview.html` to render the white bird SVG against a dark background for local browser preview.
+- Fixed the shared drawable state contamination bug (Mutate Bug) in `AppIconsSelectorCell.java` by calling `mutate()` on the loaded foreground drawable.
+- Completed standalone release build compilation via `:TMessagesProj_AppStandalone:assembleAfatStandalone` successfully and copied output APKs to `C:\Users\VovA\Desktop\Cherry\Stable`.
 
 # OPEN PROBLEMS
 - None.
@@ -59,4 +63,7 @@
 - `org/telegram/ui/Components/UpdateLayout.java` -> [MODIFY] Refactored hardcoded app titles to dynamic brand names from resource helper.
 - `uz/unnarsx/cherrygram/core/updater/UpdaterBottomSheet.java` -> [MODIFY] Replaced hardcoded brand names with helper calls.
 - `res-cherrygram/mipmap-anydpi-v26/ic_launcher.xml` -> [MODIFY] Adjusted foreground inset to 12% to scale the round/installer/notification icon bird to ~68%.
+- `gomin.svg` -> [MODIFY] Converted bird silhouette to solid white and removed outer black background.
+- `preview.html` -> [NEW] Created HTML preview to test and view SVG.
+- `TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java` -> [MODIFY] Changed preview scale factor to 0.7f to match adaptive launcher dimensions, and fixed the Drawable Mutate Bug.
 - `.memory/activeContext.md` -> [MODIFY] Updated progress state and mission status.

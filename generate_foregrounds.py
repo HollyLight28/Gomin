@@ -25,6 +25,13 @@ def generate():
         path_clean = re.sub(r'android:fillColor="[^"]*"', 'android:fillColor="#FF121212"', path)
         black_bird_paths += "        " + path_clean + "\n"
 
+    # Read yellow bird paths
+    yellow_bird_paths = ""
+    for path in paths_match:
+        # Enforce yellow color
+        path_clean = re.sub(r'android:fillColor="[^"]*"', 'android:fillColor="#FFFFD500"', path)
+        yellow_bird_paths += "        " + path_clean + "\n"
+
     # 1. Gomin Default (Blue Telegram)
     default_xml = f"""<vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -41,7 +48,13 @@ def generate():
         android:pivotY="512"
         android:scaleX="0.52"
         android:scaleY="0.52">
-{white_bird_paths}    </group>
+        <group
+            android:translateX="0"
+            android:translateY="1024"
+            android:scaleX="0.1"
+            android:scaleY="-0.1">
+{white_bird_paths}        </group>
+    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_default.xml"), "w", encoding="utf-8") as f:
@@ -63,7 +76,13 @@ def generate():
         android:pivotY="512"
         android:scaleX="0.52"
         android:scaleY="0.52">
-{white_bird_paths}    </group>
+        <group
+            android:translateX="0"
+            android:translateY="1024"
+            android:scaleX="0.1"
+            android:scaleY="-0.1">
+{white_bird_paths}        </group>
+    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_dark.xml"), "w", encoding="utf-8") as f:
@@ -85,7 +104,13 @@ def generate():
         android:pivotY="512"
         android:scaleX="0.52"
         android:scaleY="0.52">
-{black_bird_paths}    </group>
+        <group
+            android:translateX="0"
+            android:translateY="1024"
+            android:scaleX="0.1"
+            android:scaleY="-0.1">
+{black_bird_paths}        </group>
+    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_white.xml"), "w", encoding="utf-8") as f:
@@ -126,7 +151,13 @@ def generate():
         android:pivotY="512"
         android:scaleX="0.52"
         android:scaleY="0.52">
-{white_bird_paths}    </group>
+        <group
+            android:translateX="0"
+            android:translateY="1024"
+            android:scaleX="0.1"
+            android:scaleY="-0.1">
+{white_bird_paths}        </group>
+    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_aqua.xml"), "w", encoding="utf-8") as f:
@@ -167,7 +198,13 @@ def generate():
         android:pivotY="512"
         android:scaleX="0.52"
         android:scaleY="0.52">
-{white_bird_paths}    </group>
+        <group
+            android:translateX="0"
+            android:translateY="1024"
+            android:scaleX="0.1"
+            android:scaleY="-0.1">
+{white_bird_paths}        </group>
+    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_lavanda.xml"), "w", encoding="utf-8") as f:
@@ -208,11 +245,41 @@ def generate():
         android:pivotY="512"
         android:scaleX="0.52"
         android:scaleY="0.52">
-{white_bird_paths}    </group>
+        <group
+            android:translateX="0"
+            android:translateY="1024"
+            android:scaleX="0.1"
+            android:scaleY="-0.1">
+{white_bird_paths}        </group>
+    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_sunset.xml"), "w", encoding="utf-8") as f:
         f.write(sunset_xml)
+
+    # 7. Gomin Yellow (Ukraine)
+    yellow_xml = f"""<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <!-- Gold Bird -->
+    <group
+        android:pivotX="512"
+        android:pivotY="512"
+        android:scaleX="0.52"
+        android:scaleY="0.52">
+        <group
+            android:translateX="0"
+            android:translateY="1024"
+            android:scaleX="0.1"
+            android:scaleY="-0.1">
+{yellow_bird_paths}        </group>
+    </group>
+</vector>
+"""
+    with open(os.path.join(res_dir, "icon_foreground_gomin_yellow.xml"), "w", encoding="utf-8") as f:
+        f.write(yellow_xml)
 
     print("SUCCESS")
 
