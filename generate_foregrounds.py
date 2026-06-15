@@ -46,15 +46,9 @@ def generate():
     <group
         android:pivotX="512"
         android:pivotY="512"
-        android:scaleX="0.52"
-        android:scaleY="0.52">
-        <group
-            android:translateX="0"
-            android:translateY="1024"
-            android:scaleX="0.1"
-            android:scaleY="-0.1">
-{white_bird_paths}        </group>
-    </group>
+        android:scaleX="1.0"
+        android:scaleY="1.0">
+{white_bird_paths}    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_default.xml"), "w", encoding="utf-8") as f:
@@ -74,15 +68,9 @@ def generate():
     <group
         android:pivotX="512"
         android:pivotY="512"
-        android:scaleX="0.52"
-        android:scaleY="0.52">
-        <group
-            android:translateX="0"
-            android:translateY="1024"
-            android:scaleX="0.1"
-            android:scaleY="-0.1">
-{white_bird_paths}        </group>
-    </group>
+        android:scaleX="1.0"
+        android:scaleY="1.0">
+{white_bird_paths}    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_dark.xml"), "w", encoding="utf-8") as f:
@@ -102,15 +90,9 @@ def generate():
     <group
         android:pivotX="512"
         android:pivotY="512"
-        android:scaleX="0.52"
-        android:scaleY="0.52">
-        <group
-            android:translateX="0"
-            android:translateY="1024"
-            android:scaleX="0.1"
-            android:scaleY="-0.1">
-{black_bird_paths}        </group>
-    </group>
+        android:scaleX="1.0"
+        android:scaleY="1.0">
+{black_bird_paths}    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_white.xml"), "w", encoding="utf-8") as f:
@@ -149,15 +131,9 @@ def generate():
     <group
         android:pivotX="512"
         android:pivotY="512"
-        android:scaleX="0.52"
-        android:scaleY="0.52">
-        <group
-            android:translateX="0"
-            android:translateY="1024"
-            android:scaleX="0.1"
-            android:scaleY="-0.1">
-{white_bird_paths}        </group>
-    </group>
+        android:scaleX="1.0"
+        android:scaleY="1.0">
+{white_bird_paths}    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_aqua.xml"), "w", encoding="utf-8") as f:
@@ -196,15 +172,9 @@ def generate():
     <group
         android:pivotX="512"
         android:pivotY="512"
-        android:scaleX="0.52"
-        android:scaleY="0.52">
-        <group
-            android:translateX="0"
-            android:translateY="1024"
-            android:scaleX="0.1"
-            android:scaleY="-0.1">
-{white_bird_paths}        </group>
-    </group>
+        android:scaleX="1.0"
+        android:scaleY="1.0">
+{white_bird_paths}    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_lavanda.xml"), "w", encoding="utf-8") as f:
@@ -243,15 +213,9 @@ def generate():
     <group
         android:pivotX="512"
         android:pivotY="512"
-        android:scaleX="0.52"
-        android:scaleY="0.52">
-        <group
-            android:translateX="0"
-            android:translateY="1024"
-            android:scaleX="0.1"
-            android:scaleY="-0.1">
-{white_bird_paths}        </group>
-    </group>
+        android:scaleX="1.0"
+        android:scaleY="1.0">
+{white_bird_paths}    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_sunset.xml"), "w", encoding="utf-8") as f:
@@ -267,15 +231,9 @@ def generate():
     <group
         android:pivotX="512"
         android:pivotY="512"
-        android:scaleX="0.52"
-        android:scaleY="0.52">
-        <group
-            android:translateX="0"
-            android:translateY="1024"
-            android:scaleX="0.1"
-            android:scaleY="-0.1">
-{yellow_bird_paths}        </group>
-    </group>
+        android:scaleX="1.0"
+        android:scaleY="1.0">
+{yellow_bird_paths}    </group>
 </vector>
 """
     with open(os.path.join(res_dir, "icon_foreground_gomin_yellow.xml"), "w", encoding="utf-8") as f:

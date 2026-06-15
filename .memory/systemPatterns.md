@@ -159,5 +159,11 @@ To guarantee robust microphone acquisition and audio session stability for real-
 3. **Audio Record Source Fallbacks**: In `initAudioDevices()`, attempt to initialize `AudioRecord` utilizing `MediaRecorder.AudioSource.VOICE_COMMUNICATION` to enable hardware echo cancellation (AEC) and noise suppression (NS). If it fails or is uninitialized, release it and fall back to `MediaRecorder.AudioSource.MIC` to guarantee microphone access.
 4. **Recording Thread Silent-Loop Circuit Breaker**: Inside the recording thread loop, check the return value of `AudioRecord.read(...)`. If it returns a negative error code (e.g. `ERROR_INVALID_OPERATION`), immediately break the loop, log the failure, and call `stopSession()` to cleanly teardown the WebSocket and notify the UI.
 
+### Vector Flattening & Adaptive Icon Scale Pattern
+For Android launchers and status bar drawables, to ensure 100% rendering fidelity and prevent rendering crashes on custom OEM ROMs (like MIUI/EMUI) which fail to parse nested `<group>` transforms:
+1. **Pre-Flattening Path Coordinates**: Instead of applying translations and negative scales (such as `translateX/Y` and `scaleX/Y="-0.1"` for Y-flip) inside VectorDrawable groups, mathematically compute and bake the scaling and flips directly into the path coordinates (producing coordinates in standard viewBox 1024x1024).
+2. **Standardizing Scales**: Keep the basic path at a standardized scale of `0.10` inside the drawable. This fits the circular mask boundaries beautifully without clipping wings or tail tips.
+3. **Adaptive Icon Inset Synchronization**: In the selector preview (e.g., `AppIconsSelectorCell`), scale the foreground path by `0.64f` (`foreScale = 0.64f`). This precisely matches the standard `android:inset="18%"` (which reduces visible size to 64%) applied to adaptive icons on the home screen, keeping the visual size of the settings preview and the launcher shortcut perfectly identical.
+
 
 

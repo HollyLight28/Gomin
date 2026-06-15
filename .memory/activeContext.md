@@ -5,7 +5,7 @@
 4. Fix Gemini Live API mic initialization, request code permissions collision, payload serialization casing, and implement automatic voice greetings. [COMPLETED]
 5. Verify OTA Auto-Updater flow (simulate downgrade version and test updater integration). [COMPLETED]
 6. Diagnose and fix the Gemini Live API mic activation issue, migrate to active stable models, add full error UI indicators (Toasts) and move device initialization to background thread. [COMPLETED]
-7. Adjust scale of installer and notification drawer app icon. [COMPLETED by USER]
+7. Adjust scale of installer and notification drawer app icon to clean 0.10 scale, flattening vector path coordinates to eliminate nested groups and match selector preview dimensions. [COMPLETED]
 
 # COMPLETED ATOMIC STEPS
 - Added Android Log redirects in `GominLiveManager.kt` to ensure WebSocket lifecycle events are visible in logcat.
@@ -46,7 +46,12 @@
 - Cleaned up `gomin.svg` by removing the outer black background box, setting path fill to `#ffffff` (white), and converting relative coordinates to absolute to prevent shift.
 - Created `preview.html` to render the white bird SVG against a dark background for local browser preview.
 - Fixed the shared drawable state contamination bug (Mutate Bug) in `AppIconsSelectorCell.java` by calling `mutate()` on the loaded foreground drawable.
-- Completed standalone release build compilation via `:TMessagesProj_AppStandalone:assembleAfatStandalone` successfully and copied output APKs to `C:\Users\VovA\Desktop\Cherry\Stable`.
+- Flat-scaled the source bird vector path in `icon_foreground_gomin.xml` to a clean scale of 0.10 and Y-flipped translation, removing nested group transforms.
+- Updated launcher icon templates in `generate_foregrounds.py` to remove redundant inner groups and re-generated all 7 adaptive launcher drawables.
+- Standardized the status bar notification drawable `notification.xml` to clean scale 0.10.
+- Synchronized `foreScale` inside `AppIconsSelectorCell.java`'s `AdaptiveIconImageView` to exactly `0.64f` to align selector preview sizes with home screen launcher sizes.
+- Cleaned the Gradle build cache using `./gradlew clean` to work around resource merger caching failures.
+- Compiled standalone release build APK successfully.
 
 # OPEN PROBLEMS
 - None.
@@ -65,5 +70,9 @@
 - `res-cherrygram/mipmap-anydpi-v26/ic_launcher.xml` -> [MODIFY] Adjusted foreground inset to 12% to scale the round/installer/notification icon bird to ~68%.
 - `gomin.svg` -> [MODIFY] Converted bird silhouette to solid white and removed outer black background.
 - `preview.html` -> [NEW] Created HTML preview to test and view SVG.
-- `TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java` -> [MODIFY] Changed preview scale factor to 0.7f to match adaptive launcher dimensions, and fixed the Drawable Mutate Bug.
+- `generate_previews.py` -> [NEW] Created automated python flat coordinate scaler and SVG preview page generator.
+- `TMessagesProj/src/main/res-cherrygram/drawable/icon_foreground_gomin.xml` -> [MODIFY] Updated vector drawable path to use flat pre-scaled coordinates and removed nested transform groups.
+- `generate_foregrounds.py` -> [MODIFY] Cleaned templates to remove nested group wrappers and support flat coordinates.
+- `TMessagesProj/src/main/res/drawable/notification.xml` -> [MODIFY] Updated notification icon scale to 1.0 (clean 0.10 scale).
+- `TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java` -> [MODIFY] Adjusted preview scale factor to 0.64f to precisely match adaptive launcher dimensions, and fixed the Drawable Mutate Bug.
 - `.memory/activeContext.md` -> [MODIFY] Updated progress state and mission status.
