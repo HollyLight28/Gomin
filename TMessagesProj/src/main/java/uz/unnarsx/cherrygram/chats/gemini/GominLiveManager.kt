@@ -223,8 +223,9 @@ class GominLiveManager(
 
             // Формат згідно з офіційним get-started-websocket прикладом (червень 2026):
             // https://ai.google.dev/gemini-api/docs/live-api/get-started-websocket
+            // ВАЖЛИВО: ключ має бути "config", а не "setup"!
             val setupJson = JSONObject().apply {
-                put("setup", JSONObject().apply {
+                put("config", JSONObject().apply {
                     put("model", targetModel)
                     put("responseModalities", JSONArray().put(if (isTranscriptionMode) "TEXT" else "AUDIO"))
                     put("systemInstruction", JSONObject().apply {
