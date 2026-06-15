@@ -784,6 +784,12 @@
             android:foregroundServiceType="camera|microphone|mediaPlayback|mediaProjection"
         />
         <service
+            android:name="uz.unnarsx.cherrygram.chats.gemini.GominMicrophoneService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="microphone"
+        />
+        <service
             android:name=".MusicPlayerService"
             android:exported="true"
             android:enabled="true"

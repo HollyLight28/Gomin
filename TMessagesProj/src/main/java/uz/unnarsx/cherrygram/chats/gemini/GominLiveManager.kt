@@ -27,7 +27,8 @@ class GominLiveManager(
     private val isTranscriptionMode: Boolean = false,
     private val onTextReceived: ((String) -> Unit)? = null,
     private val onTurnComplete: (() -> Unit)? = null,
-    private val onConnectionClosed: () -> Unit
+    private val onConnectionClosed: () -> Unit,
+    private val onStatusUpdate: ((String, String) -> Unit)? = null
 ) {
 
     companion object {
@@ -66,17 +67,32 @@ class GominLiveManager(
 
     private val sampleRateIn = 16000
     private val sampleRateOut = 24000
-    private val bufferSizeIn = AudioRecord.getMinBufferSize(
-        sampleRateIn,
-        AudioFormat.CHANNEL_IN_MONO,
-        AudioFormat.ENCODING_PCM_16BIT
-    ) * 2
 
-    private val bufferSizeOut = AudioTrack.getMinBufferSize(
-        sampleRateOut,
-        AudioFormat.CHANNEL_OUT_MONO,
-        AudioFormat.ENCODING_PCM_16BIT
-    ) * 2
+    private fun getBufferSizeIn(): Int {
+        val minBuf = AudioRecord.getMinBufferSize(
+            sampleRateIn,
+            AudioFormat.CHANNEL_IN_MONO,
+            AudioFormat.ENCODING_PCM_16BIT
+        )
+        return if (minBuf <= 0) 4096 else minBuf * 2
+    }
+
+    private fun getBufferSizeOut(): Int {
+        val minBuf = AudioTrack.getMinBufferSize(
+            sampleRateOut,
+            AudioFormat.CHANNEL_OUT_MONO,
+            AudioFormat.ENCODING_PCM_16BIT
+        )
+        return if (minBuf <= 0) 4096 else minBuf * 2
+    }
+
+    private fun updateStatus(main: String, sub: String = "") {
+        FileLog.d("STATUS: $main | $sub")
+        AndroidUtilities.runOnUIThread {
+            glowView.setStatusText(main, sub)
+            onStatusUpdate?.invoke(main, sub)
+        }
+    }
 
     private val audioLock = Any()
     private var audioRecord: AudioRecord? = null
@@ -95,19 +111,27 @@ class GominLiveManager(
     fun startSession() {
         val apiKey = CherrygramMessagesConfig.geminiApiKey
         if (apiKey.isEmpty()) {
-            FileLog.e("GominLiveManager: Gemini API key is missing.")
+            FileLog.e("API key missing")
+            updateStatus("❌ API ключ порожній", "Перевір налаштування Gemini")
             showToastLong("Помилка: API-ключ Gemini порожній!")
             onConnectionClosed()
             return
         }
 
         isSessionActive = true
-        showToast("🔌 Підключаюся до Gemini...")
+        updateStatus("🔌 Підключення до Gemini...", "Ініціалізація аудіо")
+        // Start foreground service so Android 14+ shows the green mic dot
+        GominMicrophoneService.start()
         Thread {
-            initAudioDevices()
+            val audioOk = initAudioDevices()
             AndroidUtilities.runOnUIThread {
-                if (isSessionActive) {
+                if (isSessionActive && audioOk) {
+                    updateStatus("🔌 Підключення WebSocket...", "")
                     connectWebSocket(apiKey)
+                } else if (isSessionActive && !audioOk) {
+                    updateStatus("❌ Аудіо не ініціалізовано", "Мікрофон недоступний")
+                    showToastLong("❌ Не вдалося ініціалізувати мікрофон")
+                    stopSession()
                 }
             }
         }.apply {
@@ -117,9 +141,11 @@ class GominLiveManager(
     }
 
     @SuppressLint("MissingPermission")
-    private fun initAudioDevices() {
-        synchronized(audioLock) {
+    private fun initAudioDevices(): Boolean {
+        return synchronized(audioLock) {
             try {
+                updateStatus("🎤 Ініціалізація аудіо...", "Налаштування мікрофона")
+
                 val context = glowView.context
                 val audioManager = context.getSystemService(android.content.Context.AUDIO_SERVICE) as? AudioManager
                 audioManager?.let {
@@ -128,6 +154,9 @@ class GominLiveManager(
                     it.requestAudioFocus({ }, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
                 }
 
+                val bufSize = getBufferSizeIn()
+                FileLog.d("bufferSizeIn = $bufSize")
+
                 var record: AudioRecord? = null
                 try {
                     record = AudioRecord(
@@ -135,72 +164,91 @@ class GominLiveManager(
                         sampleRateIn,
                         AudioFormat.CHANNEL_IN_MONO,
                         AudioFormat.ENCODING_PCM_16BIT,
-                        bufferSizeIn
+                        bufSize
                     )
+                    FileLog.d("AudioRecord(VOICE_COMMUNICATION) state = ${record.state}")
                 } catch (e: Exception) {
-                    FileLog.e("GominLiveManager: Failed to initialize AudioRecord with VOICE_COMMUNICATION, trying MIC", e)
+                    FileLog.e("VOICE_COMMUNICATION failed: ${e.message}")
                 }
 
                 if (record == null || record.state != AudioRecord.STATE_INITIALIZED) {
                     record?.release()
+                    FileLog.d("Falling back to MIC source")
                     record = AudioRecord(
                         MediaRecorder.AudioSource.MIC,
                         sampleRateIn,
                         AudioFormat.CHANNEL_IN_MONO,
                         AudioFormat.ENCODING_PCM_16BIT,
-                        bufferSizeIn
+                        bufSize
                     )
+                    FileLog.d("AudioRecord(MIC) state = ${record.state}")
                 }
+
+                if (record.state != AudioRecord.STATE_INITIALIZED) {
+                    FileLog.e("AudioRecord NOT initialized, state = ${record.state}")
+                    updateStatus("❌ Помилка мікрофона", "Не вдалося ініціалізувати AudioRecord")
+                    audioRecord = null
+                    return@synchronized false
+                }
+
                 audioRecord = record
+                FileLog.d("AudioRecord initialized SUCCESS")
 
-                if (record.state == AudioRecord.STATE_INITIALIZED) {
-                    val sessionId = record.audioSessionId
-                    if (AcousticEchoCanceler.isAvailable()) {
-                        echoCanceler = AcousticEchoCanceler.create(sessionId)?.apply {
-                            enabled = true
-                        }
+                val sessionId = record.audioSessionId
+                if (AcousticEchoCanceler.isAvailable()) {
+                    echoCanceler = AcousticEchoCanceler.create(sessionId)?.apply {
+                        enabled = true
                     }
-                    if (NoiseSuppressor.isAvailable()) {
-                        noiseSuppressor = NoiseSuppressor.create(sessionId)?.apply {
-                            enabled = true
-                        }
+                }
+                if (NoiseSuppressor.isAvailable()) {
+                    noiseSuppressor = NoiseSuppressor.create(sessionId)?.apply {
+                        enabled = true
                     }
                 }
 
+                val bufOut = getBufferSizeOut()
                 audioTrack = AudioTrack(
                     AudioManager.STREAM_VOICE_CALL,
                     sampleRateOut,
                     AudioFormat.CHANNEL_OUT_MONO,
                     AudioFormat.ENCODING_PCM_16BIT,
-                    bufferSizeOut,
+                    bufOut,
                     AudioTrack.MODE_STREAM
                 )
+                FileLog.d("AudioTrack initialized, state = ${audioTrack?.state}")
+
+                updateStatus("🎤 Мікрофон готовий", "Очікування WebSocket...")
+                true
             } catch (e: Exception) {
-                FileLog.e("GominLiveManager: Error in initAudioDevices", e)
+                FileLog.e("Error in initAudioDevices", e)
+                updateStatus("❌ Помилка аудіо", e.message ?: "Невідома помилка")
+                false
             }
         }
     }
 
     private fun connectWebSocket(apiKey: String) {
         val url = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=$apiKey"
+        FileLog.d("Connecting WebSocket: ${url.take(80)}...")
         val request = Request.Builder().url(url).build()
 
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
-                FileLog.d("GominLiveManager: WebSocket opened successfully. Status: ${response.code}")
+                FileLog.d("WebSocket opened. Status: ${response.code}")
                 isWebSocketOpen = true
-                showToast("✅ З'єднання встановлено!")
+                updateStatus("✅ WebSocket підключено", "Надсилання налаштувань...")
                 sendSetupMessage(webSocket)
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {
                 val preview = if (text.length > 200) text.substring(0, 200) + "..." else text
-                FileLog.d("GominLiveManager: Received message (len=${text.length}): $preview")
+                FileLog.d("Received (len=${text.length}): $preview")
                 parseServerMessage(text)
             }
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                FileLog.d("GominLiveManager: WebSocket closed. Code: $code, Reason: $reason")
+                FileLog.d("WebSocket closed. Code: $code, Reason: $reason")
+                updateStatus("🔌 З'єднання закрите", "Код: $code")
                 if (code != 1000) {
                     showToastLong("🔌 З'єднання закрите: $reason (код $code)")
                 }
@@ -208,9 +256,10 @@ class GominLiveManager(
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                FileLog.e("GominLiveManager: WebSocket Failure. Response code: ${response?.code}", t)
-                val codeStr = if (response != null) " (код ${response.code})" else ""
-                showToastLong("❌ Помилка WebSocket: ${t.message}$codeStr")
+                val respCode = response?.code
+                FileLog.e("WebSocket Failure. Code: $respCode", t)
+                updateStatus("❌ Помилка WebSocket", "${t.message} (код $respCode)")
+                showToastLong("❌ Помилка WebSocket: ${t.message} (код $respCode)")
                 stopSession()
             }
         })
@@ -219,7 +268,8 @@ class GominLiveManager(
     private fun sendSetupMessage(ws: WebSocket) {
         try {
             val targetModel = if (isTranscriptionMode) MODEL_TRANSCRIPTION else MODEL_VOICE_CALL
-            FileLog.d("GominLiveManager: Using model $targetModel")
+            FileLog.d("Using model $targetModel")
+            updateStatus("📡 Надсилання конфігурації...", targetModel)
 
             // Формат згідно з офіційним get-started-websocket прикладом (червень 2026):
             // https://ai.google.dev/gemini-api/docs/live-api/get-started-websocket
@@ -227,34 +277,63 @@ class GominLiveManager(
             val setupJson = JSONObject().apply {
                 put("config", JSONObject().apply {
                     put("model", targetModel)
-                    put("responseModalities", JSONArray().put(if (isTranscriptionMode) "TEXT" else "AUDIO"))
+                    // CRITICAL: Live models do NOT support ["TEXT"] modality!
+                    // Always use ["AUDIO"] and get text via inputAudioTranscription side-channel
+                    put("responseModalities", JSONArray().put("AUDIO"))
+                    put("generationConfig", JSONObject().apply {
+                        if (!isTranscriptionMode) {
+                            put("speechConfig", JSONObject().apply {
+                                put("voiceConfig", JSONObject().apply {
+                                    put("prebuiltVoiceConfig", JSONObject().apply {
+                                        put("voiceName", "Puck")
+                                    })
+                                })
+                            })
+                        }
+                    })
                     put("systemInstruction", JSONObject().apply {
                         put("parts", JSONArray().put(JSONObject().apply {
                             put("text", "Ти — Гомін AI, дружній голосовий асистент. Відповідай коротко та природно українською мовою.")
                         }))
                     })
+                    if (isTranscriptionMode) {
+                        put("inputAudioTranscription", JSONObject())
+                    }
+                })
+            }
+>>>>>>> 6969a1265 (fix(gemini): live mic green dot + diagnostics + 3 critical bugfixes)
+                    })
+                    if (isTranscriptionMode) {
+                        put("inputAudioTranscription", JSONObject())
+                    }
                 })
             }
             val setupStr = setupJson.toString()
-            FileLog.d("GominLiveManager: Sending setup: $setupStr")
+            FileLog.d("Setup: $setupStr")
             ws.send(setupStr)
         } catch (e: Exception) {
-            FileLog.e(e)
+            FileLog.e("Error sending setup", e)
+            updateStatus("❌ Помилка конфігурації", e.message ?: "")
         }
     }
 
     private fun startAudioThreads() {
+        updateStatus("🎤 Запуск аудіо-потоків...", "Старт запису")
+
         if (!isTranscriptionMode) {
             playThread = Thread {
                 val track = synchronized(audioLock) { audioTrack }
                 if (track == null || track.state != AudioTrack.STATE_INITIALIZED) {
+                    updateStatus("❌ Динамік не готовий", "Помилка ініціалізації AudioTrack")
                     showToast("Помилка ініціалізації динаміка 🔊")
                     AndroidUtilities.runOnUIThread { stopSession() }
                 } else {
                     try {
                         track.play()
+                        FileLog.d("AudioTrack.play() started")
                     } catch (e: Exception) {
-                        FileLog.e(e)
+                        FileLog.e("AudioTrack.play() failed", e)
+                        updateStatus("❌ Динамік не запустився", e.message ?: "")
                         showToast("Не вдалося запустити динамік 🔊")
                         AndroidUtilities.runOnUIThread { stopSession() }
                     }
@@ -289,19 +368,30 @@ class GominLiveManager(
         }
 
         recordThread = Thread {
-            val buffer = ShortArray(bufferSizeIn / 2)
+            val bufSize = getBufferSizeIn()
+            val buffer = ShortArray(if (bufSize > 0) bufSize / 2 else 1024)
             val record = synchronized(audioLock) { audioRecord }
+
             if (record != null && record.state == AudioRecord.STATE_INITIALIZED) {
                 try {
+                    FileLog.d("Calling record.startRecording()...")
                     record.startRecording()
+                    FileLog.d("record.startRecording() SUCCESS")
+                    updateStatus("🎙️ Мікрофон АКТИВОВАНО", "Зелена точка має з'явитися")
                 } catch (e: Exception) {
-                    FileLog.e(e)
-                    showToast("Не вдалося запустити запис мікрофона: ${e.message}")
+                    FileLog.e("startRecording() FAILED: ${e.message}", e)
+                    updateStatus("❌ Мікрофон не запустився", e.message ?: "IllegalStateException")
+                    showToast("❌ Не вдалося запустити мікрофон: ${e.message}")
                     AndroidUtilities.runOnUIThread { stopSession() }
+                    return@Thread
                 }
             } else {
-                showToast("Мікрофон не ініціалізовано 🎙️")
+                val stateStr = record?.state?.toString() ?: "null"
+                FileLog.e("AudioRecord not initialized. record=$record state=$stateStr")
+                updateStatus("❌ Мікрофон не ініціалізовано", "State: $stateStr")
+                showToast("Мікрофон не ініціалізовано 🎙️ (state=$stateStr)")
                 AndroidUtilities.runOnUIThread { stopSession() }
+                return@Thread
             }
 
             val accumulatedBytes = java.io.ByteArrayOutputStream()
@@ -316,7 +406,8 @@ class GominLiveManager(
                     }
                     val read = activeRecord.read(buffer, 0, buffer.size)
                     if (read < 0) {
-                        FileLog.e("GominLiveManager: AudioRecord read error: $read")
+                        FileLog.e("AudioRecord read error: $read")
+                        updateStatus("❌ Помилка читання мікрофона", "read() = $read")
                         AndroidUtilities.runOnUIThread { stopSession() }
                         break
                     }
@@ -350,11 +441,10 @@ class GominLiveManager(
                             accumulatedBytes.reset()
 
                             val base64Data = Base64.encodeToString(chunkToSend, Base64.NO_WRAP)
-                            // FIX: mediaChunks is deprecated — use top-level `audio` field instead
                             val inputJson = JSONObject().apply {
                                 put("realtimeInput", JSONObject().apply {
                                     put("audio", JSONObject().apply {
-                                        put("mimeType", "audio/pcm;rate=16000")
+                                        put("mimeType", "audio/pcm")
                                         put("data", base64Data)
                                     })
                                 })
@@ -410,7 +500,8 @@ class GominLiveManager(
             if (obj.has("error")) {
                 val error = obj.getJSONObject("error")
                 val errMsg = error.optString("message", "Невідома помилка")
-                FileLog.e("GominLiveManager Server Error: $errMsg")
+                FileLog.e("Server Error: $errMsg")
+                updateStatus("❌ Помилка Gemini", errMsg)
                 showToastLong("❌ Помилка Gemini: $errMsg")
                 AndroidUtilities.runOnUIThread { stopSession() }
                 return
@@ -418,7 +509,8 @@ class GominLiveManager(
 
             if (obj.has("setupComplete")) {
                 isSetupComplete = true
-                showToast("🎙️ Сесія активована!")
+                FileLog.d(">>> SETUP COMPLETE <<<")
+                updateStatus("🎙️ Сесію активовано!", "Запуск мікрофона...")
                 startAudioThreads()
                 sendInitialGreetingTrigger()
             }
@@ -530,6 +622,11 @@ class GominLiveManager(
         isWebSocketOpen = false
         isSetupComplete = false
 
+        FileLog.d("Stopping session...")
+        updateStatus("🛑 Зупинка сесії...", "")
+
+        GominMicrophoneService.stop()
+
         try { webSocket?.close(1000, "Session ended") } catch (e: Exception) { }
 
         recordThread?.interrupt()
@@ -544,9 +641,13 @@ class GominLiveManager(
             try {
                 if (audioRecord?.state == AudioRecord.STATE_INITIALIZED) {
                     audioRecord?.stop()
+                    FileLog.d("AudioRecord stopped")
                 }
                 audioRecord?.release()
-            } catch (e: Exception) { }
+                FileLog.d("AudioRecord released")
+            } catch (e: Exception) {
+                FileLog.e("Error releasing AudioRecord", e)
+            }
 
             try {
                 if (audioTrack?.state == AudioTrack.STATE_INITIALIZED) {
@@ -572,11 +673,14 @@ class GominLiveManager(
                 it.abandonAudioFocus { }
             }
         } catch (e: Exception) {
-            FileLog.e("GominLiveManager: Error releasing AudioManager", e)
+            FileLog.e("Error releasing AudioManager", e)
         }
 
         webSocket = null
-        AndroidUtilities.runOnUIThread { onConnectionClosed() }
+        AndroidUtilities.runOnUIThread {
+            glowView.setStatusText("", "")
+            onConnectionClosed()
+        }
     }
 
     private fun sendInitialGreetingTrigger() {

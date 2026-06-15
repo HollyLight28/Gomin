@@ -28,6 +28,12 @@ class GominLiveEdgeGlowView @JvmOverloads constructor(
         color = Color.TRANSPARENT // Completely transparent background to see chats
     }
 
+    private var statusText: String? = null
+    private var subStatusText: String? = null
+    private val statusBgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.argb(160, 0, 0, 0)
+    }
+
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
         textSize = 48f
@@ -45,6 +51,12 @@ class GominLiveEdgeGlowView @JvmOverloads constructor(
     private val pulseCirclePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = 0xFF2AABEE.toInt() // Gomin Premium Blue status
         style = Paint.Style.FILL
+    }
+
+    fun setStatusText(main: String, sub: String = "") {
+        statusText = main
+        subStatusText = sub.ifEmpty { null }
+        postInvalidate()
     }
 
     private var rotationAngle = 0f
@@ -140,8 +152,27 @@ class GominLiveEdgeGlowView @JvmOverloads constructor(
         // Draw Dim Background (Now Transparent)
         canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), dimPaint)
 
-        // Siri-like status text removed for cleaner "transparent" look
-        // as requested by user ("хай взагалі нічого не зміняється")
+        // Diagnostic status text (visible during session startup)
+        statusText?.let { main ->
+            val textY = height * 0.78f
+            val sub = subStatusText
+            if (sub != null) {
+                val bgH = 110f
+                canvas.drawRoundRect(
+                    0f, textY - 85f, width.toFloat(), textY + 25f,
+                    24f, 24f, statusBgPaint
+                )
+                canvas.drawText(main, width / 2f, textY - 10f, textPaint)
+                canvas.drawText(sub, width / 2f, textY + 18f, subTextPaint)
+            } else {
+                val bgH = 70f
+                canvas.drawRoundRect(
+                    0f, textY - 55f, width.toFloat(), textY + 15f,
+                    24f, 24f, statusBgPaint
+                )
+                canvas.drawText(main, width / 2f, textY, textPaint)
+            }
+        }
 
         val shader = sweepShader ?: return
         val cx = width / 2f

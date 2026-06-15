@@ -921,7 +921,11 @@ If є аб’юз — не пом’якшуй.
     private fun startTranscriptionSession(activity: ChatActivity) {
         val parentActivity = activity.parentActivity ?: return
         val enterView = activity.chatActivityEnterView ?: return
-        
+        // CRITICAL: validate ALL precondition resources BEFORE mutating any state.
+        // Otherwise an early return would leave isTranscriptionActive / button mode
+        // permanently corrupted with no way to recover.
+        val rootLayout = parentActivity.window.decorView as? ViewGroup ?: return
+
         // 1. Tactile feedback
         enterView.attachButton?.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
 
@@ -929,9 +933,19 @@ If є аб’юз — не пом’якшуй.
         isTranscriptionActive = true
         enterView.setAttachButtonToRecordMode(true)
 
+        // 1b. Create glow overlay (add to hierarchy so status text is visible)
+        val tGlowView = GominLiveEdgeGlowView(parentActivity).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+        liveGlowView = tGlowView
+        rootLayout.addView(tGlowView)
+
         // 2. Setup Manager with Text Callback
         val manager = GominLiveManager(
-            GominLiveEdgeGlowView(parentActivity),
+            tGlowView,
             isTranscriptionMode = true,
             onTextReceived = { text ->
                 AndroidUtilities.runOnUIThread {
@@ -1012,6 +1026,10 @@ If є аб’юз — не пом’якшуй.
             onConnectionClosed = {
                 stopLiveSession()
             }
+            // NOTE: onStatusUpdate is intentionally omitted because updateStatus()
+            // inside GominLiveManager already calls glowView.setStatusText() directly.
+            // Adding it here would cause a double write + double postInvalidate()
+            // on every status tick, degrading edge-glow animation smoothness.
         )
         liveManager = manager
 
