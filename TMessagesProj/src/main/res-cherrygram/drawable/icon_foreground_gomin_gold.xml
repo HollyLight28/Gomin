@@ -4,16 +4,16 @@
     android:height="108dp"
     android:viewportWidth="1024"
     android:viewportHeight="1024">
-    <!-- Gold Gradient Circle -->
+    <!-- Gold Full Background -->
     <path
-        android:pathData="M 512, 512 m -300, 0 a 300,300 0 1,0 600,0 a 300,300 0 1,0 -600,0">
+        android:pathData="M0,0 L1024,0 L1024,1024 L0,1024 Z">
         <aapt:attr name="android:fillColor">
             <gradient
                 android:type="linear"
-                android:startX="212"
-                android:startY="212"
-                android:endX="812"
-                android:endY="812">
+                android:startX="0"
+                android:startY="0"
+                android:endX="1024"
+                android:endY="1024">
                 <item android:color="#FFFFD700" android:offset="0"/>
                 <item android:color="#FFDAA520" android:offset="0.5"/>
                 <item android:color="#FFB8860B" android:offset="1.0"/>
