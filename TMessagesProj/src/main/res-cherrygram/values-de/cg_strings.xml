@@ -112,10 +112,10 @@
     <string name="AP_Old_Notification_Icon">Standard-Benachrichtigungssymbol (Telegram)</string>
     <string name="AP_ChangeIcon_Cherry_NY">Neujahr</string>
     <string name="AP_ChangeIcon_Dark">Dunkel</string>
-    <string name="AP_ChangeIcon_Classic">Classic (Blue)</string>
     <string name="AP_ChangeIcon_White">Weiß</string>
     <string name="AP_ChangeIcon_Laguna">Laguna</string>
     <string name="AP_ChangeIcon_Green">Grün</string>
+    <string name="AP_ChangeIcon_Gold">Gold</string>
     <string name="AP_ChangeIcon_Lavanda">Lavanda</string>
     <string name="AP_ChangeIcon_Sunset">Sonnenuntergang</string>
     <string name="AP_ChangeIcon_Sunrise">Sonnenaufgang</string>

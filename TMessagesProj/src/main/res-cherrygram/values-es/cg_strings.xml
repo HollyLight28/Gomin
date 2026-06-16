@@ -142,10 +142,10 @@
     <string name="AP_Tablet_Mode">Modo tablet</string>
     <string name="AP_ChangeIcon_Cherry_NY">Año Nuevo</string>
     <string name="AP_ChangeIcon_Dark">Oscuro</string>
-    <string name="AP_ChangeIcon_Classic">Classic (Blue)</string>
     <string name="AP_ChangeIcon_White">Blanco</string>
     <string name="AP_ChangeIcon_Laguna">Laguna</string>
     <string name="AP_ChangeIcon_Green">Verde</string>
+    <string name="AP_ChangeIcon_Gold">Gold</string>
     <string name="AP_ChangeIcon_Lavanda">Lavanda</string>
     <string name="AP_ChangeIcon_Sunset">Atardecer</string>
     <string name="AP_ChangeIcon_Sunrise">Amanecer</string>

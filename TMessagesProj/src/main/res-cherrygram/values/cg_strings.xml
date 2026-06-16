@@ -182,13 +182,13 @@
     <string name="AP_Tablet_Mode">Tablet mode</string>
     <string name="AP_ChangeIcon_Cherry_NY">New Year</string>
     <string name="AP_ChangeIcon_Dark">Night</string>
-    <string name="AP_ChangeIcon_Classic">Classic (Blue)</string>
     <string name="AP_ChangeIcon_White">Light</string>
     <string name="AP_ChangeIcon_Bra" translatable="false">Bra</string>
     <string name="AP_ChangeIcon_Laguna">Laguna</string>
     <string name="AP_ChangeIcon_Green">Green</string>
     <string name="AP_ChangeIcon_Lavanda">Amethyst</string>
-    <string name="AP_ChangeIcon_Violet_Sunset">Ruby</string>
+    <string name="AP_ChangeIcon_Violet_Sunset">Kalyna</string>
+    <string name="AP_ChangeIcon_Gold">Gold</string>
     <string name="AP_ChangeIcon_Sunset">Sunset</string>
     <string name="AP_ChangeIcon_Sunrise">Sunrise</string>
     <string name="AP_ChangeIcon_Ukraine">Patriotic</string>

@@ -301,6 +301,21 @@
 
         <activity-alias
             android:enabled="false"
+            android:name="ua.gomin.messenger.CG_Icon_Gold"
+            android:targetActivity="org.telegram.ui.LaunchActivity"
+            android:icon="@mipmap/ic_cg_icon_gold"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
+            android:enabled="false"
             android:name="ua.gomin.messenger.CG_Icon_Sunset"
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/ic_cg_icon_sunset"

@@ -147,10 +147,11 @@
     <string name="AP_Tablet_Mode">Режим планшета</string>
     <string name="AP_ChangeIcon_Cherry_NY">Новий Рік</string>
     <string name="AP_ChangeIcon_Dark">Нічна</string>
-    <string name="AP_ChangeIcon_Classic">Класична (Синя)</string>
     <string name="AP_ChangeIcon_White">Світла</string>
     <string name="AP_ChangeIcon_Laguna">Лагуна</string>
     <string name="AP_ChangeIcon_Green">Зелена</string>
+    <string name="AP_ChangeIcon_Gold">Золота</string>
+    <string name="AP_ChangeIcon_Violet_Sunset">Калина</string>
     <string name="AP_ChangeIcon_Lavanda">Аметист</string>
     <string name="AP_ChangeIcon_Sunset">Сутінки</string>
     <string name="AP_ChangeIcon_Sunrise">Світанок</string>
