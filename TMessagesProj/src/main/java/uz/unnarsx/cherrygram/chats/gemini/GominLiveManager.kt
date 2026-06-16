@@ -58,8 +58,10 @@ class GominLiveManager(
                 put("setup", JSONObject().apply {
                     put("model", targetModel)
                     put("generationConfig", JSONObject().apply {
-                        put("responseModalities", JSONArray().put("AUDIO"))
-                        if (!isTranscriptionMode) {
+                        if (isTranscriptionMode) {
+                            put("responseModalities", JSONArray().put("TEXT"))
+                        } else {
+                            put("responseModalities", JSONArray().put("AUDIO"))
                             put("speechConfig", JSONObject().apply {
                                 put("voiceConfig", JSONObject().apply {
                                     put("prebuiltVoiceConfig", JSONObject().apply {
@@ -92,8 +94,14 @@ class GominLiveManager(
         .build()
 
     private var webSocket: WebSocket? = null
+    @Volatile
     private var isWebSocketOpen = false
+    @Volatile
     private var isSetupComplete = false
+
+    private val audioFocusListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
+        FileLog.d("Audio focus changed: $focusChange")
+    }
 
     private val sampleRateIn = 16000
     private val sampleRateOut = 24000
@@ -148,11 +156,34 @@ class GominLiveManager(
             return
         }
 
+        val context = glowView.context
+        if (androidx.core.content.ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.RECORD_AUDIO
+            ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            FileLog.e("RECORD_AUDIO permission not granted at startSession")
+            updateStatus("❌ Помилка дозволу", "Надайте дозвіл на мікрофон")
+            showToastLong("❌ Надайте дозвіл на використання мікрофона!")
+            onConnectionClosed()
+            return
+        }
+
         isSessionActive = true
         updateStatus("🔌 Підключення до Gemini...", "Ініціалізація аудіо")
         // Start foreground service so Android 14+ shows the green mic dot
         GominMicrophoneService.start()
         Thread {
+            // Wait for GominMicrophoneService to start and call startForeground to prevent background record issues
+            var attempts = 0
+            while ((GominMicrophoneService.instance == null || !GominMicrophoneService.isForeground) && attempts < 20) {
+                try {
+                    Thread.sleep(100)
+                } catch (e: Exception) {
+                    // Ignore
+                }
+                attempts++
+            }
             val audioOk = initAudioDevices()
             AndroidUtilities.runOnUIThread {
                 if (isSessionActive && audioOk) {
@@ -181,7 +212,7 @@ class GominLiveManager(
                 audioManager?.let {
                     it.mode = AudioManager.MODE_IN_COMMUNICATION
                     @Suppress("DEPRECATION")
-                    it.requestAudioFocus({ }, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                    it.requestAudioFocus(audioFocusListener, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
                 }
 
                 val bufSize = getBufferSizeIn()
@@ -501,10 +532,10 @@ class GominLiveManager(
                             val base64Data = Base64.encodeToString(chunkToSend, Base64.NO_WRAP)
                             val inputJson = JSONObject().apply {
                                 put("realtimeInput", JSONObject().apply {
-                                    put("audio", JSONObject().apply {
-                                        put("mimeType", "audio/pcm")
+                                    put("mediaChunks", JSONArray().put(JSONObject().apply {
+                                        put("mimeType", "audio/pcm;rate=16000")
                                         put("data", base64Data)
-                                    })
+                                    }))
                                 })
                             }
 
@@ -685,6 +716,13 @@ class GominLiveManager(
 
         GominMicrophoneService.stop()
 
+        try {
+            client.dispatcher.executorService.shutdown()
+            client.connectionPool.evictAll()
+        } catch (e: Exception) {
+            FileLog.e("Error shutting down OkHttpClient", e)
+        }
+
         try { webSocket?.close(1000, "Session ended") } catch (e: Exception) { }
 
         // Stop record and play hardware FIRST to unblock read() and allow threads to terminate instantly
@@ -715,6 +753,8 @@ class GominLiveManager(
         playThread?.interrupt()
         try { recordThread?.join(500) } catch (e: Exception) {}
         try { playThread?.join(500) } catch (e: Exception) {}
+        recordThread = null
+        playThread = null
 
         // Finally, release hardware resources
         synchronized(audioLock) {
@@ -748,7 +788,7 @@ class GominLiveManager(
             audioManager?.let {
                 it.mode = AudioManager.MODE_NORMAL
                 @Suppress("DEPRECATION")
-                it.abandonAudioFocus { }
+                it.abandonAudioFocus(audioFocusListener)
             }
         } catch (e: Exception) {
             FileLog.e("Error releasing AudioManager", e)

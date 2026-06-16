@@ -58,6 +58,12 @@
 - Added `org.json` JVM test dependency in `build.gradle` to allow proper `JSONObject` and `JSONArray` behavior in JVM unit tests.
 - Fixed race conditions and resource leaks in `GominLiveManager.kt`'s audio threads by verifying `isSessionActive` under `synchronized(audioLock)` right before starting recording/playback and releasing resources immediately on errors.
 - Verified all Gemini Live WebSocket payload initialization unit tests successfully.
+- Analyzed GitHub Action workflows and verified that the repository contains all 5 required user-defined secrets (`SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`, `SIGNING_STORE_PASSWORD`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`), confirming the 6th secret is the built-in `GITHUB_TOKEN`.
+- Researched and documented Google Play Protect verification bypass steps (using the public Play Protect Appeal Form and local Play Protect disable options) for signed APK sideloading without a paid developer account.
+- Solved silent background AudioRecord denial (green dot never appearing) by adding an `isForeground` tracker to `GominMicrophoneService` and making `GominLiveManager` wait until `startForeground` is fully processed by Android 14+.
+- Fixed Gemini API silently dropping audio payloads by explicitly adding `;rate=16000` to the `audio/pcm` `mimeType` in WebSocket `mediaChunks`.
+- Restructured `RECORD_AUDIO` permission check in `GominLiveManager.kt` to run before `startForegroundService` to prevent `SecurityException` crashes.
+- Fixed `responseModalities` payload to request `TEXT` instead of `AUDIO` in transcription mode.
 
 
 # OPEN PROBLEMS

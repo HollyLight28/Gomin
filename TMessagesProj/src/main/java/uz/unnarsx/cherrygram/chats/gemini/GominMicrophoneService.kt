@@ -29,7 +29,12 @@ class GominMicrophoneService : Service() {
         private val serviceLock = Any()
 
         @Volatile
-        private var instance: GominMicrophoneService? = null
+        var instance: GominMicrophoneService? = null
+            private set
+
+        @Volatile
+        var isForeground = false
+            internal set
 
         fun start() {
             synchronized(serviceLock) {
@@ -70,11 +75,12 @@ class GominMicrophoneService : Service() {
             0
         }
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 startForeground(NOTIFICATION_ID, notification, fgsType)
             } else {
                 startForeground(NOTIFICATION_ID, notification)
             }
+            isForeground = true
         } catch (e: Exception) {
             android.util.Log.e("GominMicrophoneService", "startForeground failed", e)
         }
@@ -86,6 +92,7 @@ class GominMicrophoneService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         synchronized(serviceLock) { instance = null }
+        isForeground = false
         try {
             stopForeground(STOP_FOREGROUND_REMOVE)
         } catch (e: Exception) {
