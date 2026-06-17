@@ -357,10 +357,10 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
             super.onDraw(canvas);
             canvas.restore();
 
-            // Draw the bird (foreground) at its scaled size to match launcher scaling (0.64x)
+            // Draw the bird (foreground) at its scaled size to match launcher scaling (0.76x)
             if (foreground != null) {
                 canvas.save();
-                float foreScale = 0.64f;
+                float foreScale = 0.76f;
                 canvas.scale(foreScale, foreScale, getWidth() / 2f, getHeight() / 2f);
                 foreground.setBounds(0, 0, getWidth(), getHeight());
                 foreground.draw(canvas);
