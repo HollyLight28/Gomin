@@ -532,10 +532,10 @@ class GominLiveManager(
                             val base64Data = Base64.encodeToString(chunkToSend, Base64.NO_WRAP)
                             val inputJson = JSONObject().apply {
                                 put("realtimeInput", JSONObject().apply {
-                                    put("mediaChunks", JSONArray().put(JSONObject().apply {
+                                    put("audio", JSONObject().apply {
                                         put("mimeType", "audio/pcm;rate=16000")
                                         put("data", base64Data)
-                                    }))
+                                    })
                                 })
                             }
 
@@ -604,17 +604,8 @@ class GominLiveManager(
                 sendInitialGreetingTrigger()
             }
 
-            if (obj.has("inputTranscription")) {
-                val inputTranscription = obj.getJSONObject("inputTranscription")
-                val transcriptionText = inputTranscription.optString("text", "")
-                val isPartial = inputTranscription.optBoolean("partial", true)
-                if (transcriptionText.isNotEmpty()) {
-                    onTextReceived?.invoke(transcriptionText)
-                    if (!isPartial) {
-                        onTurnComplete?.invoke()
-                    }
-                }
-            }
+            // inputTranscription and outputTranscription are fields of serverContent
+            // per BidiGenerateContentServerContent reference
 
             if (obj.has("serverContent")) {
                 val serverContent = obj.getJSONObject("serverContent")
@@ -637,6 +628,29 @@ class GominLiveManager(
                     isAiSpeaking = false
                     AndroidUtilities.runOnUIThread { glowView.setAmplitude(0f, false) }
                     onTurnComplete?.invoke()
+                }
+
+                // Parse inputTranscription from serverContent (per BidiGenerateContentServerContent spec)
+                if (serverContent.has("inputTranscription")) {
+                    val inputTranscription = serverContent.getJSONObject("inputTranscription")
+                    val transcriptionText = inputTranscription.optString("text", "")
+                    val isPartial = inputTranscription.optBoolean("partial", true)
+                    if (transcriptionText.isNotEmpty()) {
+                        onTextReceived?.invoke(transcriptionText)
+                        if (!isPartial) {
+                            onTurnComplete?.invoke()
+                        }
+                    }
+                }
+
+                // Parse outputTranscription from serverContent (per BidiGenerateContentServerContent spec)
+                if (serverContent.has("outputTranscription")) {
+                    val outputTranscription = serverContent.getJSONObject("outputTranscription")
+                    val outputText = outputTranscription.optString("text", "")
+                    if (outputText.isNotEmpty()) {
+                        FileLog.d("Output transcription: $outputText")
+                        // Output transcription is logged; can be displayed in UI if needed
+                    }
                 }
 
                 if (serverContent.has("modelTurn")) {
@@ -716,12 +730,9 @@ class GominLiveManager(
 
         GominMicrophoneService.stop()
 
-        try {
-            client.dispatcher.executorService.shutdown()
-            client.connectionPool.evictAll()
-        } catch (e: Exception) {
-            FileLog.e("Error shutting down OkHttpClient", e)
-        }
+        // NOTE: Do NOT shutdown OkHttpClient dispatcher or evict connections here.
+        // The same client instance is reused across sessions; killing it here would
+        // break subsequent startSession() calls.
 
         try { webSocket?.close(1000, "Session ended") } catch (e: Exception) { }
 
@@ -804,15 +815,13 @@ class GominLiveManager(
     private fun sendInitialGreetingTrigger() {
         if (isTranscriptionMode) return
         try {
+            // Use realtimeInput.text instead of clientContent for the initial greeting.
+            // clientContent is designed for incremental conversation history with special
+            // semantics around historyConfig.initialHistoryInClientContent; realtimeInput.text
+            // is the safe way to send a simple text prompt after setupComplete.
             val greetingJson = JSONObject().apply {
-                put("clientContent", JSONObject().apply {
-                    put("turns", JSONArray().put(JSONObject().apply {
-                        put("role", "user")
-                        put("parts", JSONArray().put(JSONObject().apply {
-                            put("text", "Привіт! Будь ласка, привітайся зі мною голосом коротко та дружелюбно українською мовою та запитай, про що поспілкуємося сьогодні.")
-                        }))
-                    }))
-                    put("turnComplete", true)
+                put("realtimeInput", JSONObject().apply {
+                    put("text", "Привіт! Будь ласка, привітайся зі мною голосом коротко та дружелюбно українською мовою та запитай, про що поспілкуємося сьогодні.")
                 })
             }
             val greetingStr = greetingJson.toString()
