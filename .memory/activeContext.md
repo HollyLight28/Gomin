@@ -9,6 +9,9 @@
 8. Audit the Gemini Live API WebSocket connection parameters and message schemas, comparing them with the official documentation and the local implementation, and prepare a detailed explanation. [COMPLETED]
 
 
+9. Fix Live API integration per current Google documentation: replace deprecated `mediaChunks` with `audio`, `clientContent` greeting with `realtimeInput.text`, move `inputTranscription` parsing under `serverContent`, remove `OkHttpClient` shutdown in `stopSession()`. [COMPLETED]
+
+
 # COMPLETED ATOMIC STEPS
 - Added Android Log redirects in `GominLiveManager.kt` to ensure WebSocket lifecycle events are visible in logcat.
 - Cleaned setup JSON payload by removing empty `inputAudioTranscription` configuration block.
@@ -64,11 +67,15 @@
 - Fixed Gemini API silently dropping audio payloads by explicitly adding `;rate=16000` to the `audio/pcm` `mimeType` in WebSocket `mediaChunks`.
 - Restructured `RECORD_AUDIO` permission check in `GominLiveManager.kt` to run before `startForegroundService` to prevent `SecurityException` crashes.
 - Fixed `responseModalities` payload to request `TEXT` instead of `AUDIO` in transcription mode.
+- **[SESSION 9]** Replaced deprecated `realtimeInput.mediaChunks[]` with `realtimeInput.audio` (single Blob object) per current Google Live API spec. Verified via web search and official documentation.
+- **[SESSION 9]** Replaced `clientContent` greeting trigger with `realtimeInput.text` to avoid `historyConfig.initialHistoryInClientContent` semantic conflicts.
+- **[SESSION 9]** Moved `inputTranscription` parsing from top-level JSON to `serverContent` object, per `BidiGenerateContentServerContent` reference. Added `outputTranscription` parsing with logging.
+- **[SESSION 9]** Removed `client.dispatcher.executorService.shutdown()` and `client.connectionPool.evictAll()` from `stopSession()` to prevent OkHttpClient reuse breakage on subsequent sessions.
+- **[SESSION 9]** Verified `mediaChunks` is completely eliminated from codebase (grep confirmed zero matches).
 
 
 # OPEN PROBLEMS
-None
-
+- GitHub Actions CI build failure (suspected code signing secrets issue or runner Out-Of-Memory killer SIGKILL 137).
 
 # MODIFIED FILES
 - `uz/unnarsx/cherrygram/alerts/AirAlertStatsActivity.kt` -> [NEW] Implemented premium Statistics screen with live parallel HTTP fetching of 26 Ukrainian regions, dynamic search filter, and reactive refresh.
@@ -91,4 +98,4 @@ None
 - `TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java` -> [MODIFY] Adjusted preview scale factor to 0.64f to precisely match adaptive launcher dimensions, and fixed the Drawable Mutate Bug.
 - `TMessagesProj/build.gradle` -> [MODIFY] Added JVM unit test dependency for org.json.
 - `TMessagesProj/src/test/java/uz/unnarsx/cherrygram/chats/gemini/GominLiveManagerPayloadTest.kt` -> [NEW] Implemented unit tests for voice and transcription modes Live API handshake configurations.
-- `.memory/activeContext.md` -> [MODIFY] Updated progress state and mission status.
+- `.memory/activeContext.md` -> [MODIFY] Updated progress state with local build success and CI build failure analysis.

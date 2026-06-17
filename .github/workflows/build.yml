@@ -55,6 +55,8 @@ jobs:
       id: find_apk
       run: |
         # Знайти універсальний apk
+        echo "Searching for APK files in workspace..."
+        find . -name "*.apk" || true
         APK_PATH=$(find . -name "*universal.apk" | head -n 1)
         if [ -z "$APK_PATH" ]; then
           APK_PATH=$(find . -name "*.apk" | grep "standalone" | head -n 1)
@@ -62,11 +64,14 @@ jobs:
         
         if [ -z "$APK_PATH" ]; then
           echo "Error: APK not found!"
+          echo "Listing directory structure of build outputs:"
+          find TMessagesProj_AppStandalone/build/outputs/ || true
           exit 1
         fi
         echo "Found APK at: $APK_PATH"
         cp "$APK_PATH" gomin-release.apk
         echo "apk_path=gomin-release.apk" >> $GITHUB_OUTPUT
+
 
     - name: Create Rolling Release
       id: create_release
