@@ -55,7 +55,7 @@ public class LauncherIconController {
 
     public enum LauncherIcon {
         GOMIN("Gomin_Icon_Main", R.drawable.icon_background_dark, R.drawable.icon_foreground_gomin_dark, R.string.Default),
-        GOLD_CHERRY("CG_Icon_Gold", R.drawable.icon_background_dark, R.drawable.icon_foreground_gomin_gold, R.string.AP_ChangeIcon_Gold),
+        GOLD_CHERRY("CG_Icon_Gold", R.drawable.icon_background_gold, R.drawable.icon_foreground_gomin_gold, R.string.AP_ChangeIcon_Gold),
         WHITE_CHERRY("CG_Icon_White_Cherry", R.drawable.icon_background_white, R.drawable.icon_foreground_gomin_white, R.string.AP_ChangeIcon_White),
         AQUA_CHERRY("CG_Icon_Aqua", R.drawable.icon_background_aqua, R.drawable.icon_foreground_gomin_aqua, R.string.AppIconAqua),
         LAVANDA_CHERRY("CG_Icon_Lavanda", R.drawable.icon_background_lavanda, R.drawable.icon_foreground_gomin_lavanda, R.string.AP_ChangeIcon_Lavanda),

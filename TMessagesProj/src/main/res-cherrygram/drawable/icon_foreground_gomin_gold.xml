@@ -1,26 +1,9 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="1024"
     android:viewportHeight="1024">
-    <!-- Gold Circle Disc in Center -->
-    <path
-        android:pathData="M 512, 512 m -300, 0 a 300,300 0 1,0 600,0 a 300,300 0 1,0 -600,0">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:type="linear"
-                android:startX="0"
-                android:startY="0"
-                android:endX="1024"
-                android:endY="1024">
-                <item android:color="#FFFFD700" android:offset="0"/>
-                <item android:color="#FFDAA520" android:offset="0.5"/>
-                <item android:color="#FFB8860B" android:offset="1.0"/>
-            </gradient>
-        </aapt:attr>
-    </path>
-    <!-- Black Bird -->
+    <!-- Black Bird (gold background is in icon_background_gold layer) -->
     <group
         android:pivotX="512"
         android:pivotY="512"
