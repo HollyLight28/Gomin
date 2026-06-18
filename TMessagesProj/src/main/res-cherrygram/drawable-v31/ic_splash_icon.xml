@@ -6,7 +6,7 @@
         </shape>
     </item>
     <item
-        android:drawable="@mipmap/ic_launcher_foreground"
+        android:drawable="@drawable/cg_splash_bird"
         android:width="80dp"
         android:height="80dp"
         android:gravity="center" />
