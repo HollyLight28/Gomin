@@ -14,6 +14,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import okio.ByteString
 import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
@@ -98,6 +99,8 @@ class GominLiveManager(
     private var isWebSocketOpen = false
     @Volatile
     private var isSetupComplete = false
+    @Volatile
+    private var setupWatchdogActive = false
 
     private val audioFocusListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
         FileLog.d("Audio focus changed: $focusChange")
@@ -329,7 +332,8 @@ class GominLiveManager(
 
 
     private fun connectWebSocket(apiKey: String) {
-        val url = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=$apiKey"
+        val encodedKey = java.net.URLEncoder.encode(apiKey, "UTF-8")
+        val url = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=$encodedKey"
         FileLog.d("Connecting WebSocket: ${url.take(80)}...")
         val request = Request.Builder().url(url).build()
 
@@ -347,13 +351,21 @@ class GominLiveManager(
                 parseServerMessage(text)
             }
 
+            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                FileLog.d("Received binary (${bytes.size()} bytes): ${bytes.hex().take(80)}...")
+            }
+
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 FileLog.d("WebSocket closed. Code: $code, Reason: $reason")
-                updateStatus("🔌 З'єднання закрите", "Код: $code")
+                updateStatus("🔌 WebSocket закрито", "Код: $code — $reason")
                 if (code != 1000) {
                     showToastLong("🔌 З'єднання закрите: $reason (код $code)")
                 }
-                stopSession()
+                // Затримка 5с щоб побачити код/причину закриття
+                // Перевіряємо що glowView ще прикріплений (не стартували нову сесію)
+                AndroidUtilities.runOnUIThread({
+                    if (glowView.parent != null) stopSession()
+                }, 5000)
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -361,7 +373,11 @@ class GominLiveManager(
                 FileLog.e("WebSocket Failure. Code: $respCode", t)
                 updateStatus("❌ Помилка WebSocket", "${t.message} (код $respCode)")
                 showToastLong("❌ Помилка WebSocket: ${t.message} (код $respCode)")
-                stopSession()
+                // Затримка 5с щоб побачити помилку
+                // Перевіряємо що glowView ще прикріплений
+                AndroidUtilities.runOnUIThread({
+                    if (glowView.parent != null) stopSession()
+                }, 5000)
             }
         })
     }
@@ -378,7 +394,24 @@ class GominLiveManager(
             val setupJson = buildSetupPayload(isTranscriptionMode, targetModel)
             val setupStr = setupJson.toString()
             FileLog.d("Setup: $setupStr")
-            ws.send(setupStr)
+            val sent = ws.send(setupStr)
+            FileLog.d("Setup send returned: $sent")
+            if (!sent) {
+                FileLog.e("WebSocket send returned FALSE — message not queued")
+                updateStatus("❌ Помилка відправки", "WebSocket send = false")
+                showToastLong("❌ WebSocket: повідомлення не відправлене!")
+            } else {
+                // Вотчдог: якщо за 30с не прийшов setupComplete — показати помилку
+                setupWatchdogActive = true
+                AndroidUtilities.runOnUIThread({
+                    if (setupWatchdogActive && !isSetupComplete) {
+                        FileLog.e("TIMEOUT: no setupComplete after 30s")
+                        updateStatus("⏱️ Таймаут очікування", "Сервер не відповів за 30с")
+                        showToastLong("⏱️ Сервер не відповідає після надсилання конфігурації!")
+                        stopSession()
+                    }
+                }, 30000)
+            }
         } catch (e: Exception) {
             FileLog.e("Error sending setup", e)
             updateStatus("❌ Помилка конфігурації", e.message ?: "")
@@ -592,12 +625,17 @@ class GominLiveManager(
                 FileLog.e("Server Error: $errMsg")
                 updateStatus("❌ Помилка Gemini", errMsg)
                 showToastLong("❌ Помилка Gemini: $errMsg")
-                AndroidUtilities.runOnUIThread { stopSession() }
+                // Затримка 5с щоб побачити помилку від API
+                // Перевіряємо що glowView ще прикріплений (не стартували нову сесію)
+                AndroidUtilities.runOnUIThread({
+                    if (glowView.parent != null) stopSession()
+                }, 5000)
                 return
             }
 
             if (obj.has("setupComplete")) {
                 isSetupComplete = true
+                setupWatchdogActive = false  // вотчдог отримав відповідь
                 FileLog.d(">>> SETUP COMPLETE <<<")
                 updateStatus("🎙️ Сесію активовано!", "Запуск мікрофона...")
                 startAudioThreads()
@@ -724,6 +762,7 @@ class GominLiveManager(
         }
         isWebSocketOpen = false
         isSetupComplete = false
+        setupWatchdogActive = false  // скидаємо вотчдог
 
         FileLog.d("Stopping session...")
         updateStatus("🛑 Зупинка сесії...", "")
