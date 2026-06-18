@@ -352,7 +352,7 @@ class GominLiveManager(
             }
 
             override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-                FileLog.d("Received binary (${bytes.size()} bytes): ${bytes.hex().take(80)}...")
+                FileLog.d("Received binary (${bytes.size} bytes): ${bytes.hex().take(80)}...")
             }
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
