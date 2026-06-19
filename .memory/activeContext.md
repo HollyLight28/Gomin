@@ -7,12 +7,15 @@
 6. Diagnose and fix the Gemini Live API mic activation issue, migrate to active stable models, add full error UI indicators (Toasts) and move device initialization to background thread. [COMPLETED]
 7. Adjust scale of installer and notification drawer app icon to clean 0.10 scale, flattening vector path coordinates to eliminate nested groups and match selector preview dimensions. [COMPLETED]
 8. Audit the Gemini Live API WebSocket connection parameters and message schemas, comparing them with the official documentation and the local implementation, and prepare a detailed explanation. [COMPLETED]
-
-
 9. Fix Live API integration per current Google documentation: replace deprecated `mediaChunks` with `audio`, `clientContent` greeting with `realtimeInput.text`, move `inputTranscription` parsing under `serverContent`, remove `OkHttpClient` shutdown in `stopSession()`. [COMPLETED]
+10. Restructure setup payload to have responseModalities and speechConfig directly under setup, not nested inside generationConfig, per official Google Gemini Live API WebSocket docs (June 2026). [COMPLETED]
 
 
 # COMPLETED ATOMIC STEPS
+- Restructured WebSocket setup payload: moved responseModalities, speechConfig, and systemInstruction to be direct children of the "setup" JSON object instead of being incorrectly nested under "generationConfig" (which was causing 30s timeout and setup failures).
+- Updated `GominLiveManagerPayloadTest.kt` unit tests to reflect and assert the correct flat setup structure.
+- Downloaded and saved the official Google Gemini Live API WebSocket documentation to `docs/gemini-live-api-websocket-reference.md`.
+- Successfully verified the fix on JVM using Gradle unit tests (`BUILD SUCCESSFUL in 1m 25s`).
 - Added Android Log redirects in `GominLiveManager.kt` to ensure WebSocket lifecycle events are visible in logcat.
 - Cleaned setup JSON payload by removing empty `inputAudioTranscription` configuration block.
 - Replaced ScrollView with NestedScrollView in `GominShieldBottomSheet.kt` to fix dismiss swipe issues.

@@ -54,24 +54,35 @@ class GominLiveManager(
             }
         }
 
+        /**
+         * Builds the setup payload per official Google Gemini Live API WebSocket docs (June 2026).
+         *
+         * CRITICAL: responseModalities and speechConfig are DIRECT children of "setup",
+         * NOT nested inside "generationConfig". The official examples at
+         * https://ai.google.dev/gemini-api/docs/live-api/get-started-websocket
+         * show this flat structure. Wrapping them in generationConfig causes
+         * the server to silently ignore the setup and never send setupComplete.
+         *
+         * See: docs/gemini-live-api-websocket-reference.md in this repo for the saved docs.
+         */
         fun buildSetupPayload(isTranscriptionMode: Boolean, targetModel: String): JSONObject {
             return JSONObject().apply {
                 put("setup", JSONObject().apply {
                     put("model", targetModel)
-                    put("generationConfig", JSONObject().apply {
-                        if (isTranscriptionMode) {
-                            put("responseModalities", JSONArray().put("TEXT"))
-                        } else {
-                            put("responseModalities", JSONArray().put("AUDIO"))
-                            put("speechConfig", JSONObject().apply {
-                                put("voiceConfig", JSONObject().apply {
-                                    put("prebuiltVoiceConfig", JSONObject().apply {
-                                        put("voiceName", "Puck")
-                                    })
+                    // responseModalities — direct child of setup, per official docs
+                    if (isTranscriptionMode) {
+                        put("responseModalities", JSONArray().put("TEXT"))
+                    } else {
+                        put("responseModalities", JSONArray().put("AUDIO"))
+                        // speechConfig — direct child of setup, NOT inside generationConfig
+                        put("speechConfig", JSONObject().apply {
+                            put("voiceConfig", JSONObject().apply {
+                                put("prebuiltVoiceConfig", JSONObject().apply {
+                                    put("voiceName", "Puck")
                                 })
                             })
-                        }
-                    })
+                        })
+                    }
                     if (!isTranscriptionMode) {
                         put("systemInstruction", JSONObject().apply {
                             put("parts", JSONArray().put(JSONObject().apply {
