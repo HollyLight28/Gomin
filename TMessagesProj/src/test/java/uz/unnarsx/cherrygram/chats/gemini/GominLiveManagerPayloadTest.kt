@@ -62,10 +62,14 @@ class GominLiveManagerPayloadTest {
             setup.has("generationConfig")
         )
 
-        // 7. Не повинно бути inputAudioTranscription у голосовому режимі
-        assertFalse(
-            "inputAudioTranscription не повинен бути в голосовому режимі",
+        // 7. Повинні бути inputAudioTranscription та outputAudioTranscription для підтримки двосторонньої транскрипції
+        assertTrue(
+            "inputAudioTranscription має бути в setup",
             setup.has("inputAudioTranscription")
+        )
+        assertTrue(
+            "outputAudioTranscription має бути в setup",
+            setup.has("outputAudioTranscription")
         )
     }
 

@@ -90,9 +90,9 @@ class GominLiveManager(
                             }))
                         })
                     }
-                    if (isTranscriptionMode) {
-                        put("inputAudioTranscription", JSONObject())
-                    }
+                    // Always initialize transcription configurations to allow bidirectional subtitles/logs
+                    put("inputAudioTranscription", JSONObject())
+                    put("outputAudioTranscription", JSONObject())
                 })
             }
         }
@@ -346,7 +346,10 @@ class GominLiveManager(
         val encodedKey = java.net.URLEncoder.encode(apiKey, "UTF-8")
         val url = "wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=$encodedKey"
         FileLog.d("Connecting WebSocket: ${url.take(80)}...")
-        val request = Request.Builder().url(url).build()
+        val request = Request.Builder()
+            .url(url)
+            .header("User-Agent", "aistudio-build")
+            .build()
 
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
