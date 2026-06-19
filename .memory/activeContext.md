@@ -9,9 +9,11 @@
 8. Audit the Gemini Live API WebSocket connection parameters and message schemas, comparing them with the official documentation and the local implementation, and prepare a detailed explanation. [COMPLETED]
 9. Fix Live API integration per current Google documentation: replace deprecated `mediaChunks` with `audio`, `clientContent` greeting with `realtimeInput.text`, move `inputTranscription` parsing under `serverContent`, remove `OkHttpClient` shutdown in `stopSession()`. [COMPLETED]
 10. Restructure setup payload to have responseModalities and speechConfig directly under setup, not nested inside generationConfig, per official Google Gemini Live API WebSocket docs (June 2026). [COMPLETED]
+11. Refactor WebSocket OkHttpClient, thread priority settings, audio queue bounding, and early mic recording lifecycle based on senior code-review feedbacks. [COMPLETED]
 
 
 # COMPLETED ATOMIC STEPS
+- Resolved key WebSocket connection issues & resource leaks based on critical code review: removed pingInterval to prevent connection drops, migrated OkHttpClient to a companion object singleton, switched thread priorities from Java priority settings to android.os.Process.THREAD_PRIORITY_URGENT_AUDIO, capped audioPlayQueue capacity to 100 to safeguard against Out-Of-Memory exceptions, and initialized recording threads early to immediately launch microphone sessions (satisfying Android 14+ foreground service validation).
 - Restructured WebSocket setup payload: moved responseModalities, speechConfig, and systemInstruction to be direct children of the "setup" JSON object instead of being incorrectly nested under "generationConfig" (which was causing 30s timeout and setup failures).
 - Updated `GominLiveManagerPayloadTest.kt` unit tests to reflect and assert the correct flat setup structure.
 - Downloaded and saved the official Google Gemini Live API WebSocket documentation to `docs/gemini-live-api-websocket-reference.md`.

@@ -96,14 +96,13 @@ class GominLiveManager(
                 })
             }
         }
-    }
 
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(0, TimeUnit.MILLISECONDS)
-        .writeTimeout(10, TimeUnit.SECONDS)
-        .pingInterval(15, TimeUnit.SECONDS)
-        .build()
+        private val client = OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(0, TimeUnit.MILLISECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .build()
+    }
 
     private var webSocket: WebSocket? = null
     @Volatile
@@ -157,7 +156,7 @@ class GominLiveManager(
     @Volatile
     private var isSessionActive = false
 
-    private val audioPlayQueue = LinkedBlockingQueue<ByteArray>()
+    private val audioPlayQueue = LinkedBlockingQueue<ByteArray>(100)
     private var isAiSpeaking = false
 
     fun startSession() {
@@ -201,6 +200,7 @@ class GominLiveManager(
             val audioOk = initAudioDevices()
             AndroidUtilities.runOnUIThread {
                 if (isSessionActive && audioOk) {
+                    startAudioThreads()
                     updateStatus("🔌 Підключення WebSocket...", "")
                     connectWebSocket(apiKey)
                 } else if (isSessionActive && !audioOk) {
@@ -435,6 +435,7 @@ class GominLiveManager(
 
         if (!isTranscriptionMode) {
             playThread = Thread {
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO)
                 var playStarted = false
                 synchronized(audioLock) {
                     val track = audioTrack
@@ -481,12 +482,12 @@ class GominLiveManager(
                     }
                 }
             }.apply {
-                priority = Thread.MAX_PRIORITY
                 start()
             }
         }
 
         recordThread = Thread {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO)
             val bufSize = getBufferSizeIn()
             val buffer = ShortArray(if (bufSize > 0) bufSize / 2 else 1024)
             var recordStarted = false
@@ -594,7 +595,6 @@ class GominLiveManager(
                 }
             }
         }.apply {
-            priority = Thread.MAX_PRIORITY
             start()
         }
     }
@@ -648,9 +648,9 @@ class GominLiveManager(
                 isSetupComplete = true
                 setupWatchdogActive = false  // вотчдог отримав відповідь
                 FileLog.d(">>> SETUP COMPLETE <<<")
-                updateStatus("🎙️ Сесію активовано!", "Запуск мікрофона...")
-                startAudioThreads()
+                updateStatus("🎙️ Сесію активовано!", "Розмова розпочалась")
                 sendInitialGreetingTrigger()
+                return
             }
 
             // inputTranscription and outputTranscription are fields of serverContent
