@@ -90,9 +90,9 @@ class GominLiveManager(
                             }))
                         })
                     }
-                    // Always initialize transcription configurations to allow bidirectional subtitles/logs
-                    put("inputAudioTranscription", JSONObject())
-                    put("outputAudioTranscription", JSONObject())
+                    if (isTranscriptionMode) {
+                        put("inputAudioTranscription", JSONObject())
+                    }
                 })
             }
         }
