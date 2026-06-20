@@ -9,18 +9,22 @@ import org.junit.Test
 /**
  * Unit-тести для валідації структури JSON-пакета ініціалізації Gemini Live API.
  *
- * Правильна структура (згідно з офіційною документацією Google, червень 2026):
+ * ПРАВИЛЬНА структура (ВЕРИФІКОВАНО 2026-06-20 live-тестом):
  * {
  *   "setup": {
  *     "model": "models/gemini-3.1-flash-live-preview",
- *     "responseModalities": ["AUDIO"],      // <-- НА РІВНІ setup!
- *     "speechConfig": { ... },              // <-- НА РІВНІ setup!
- *     "systemInstruction": { ... }          // <-- НА РІВНІ setup!
+ *     "generation_config": {
+ *       "response_modalities": ["AUDIO"],
+ *       "speech_config": { "voice_config": { "prebuilt_voice_config": { "voice_name": "Puck" } } }
+ *     },
+ *     "system_instruction": { "parts": [{ "text": "..." }] }
  *   }
  * }
  *
- * УВАГА: responseModalities і speechConfig — НЕ загорнуті в generationConfig!
- * Docs: https://ai.google.dev/gemini-api/docs/live-api/get-started-websocket
+ * ВАЖЛИВО: response_modalities і speech_config — ВСЕРЕДИНІ generation_config.
+ * Сервер явно відкидає їх на рівні setup:
+ *   "Unknown name 'responseModalities' at 'setup': Cannot find field."
+ * УСІ поля — snake_case.
  */
 class GominLiveManagerPayloadTest {
 
@@ -31,46 +35,43 @@ class GominLiveManagerPayloadTest {
             targetModel = "models/gemini-3.1-flash-live-preview"
         )
 
-        // 1. Кореневий ключ має бути "setup"
+        // 1. Кореневий ключ "setup"
         assertTrue("Кореневий ключ має бути 'setup'", payload.has("setup"))
         val setup = payload.getJSONObject("setup")
 
-        // 2. Модель має бути під "setup"
+        // 2. Модель
         assertEquals("models/gemini-3.1-flash-live-preview", setup.getString("model"))
 
-        // 3. responseModalities має бути НАПРЯМУ під "setup" (НЕ в generationConfig!)
-        assertTrue("responseModalities має бути напряму в setup", setup.has("responseModalities"))
-        val modalities = setup.getJSONArray("responseModalities")
+        // 3. generation_config має існувати
+        assertTrue("generation_config має бути присутній", setup.has("generation_config"))
+        val genConfig = setup.getJSONObject("generation_config")
+
+        // 4. response_modalities — всередині generation_config
+        assertTrue("response_modalities має бути в generation_config", genConfig.has("response_modalities"))
+        val modalities = genConfig.getJSONArray("response_modalities")
         assertEquals("AUDIO", modalities.getString(0))
 
-        // 4. speech_config має бути НАПРЯМУ під "setup" (НЕ в generationConfig!)
-        assertTrue("speech_config має бути напряму в setup", setup.has("speech_config"))
-        val speechConfig = setup.getJSONObject("speech_config")
+        // 5. speech_config — всередині generation_config
+        assertTrue("speech_config має бути в generation_config", genConfig.has("speech_config"))
+        val speechConfig = genConfig.getJSONObject("speech_config")
         val voiceConfig = speechConfig.getJSONObject("voice_config")
         val prebuilt = voiceConfig.getJSONObject("prebuilt_voice_config")
         assertEquals("Puck", prebuilt.getString("voice_name"))
 
-        // 5. systemInstruction має бути безпосередньо під "setup"
-        assertTrue("systemInstruction має бути в setup", setup.has("systemInstruction"))
-        val sysInstruction = setup.getJSONObject("systemInstruction")
+        // 6. system_instruction — на рівні setup
+        assertTrue("system_instruction має бути в setup", setup.has("system_instruction"))
+        val sysInstruction = setup.getJSONObject("system_instruction")
         val parts = sysInstruction.getJSONArray("parts")
-        assertTrue("systemInstruction.parts повинен мати хоча б один елемент", parts.length() > 0)
+        assertTrue("system_instruction.parts повинен мати хоча б один елемент", parts.length() > 0)
 
-        // 6. generationConfig НЕ повинен існувати (структура плоска!)
-        assertFalse(
-            "generationConfig НЕ повинен існувати — responseModalities напряму в setup",
-            setup.has("generationConfig")
-        )
+        // 7. response_modalities НЕ на рівні setup
+        assertFalse("response_modalities НЕ повинен бути напряму в setup", setup.has("response_modalities"))
 
-        // 7. Не повинно бути inputAudioTranscription та outputAudioTranscription у голосовому режимі
-        assertFalse(
-            "inputAudioTranscription не повинен бути в голосовому режимі",
-            setup.has("inputAudioTranscription")
-        )
-        assertFalse(
-            "outputAudioTranscription не повинен бути в голосовому режимі",
-            setup.has("outputAudioTranscription")
-        )
+        // 8. speech_config НЕ на рівні setup
+        assertFalse("speech_config НЕ повинен бути напряму в setup", setup.has("speech_config"))
+
+        // 9. input_audio_transcription відсутній у голосовому режимі
+        assertFalse("input_audio_transcription не повинен бути", setup.has("input_audio_transcription"))
     }
 
     @Test
@@ -81,47 +82,37 @@ class GominLiveManagerPayloadTest {
         )
 
         val setup = payload.getJSONObject("setup")
+        val genConfig = setup.getJSONObject("generation_config")
 
-        // 1. responseModalities має бути TEXT
-        assertTrue("responseModalities має бути напряму в setup", setup.has("responseModalities"))
-        val modalities = setup.getJSONArray("responseModalities")
+        // 1. response_modalities = TEXT
+        assertTrue("response_modalities має бути в generation_config", genConfig.has("response_modalities"))
+        val modalities = genConfig.getJSONArray("response_modalities")
         assertEquals("TEXT", modalities.getString(0))
 
-        // 2. inputAudioTranscription має бути присутній
-        assertTrue("Має бути присутній inputAudioTranscription", setup.has("inputAudioTranscription"))
+        // 2. input_audio_transcription присутній
+        assertTrue("input_audio_transcription має бути", setup.has("input_audio_transcription"))
 
-        // 3. НЕ повинно бути systemInstruction у транскрипційному режимі
-        assertFalse("Має бути відсутній systemInstruction", setup.has("systemInstruction"))
+        // 3. system_instruction відсутній у транскрипційному режимі
+        assertFalse("system_instruction має бути відсутній", setup.has("system_instruction"))
 
-        // 4. НЕ повинно бути speech_config у транскрипційному режимі
-        assertFalse("Має бути відсутній speech_config", setup.has("speech_config"))
-
-        // 5. generationConfig НЕ повинен існувати
-        assertFalse(
-            "generationConfig НЕ повинен існувати",
-            setup.has("generationConfig")
-        )
+        // 4. speech_config відсутній у транскрипційному режимі
+        assertFalse("speech_config має бути відсутній", genConfig.has("speech_config"))
     }
 
     @Test
     fun testSetupPayloadJsonOutput() {
-        // Перевіряємо що фінальний JSON точно відповідає очікуваній структурі
         val payload = GominLiveManager.buildSetupPayload(
             isTranscriptionMode = false,
             targetModel = "models/gemini-3.1-flash-live-preview"
         )
         val jsonStr = payload.toString()
 
-        // Має містити ці ключі на правильному рівні
+        // Мають бути ключі на правильних рівнях
         assertTrue("JSON повинен містити 'setup'", jsonStr.contains("\"setup\""))
-        assertTrue("JSON повинен містити 'responseModalities'", jsonStr.contains("\"responseModalities\""))
+        assertTrue("JSON повинен містити 'generation_config'", jsonStr.contains("\"generation_config\""))
+        assertTrue("JSON повинен містити 'response_modalities'", jsonStr.contains("\"response_modalities\""))
         assertTrue("JSON повинен містити 'speech_config'", jsonStr.contains("\"speech_config\""))
         assertTrue("JSON повинен містити 'voice_name'", jsonStr.contains("\"voice_name\""))
-
-        // НЕ повинен містити generationConfig
-        assertFalse(
-            "JSON НЕ повинен містити 'generationConfig'",
-            jsonStr.contains("\"generationConfig\"")
-        )
+        assertTrue("JSON повинен містити 'system_instruction'", jsonStr.contains("\"system_instruction\""))
     }
 }

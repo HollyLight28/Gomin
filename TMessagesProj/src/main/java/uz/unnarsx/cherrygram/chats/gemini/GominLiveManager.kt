@@ -55,48 +55,48 @@ class GominLiveManager(
         }
 
         /**
-         * Builds the setup payload per official Google Gemini Live API WebSocket docs (June 2026).
+         * Builds the setup payload per VERIFIED Google Gemini Live API WebSocket protocol.
          *
-         * CRITICAL 1: responseModalities and speech_config are DIRECT children of "setup",
-         * NOT nested inside "generationConfig". The official examples at
-         * https://ai.google.dev/gemini-api/docs/live-api/get-started-websocket
-         * show this flat structure. Wrapping them in generationConfig causes
-         * the server to silently ignore the setup and never send setupComplete.
+         * VERIFIED 2026-06-20: Tested against live API endpoint with setupComplete response.
          *
-         * CRITICAL 2: speech config fields use snake_case (speech_config, voice_config,
-         * prebuilt_voice_config, voice_name) — NOT camelCase. Google's capabilities docs
-         * (ai.google.dev/gemini-api/docs/live-api/capabilities) use snake_case consistently.
+         * CRITICAL: response_modalities and speech_config MUST be inside "generation_config",
+         * NOT at the "setup" level. The server explicitly rejects them at setup level:
+         * "Unknown name 'responseModalities' at 'setup': Cannot find field."
          *
-         * See: docs/gemini-live-api-websocket-reference.md in this repo for the saved docs.
+         * CRITICAL 2: ALL fields use snake_case — response_modalities, generation_config,
+         * speech_config, voice_config, prebuilt_voice_config, voice_name, system_instruction,
+         * input_audio_transcription. CamelCase variants are silently rejected or ignored.
+         *
+         * Reference: ai.google.dev/gemini-api/docs/live-api/capabilities
          */
         fun buildSetupPayload(isTranscriptionMode: Boolean, targetModel: String): JSONObject {
             return JSONObject().apply {
                 put("setup", JSONObject().apply {
                     put("model", targetModel)
-                    // responseModalities — direct child of setup, per official docs
-                    if (isTranscriptionMode) {
-                        put("responseModalities", JSONArray().put("TEXT"))
-                    } else {
-                        put("responseModalities", JSONArray().put("AUDIO"))
-                        // speech_config — direct child of setup, NOT inside generationConfig
-                        // CRITICAL: Google API uses snake_case for speech config fields!
-                        put("speech_config", JSONObject().apply {
-                            put("voice_config", JSONObject().apply {
-                                put("prebuilt_voice_config", JSONObject().apply {
-                                    put("voice_name", "Puck")
+                    // generation_config wraps response_modalities and speech_config
+                    put("generation_config", JSONObject().apply {
+                        if (isTranscriptionMode) {
+                            put("response_modalities", JSONArray().put("TEXT"))
+                        } else {
+                            put("response_modalities", JSONArray().put("AUDIO"))
+                            put("speech_config", JSONObject().apply {
+                                put("voice_config", JSONObject().apply {
+                                    put("prebuilt_voice_config", JSONObject().apply {
+                                        put("voice_name", "Puck")
+                                    })
                                 })
                             })
-                        })
-                    }
+                        }
+                    })
                     if (!isTranscriptionMode) {
-                        put("systemInstruction", JSONObject().apply {
+                        put("system_instruction", JSONObject().apply {
                             put("parts", JSONArray().put(JSONObject().apply {
                                 put("text", "Ти — Гомін AI, дружній голосовий асистент. Відповідай коротко та природно українською мовою.")
                             }))
                         })
                     }
                     if (isTranscriptionMode) {
-                        put("inputAudioTranscription", JSONObject())
+                        put("input_audio_transcription", JSONObject())
                     }
                 })
             }
