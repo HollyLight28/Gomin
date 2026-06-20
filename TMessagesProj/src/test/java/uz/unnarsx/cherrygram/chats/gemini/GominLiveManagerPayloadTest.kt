@@ -43,12 +43,12 @@ class GominLiveManagerPayloadTest {
         val modalities = setup.getJSONArray("responseModalities")
         assertEquals("AUDIO", modalities.getString(0))
 
-        // 4. speechConfig має бути НАПРЯМУ під "setup" (НЕ в generationConfig!)
-        assertTrue("speechConfig має бути напряму в setup", setup.has("speechConfig"))
-        val speechConfig = setup.getJSONObject("speechConfig")
-        val voiceConfig = speechConfig.getJSONObject("voiceConfig")
-        val prebuilt = voiceConfig.getJSONObject("prebuiltVoiceConfig")
-        assertEquals("Puck", prebuilt.getString("voiceName"))
+        // 4. speech_config має бути НАПРЯМУ під "setup" (НЕ в generationConfig!)
+        assertTrue("speech_config має бути напряму в setup", setup.has("speech_config"))
+        val speechConfig = setup.getJSONObject("speech_config")
+        val voiceConfig = speechConfig.getJSONObject("voice_config")
+        val prebuilt = voiceConfig.getJSONObject("prebuilt_voice_config")
+        assertEquals("Puck", prebuilt.getString("voice_name"))
 
         // 5. systemInstruction має бути безпосередньо під "setup"
         assertTrue("systemInstruction має бути в setup", setup.has("systemInstruction"))
@@ -93,8 +93,8 @@ class GominLiveManagerPayloadTest {
         // 3. НЕ повинно бути systemInstruction у транскрипційному режимі
         assertFalse("Має бути відсутній systemInstruction", setup.has("systemInstruction"))
 
-        // 4. НЕ повинно бути speechConfig у транскрипційному режимі
-        assertFalse("Має бути відсутній speechConfig", setup.has("speechConfig"))
+        // 4. НЕ повинно бути speech_config у транскрипційному режимі
+        assertFalse("Має бути відсутній speech_config", setup.has("speech_config"))
 
         // 5. generationConfig НЕ повинен існувати
         assertFalse(
@@ -115,8 +115,8 @@ class GominLiveManagerPayloadTest {
         // Має містити ці ключі на правильному рівні
         assertTrue("JSON повинен містити 'setup'", jsonStr.contains("\"setup\""))
         assertTrue("JSON повинен містити 'responseModalities'", jsonStr.contains("\"responseModalities\""))
-        assertTrue("JSON повинен містити 'speechConfig'", jsonStr.contains("\"speechConfig\""))
-        assertTrue("JSON повинен містити 'voiceName'", jsonStr.contains("\"voiceName\""))
+        assertTrue("JSON повинен містити 'speech_config'", jsonStr.contains("\"speech_config\""))
+        assertTrue("JSON повинен містити 'voice_name'", jsonStr.contains("\"voice_name\""))
 
         // НЕ повинен містити generationConfig
         assertFalse(

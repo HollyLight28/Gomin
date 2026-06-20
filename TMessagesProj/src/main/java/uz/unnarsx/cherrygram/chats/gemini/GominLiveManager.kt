@@ -57,11 +57,15 @@ class GominLiveManager(
         /**
          * Builds the setup payload per official Google Gemini Live API WebSocket docs (June 2026).
          *
-         * CRITICAL: responseModalities and speechConfig are DIRECT children of "setup",
+         * CRITICAL 1: responseModalities and speech_config are DIRECT children of "setup",
          * NOT nested inside "generationConfig". The official examples at
          * https://ai.google.dev/gemini-api/docs/live-api/get-started-websocket
          * show this flat structure. Wrapping them in generationConfig causes
          * the server to silently ignore the setup and never send setupComplete.
+         *
+         * CRITICAL 2: speech config fields use snake_case (speech_config, voice_config,
+         * prebuilt_voice_config, voice_name) — NOT camelCase. Google's capabilities docs
+         * (ai.google.dev/gemini-api/docs/live-api/capabilities) use snake_case consistently.
          *
          * See: docs/gemini-live-api-websocket-reference.md in this repo for the saved docs.
          */
@@ -74,11 +78,12 @@ class GominLiveManager(
                         put("responseModalities", JSONArray().put("TEXT"))
                     } else {
                         put("responseModalities", JSONArray().put("AUDIO"))
-                        // speechConfig — direct child of setup, NOT inside generationConfig
-                        put("speechConfig", JSONObject().apply {
-                            put("voiceConfig", JSONObject().apply {
-                                put("prebuiltVoiceConfig", JSONObject().apply {
-                                    put("voiceName", "Puck")
+                        // speech_config — direct child of setup, NOT inside generationConfig
+                        // CRITICAL: Google API uses snake_case for speech config fields!
+                        put("speech_config", JSONObject().apply {
+                            put("voice_config", JSONObject().apply {
+                                put("prebuilt_voice_config", JSONObject().apply {
+                                    put("voice_name", "Puck")
                                 })
                             })
                         })
